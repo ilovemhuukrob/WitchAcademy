@@ -51,6 +51,10 @@ gowestcor_2 = False
 goeastcor_1 = False
 goeastcor_2 = False
 
+honglean_1 = False
+honglean_2 = False
+honglean_3 = False
+
 goresearch = False
 goteach = False
 goapothe = False
@@ -389,7 +393,7 @@ while run:
                 bg.blit(mapping[0], (0, 0))
     #--------------canteen---------------
         elif gocanteen == True: #CANTEEN
-            wall()
+            wall(walls["canteen"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
             
@@ -425,7 +429,7 @@ while run:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
     #--------------eastcor1--------------
         elif goeastcor_1 == True:
-            wall()
+            wall(walls["eastcor1"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -450,9 +454,27 @@ while run:
                 win.blit(bg ,(-28, -178))
             else:
                 win.blit(bg ,(-28, rel_y-bg_height))
+            if 1128 <= X <= 1198 and 463 <= Y < 523:
+                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                if keys[pygame.K_f]:
+                    bg = pygame.image.load("sprite/classroom.jpg")
+                    X = 58
+                    Y = 268
+                    goeastcor_1 = False
+                    honglean_1 = True
+                    CHECK = "RIGHT"
+            if 1128 <= X <= 1198 and 103 <= Y < 148:
+                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                if keys[pygame.K_f]:
+                    bg = pygame.image.load("sprite/classroom.jpg")
+                    X = 58
+                    Y = 268
+                    goeastcor_1 = False
+                    honglean_2 = True
+                    CHECK = "RIGHT"
     #--------------eastcor2--------------
         elif goeastcor_2 == True:
-            wall()
+            wall(walls["eastcor2"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -475,9 +497,66 @@ while run:
                 goeastfor = True
             else:
                 win.blit(bg ,(-28, -13))
+            if 1128 <= X <= 1198 and 328 <= Y < 373:
+                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                if keys[pygame.K_f]:
+                    bg = pygame.image.load("sprite/classroom.jpg")
+                    X = 58
+                    Y = 268
+                    goeastcor_2 = False
+                    honglean_3 = True
+                    CHECK = "RIGHT"
+    #--------------honglean--------------
+        elif honglean_1 == True:
+            wall(walls["honglean"])
+            rel_x = -X % bg_width
+            rel_y = -Y % bg_height
+
+            win.blit(bg ,(-238, -118))
+            if 13 <= X <= 28 and 253 <= Y < 283:
+                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                if keys[pygame.K_f]:
+                    bg = pygame.image.load("sprite/eastcorridor_1.jpg")
+                    X = 1093
+                    Y = 493
+                    goeastcor_1 = True
+                    honglean_1 = False
+                    CHECK = "LEFT"
+    #--------------honglean2--------------
+        elif honglean_2 == True:
+            wall(walls["honglean"])
+            rel_x = -X % bg_width
+            rel_y = -Y % bg_height
+
+            win.blit(bg ,(-238, -118))
+            if 13 <= X <= 28 and 253 <= Y < 283:
+                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                if keys[pygame.K_f]:
+                    bg = pygame.image.load("sprite/eastcorridor_1.jpg")
+                    X = 1093
+                    Y = 133
+                    goeastcor_1 = True
+                    honglean_2 = False
+                    CHECK = "LEFT"
+    #--------------honglean3--------------
+        elif honglean_3 == True:
+            wall(walls["honglean"])
+            rel_x = -X % bg_width
+            rel_y = -Y % bg_height
+
+            win.blit(bg ,(-238, -118))
+            if 13 <= X <= 28 and 253 <= Y < 283:
+                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                if keys[pygame.K_f]:
+                    bg = pygame.image.load("sprite/eastcorridor_2.jpg")
+                    X = 1093
+                    Y = 358
+                    goeastcor_2 = True
+                    honglean_3 = False
+                    CHECK = "LEFT"
     #--------------eastgarden------------
         elif goeastgar == True:
-            wall()
+            wall(walls["eastgar"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -626,7 +705,7 @@ while run:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
     #----------------hall----------------
         elif gohalls == True:
-            wall()
+            wall(walls["hallway"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -651,7 +730,7 @@ while run:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
     #-------------westgarden-------------
         elif gowestgar == True:
-            wall()
+            wall(walls["westgar"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -745,7 +824,7 @@ while run:
                     CHECK = "LEFT"
     #-------------westforest-------------
         elif gowestfor == True:
-            wall()
+            wall(walls["westfor"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -766,7 +845,7 @@ while run:
                 win.blit(bg ,(rel_x-bg_width, -58))
     #--------------forest----------------
         elif goforest == True:
-            wall()
+            wall(walls["forest"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -790,7 +869,7 @@ while run:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
     #-------------eastforest--------------
         elif goeastfor == True:
-            wall()
+            wall(walls["eastfor"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -811,14 +890,11 @@ while run:
                 win.blit(bg ,(rel_x-bg_width, -58))
     #------------apothecaryroom-----------
         elif goapothe == True:
-            wall()
+            wall(walls['apothecaryroom'])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
-            if X >= 400:
-                win.blit(bg ,(-400, -58))
-            else:
-                win.blit(bg ,(rel_x-bg_width, -58))
+            win.blit(bg ,(-238, -58))
             if 1033 <= X <= 1630 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
@@ -830,14 +906,11 @@ while run:
                     CHECK = "RIGHT"
     #------------teacherroom--------------
         elif goteach == True:
-            wall()
+            wall(walls['teacherroom'])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
-            if X >= 400:
-                win.blit(bg ,(-400, -58))
-            else:
-                win.blit(bg ,(rel_x-bg_width, -58))
+            win.blit(bg ,(-238, -58))
             if 1033 <= X <= 1630 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
@@ -849,14 +922,11 @@ while run:
                     CHECK = "RIGHT"
     #------------researchroom-------------
         elif goresearch == True:
-            wall()
+            wall(walls['researchroom'])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
-            if X >= 400:
-                win.blit(bg ,(-400, -58))
-            else:
-                win.blit(bg ,(rel_x-bg_width, -58))
+            win.blit(bg ,(-238, -58))
             if 1033 <= X <= 1630 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:

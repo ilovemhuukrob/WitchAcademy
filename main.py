@@ -687,6 +687,7 @@ while run:
             if X <= 13:
                 bg = pygame.image.load("sprite/halls.jpg")
                 X = 1153
+                Y = 178
                 goentry = False
                 gohalls = True
             elif Y <= 13:
@@ -705,7 +706,7 @@ while run:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
     #----------------hall----------------
         elif gohalls == True:
-            wall(walls["hallway"])
+            wall(walls["hall"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
 
@@ -800,6 +801,7 @@ while run:
 
             if Y >= 613:
                 bg = pygame.image.load("sprite/westcorridor_1.jpg")
+                X = 1003
                 Y = 103
                 gowestcor_2 = False
                 gowestcor_1 = True
@@ -837,6 +839,7 @@ while run:
             elif X >= 1213:
                 bg = pygame.image.load("sprite/forest.jpg")
                 X = 28
+                Y = 418
                 gowestfor = False
                 goforest = True
             elif X >= 583:

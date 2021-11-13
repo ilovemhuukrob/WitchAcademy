@@ -346,9 +346,9 @@ HeartImg = pygame.image.load('sprite/photohunt/heart.png')
 bg_ph_1 = pygame.image.load('sprite/photohunt/stage 1.png')
 bg_sound_ph1 = pygame.mixer.Sound('sprite/photohunt/main.mp3')
 bg_ph_2 = pygame.image.load('sprite/photohunt/stage 2.png')
-bg_sound_ph2 = pygame.mixer.Sound('data/sounds/main.mp3')
-bg_ph_3 = pygame.image.load('data/pic/stage 3.png')
-bg_sound_ph3 = pygame.mixer.Sound('data/sounds/main.mp3')
+bg_sound_ph2 = pygame.mixer.Sound('sprite/photohunt/main.mp3')
+bg_ph_3 = pygame.image.load('sprite/photohunt/stage 3.png')
+bg_sound_ph3 = pygame.mixer.Sound('sprite/photohunt/main.mp3')
 stage = 0
 score_value = 0
 health_value = 3
@@ -1000,7 +1000,7 @@ while run:
     elif PLAY_PH1:
         pygame.time.delay(30)
         bg_sound_ph1.play(-1)
-        sec -= 0.07
+        sec -= 0.05
         if sec < 61:
             stage = 1
             win.blit(bg_ph_1, (0, 0))
@@ -1132,7 +1132,7 @@ while run:
     elif PLAY_PH2:
         pygame.time.delay(30)
         # bg_sound_ph2.play(-1)
-        sec -= 0.07
+        sec -= 0.05
         if sec < 61:
             stage = 1
             win.blit(bg_ph_2, (0, 0))
@@ -1277,7 +1277,7 @@ while run:
     elif PLAY_PH3:
         pygame.time.delay(30)
         #bg_sound_ph3.play(-1)
-        sec -= 0.07
+        sec -= 0.05
         if sec < 61:
             stage = 1
             win.blit(bg_ph_3, (0, 0))

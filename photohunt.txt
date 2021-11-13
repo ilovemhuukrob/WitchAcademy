@@ -1,0 +1,17 @@
+sprite/photohunt/circle1.png
+sprite/photohunt/circle2.png
+sprite/photohunt/circle3.png
+sprite/photohunt/circle4.png
+sprite/photohunt/circle5.png
+sprite/photohunt/circle6.png
+sprite/photohunt/circle7.png
+sprite/photohunt/circle8.png
+sprite/photohunt/circle9.png
+sprite/photohunt/circle10.png
+sprite/photohunt/circle11.png
+sprite/photohunt/circle12.png
+sprite/photohunt/circle13.png
+sprite/photohunt/circle14.png
+sprite/photohunt/circle15.png
+sprite/photohunt/circle16.png
+sprite/photohunt/circle17.png

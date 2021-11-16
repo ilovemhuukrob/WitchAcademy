@@ -644,6 +644,7 @@ while run:
 
             if Y >= 613:
                 bg = pygame.image.load("sprite/hallway.jpg")
+                X = 253
                 Y = 43
                 gohallway = True
                 gofirstaid = False

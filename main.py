@@ -1,5 +1,6 @@
 import pygame, json
 from pygame import mixer
+
 pygame.init()
 
 #---------------------------------------------------------------------------
@@ -65,6 +66,12 @@ gowestfor = False
 goeastfor = False
 goforest = False
 
+
+#----------------Sound--------------------------------
+bg_hall = pygame.mixer.Sound("sound/178.mp3"); bg_hall.set_volume(0.5)
+bg_opendoor = pygame.mixer.Sound("sound\Wood Door - Open_Close.mp3")
+
+#--------------------------------------------
 walls = open("walls.txt", 'r').read()
 walls = dict(json.loads(walls))
 POSX_SHE, POSX_ASME, POSX_AVI, BLACK = 300, -150, -300, 0
@@ -344,11 +351,14 @@ def wall(wall=[(0,0,0,0)]):
 font_ph = pygame.font.Font('sprite/photohunt/2005_iannnnnAMD.ttf', 72)
 HeartImg = pygame.image.load('sprite/photohunt/heart.png')
 bg_ph_1 = pygame.image.load('sprite/photohunt/stage 1.png')
-bg_sound_ph1 = pygame.mixer.Sound('sprite/photohunt/main.mp3')
+bg_sound_ph1 = pygame.mixer.Sound('sprite/photohunt/main.mp3'); bg_sound_ph1.set_volume(0.3)
 bg_ph_2 = pygame.image.load('sprite/photohunt/stage 2.png')
-bg_sound_ph2 = pygame.mixer.Sound('sprite/photohunt/main.mp3')
+bg_sound_ph2 = pygame.mixer.Sound('sound/tech_rom.mp3'); bg_sound_ph2.set_volume(0.3)
 bg_ph_3 = pygame.image.load('sprite/photohunt/stage 3.png')
-bg_sound_ph3 = pygame.mixer.Sound('sprite/photohunt/main.mp3')
+bg_sound_ph3 = pygame.mixer.Sound('sound/research_roon.mp3'); bg_sound_ph3.set_volume(0.3)
+c_sound = pygame.mixer.Sound("sprite\magic\magicsound.mp3"); c_sound.set_volume(0.5)
+w_sound = pygame.mixer.Sound("sound\Swoosh.mp3"); w_sound.set_volume(0.5)
+
 stage = 0
 score_value = 0
 health_value = 3
@@ -386,6 +396,7 @@ while run:
     #--------------hallway---------------
         if gohallway == True: #HALLWAY
             # redrawsup()
+            # bg_hall.play(-1,fade_ms=5000)
             wall(walls["hallway"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
@@ -399,6 +410,7 @@ while run:
                 gofirstaid = False
                 gocanteen = False
             elif Y >= 598:
+                bg_hall.stop()
                 bg = pygame.image.load("sprite/entryhall.jpg")
                 X = 508
                 Y = 43
@@ -494,6 +506,8 @@ while run:
             if 1128 <= X <= 1198 and 463 <= Y < 523:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_hall.stop()
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/classroom.jpg")
                     X = 58
                     Y = 268
@@ -503,6 +517,8 @@ while run:
             if 1128 <= X <= 1198 and 103 <= Y < 148:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_hall.stop()
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/classroom.jpg")
                     X = 58
                     Y = 268
@@ -537,6 +553,8 @@ while run:
             if 1128 <= X <= 1198 and 328 <= Y < 373:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_hall.stop()
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/classroom.jpg")
                     X = 58
                     Y = 268
@@ -553,12 +571,14 @@ while run:
             if 13 <= X <= 28 and 253 <= Y < 283:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/eastcorridor_1.jpg")
                     X = 1093
                     Y = 493
                     goeastcor_1 = True
                     classroom1 = False
                     CHECK = "LEFT"
+                    bg_hall.play(-1,fade_ms=5000)
     #--------------classroom2--------------
         elif classroom2 == True:
             wall(walls["classroom"])
@@ -569,12 +589,14 @@ while run:
             if 13 <= X <= 28 and 253 <= Y < 283:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/eastcorridor_1.jpg")
                     X = 1093
                     Y = 133
                     goeastcor_1 = True
                     classroom2 = False
                     CHECK = "LEFT"
+                    bg_hall.play(-1,fade_ms=5000)
     #--------------classroom3--------------
         elif classroom3 == True:
             wall(walls["classroom"])
@@ -585,12 +607,14 @@ while run:
             if 13 <= X <= 28 and 253 <= Y < 283:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/eastcorridor_2.jpg")
                     X = 1093
                     Y = 358
                     goeastcor_2 = True
                     classroom3 = False
                     CHECK = "LEFT"
+                    bg_hall.play(-1,fade_ms=5000)
     #--------------eastgarden------------
         elif goeastgar == True:
             wall(walls["eastgar"])
@@ -731,6 +755,7 @@ while run:
                 bg = pygame.image.load("sprite/hallway.jpg")
                 X = 463
                 Y = 583
+                bg_hall.play(-1,fade_ms=5000)
                 goentry = False
                 gohallway = True
             elif X >= 763 and Y >= 272:
@@ -815,6 +840,8 @@ while run:
             if 13 <= X <= 28 and 313 <= Y < 388 and gopath == False:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_hall.stop()
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/apothecaryroom.jpg")
                     X = 973
                     Y = 433
@@ -824,6 +851,8 @@ while run:
             if 13 <= X <= 28 and 103 <= Y < 163:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_hall.stop()
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/teacherroom.jpg")
                     X = 958
                     Y = 373
@@ -854,6 +883,8 @@ while run:
             if 13 <= X <= 28 and 208 <= Y < 358:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_hall.stop()
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/researchroom.jpg")
                     X = 973
                     Y = 433
@@ -938,12 +969,14 @@ while run:
             if 1168 <= X <= 1280 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/westcorridor_1.jpg")
                     X = 58
                     Y = 343
                     gowestcor_1 = True
                     goapothe = False
                     CHECK = "RIGHT"
+                    bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[403,580,50,50])
             if 328 <= X <= 448 and 493 <= Y <= 523:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -960,12 +993,14 @@ while run:
             if 1168 <= X <= 1630 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/westcorridor_1.jpg")
                     X = 58
                     Y = 133
                     gowestcor_1 = True
                     goteach = False
                     CHECK = "RIGHT"
+                    bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[800,433,50,50])
             if 763 <= X <= 808 and 343 <= Y <= 418:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -982,12 +1017,14 @@ while run:
             if 1168 <= X <= 1630 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
+                    bg_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/westcorridor_2.jpg")
                     X = 58
                     Y = 298
                     gowestcor_2 = True
                     goteach = False
                     CHECK = "RIGHT"
+                    bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[223,450,50,50])
             if 118 <= X <= 283 and 373 <= Y <= 388:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -999,8 +1036,10 @@ while run:
 #-----------------Photohunt--------------------
     elif PLAY_PH1:
         pygame.time.delay(30)
-        bg_sound_ph1.play(-1)
         sec -= 0.05
+        if stage == 0:
+            bg_sound_ph1.play(-1)
+            stage = 1
         if sec < 61:
             stage = 1
             win.blit(bg_ph_1, (0, 0))
@@ -1014,24 +1053,31 @@ while run:
                     print(mx, my)
                     print(health_value)
                     if ((155 < mx < 195 and 150 < my < 239) or (740 < mx < 780 and 150 < my < 239)) and foundph1_1 == 1:  # เทียน
+                        c_sound.play()
                         score_value += 1
                         foundph1_1 = 2
                     elif ((590 < mx < 634 and 92 < my < 202) or (1183 < mx < 1217 and 92 < my < 202)) and foundph1_2 == 1:  # หนังสือ
+                        c_sound.play()
                         score_value += 1
                         foundph1_2 = 2
                     elif ((265 < mx < 310 and 280 < my < 360) or (840 < mx < 885 and 280 < my < 360)) and foundph1_3 == 1:  # อะไรไม่รุข้างหน้าต่าง
+                        c_sound.play()
                         score_value += 1
                         foundph1_3 = 2
                     elif ((575 < mx < 638 and 312 < my < 373) or (1165 < mx < 1221 and 312 < my < 373)) and foundph1_4 == 1:  # หนังสือชั้น 3
+                        c_sound.play()
                         score_value += 1
                         foundph1_4 = 2
                     elif ((130 < mx < 173 and 492 < my < 527) or (700 < mx < 760 and 492 < my < 527)) and foundph1_5 == 1:  # ไม้ไรสักอย่าง
+                        c_sound.play()
                         score_value += 1
                         foundph1_5 = 2
                     elif ((360 < mx < 436 and 470 < my < 528) or (942 < mx < 1022 and 470 < my < 528)) and foundph1_6 == 1:  # ถ้วย
+                        c_sound.play()
                         score_value += 1
                         foundph1_6 = 2
                     elif ((60 < mx < 134 and 650 < my < 703) or (649 < mx < 727 and 671 < my < 703)) and foundph1_7 == 1:  # ไห้ไรสักอย่าง
+                        c_sound.play()
                         score_value += 1
                         foundph1_7 = 2
                     # wrong click
@@ -1043,6 +1089,7 @@ while run:
                         not((360 < mx < 436 and 470 < my < 528) or (942 < mx < 1022 and 470 < my < 528)) and \
                         not((60 < mx < 134 and 650 < my < 703) or (649 < mx < 727 and 671 < my < 703)):
                         if health_value > 0:
+                            w_sound.play()
                             health_value -= 1
         if foundph1_1 == 2:
             drawcorrect(125, 157)
@@ -1114,25 +1161,27 @@ while run:
         sec_show = font_ph.render('Time Left: ' + str(int(sec)), True, (255, 255, 255))
         win.blit(sec_show, (525, 10))
         if sec > 61:
-            rules = pygame.image.load('data/pic/RULES.png')
+            rules = pygame.image.load('sprite/photohunt/RULES.png')
             win.blit(rules,(0,0))
         if score_value == 7:
-            win_screen = pygame.image.load('data/pic/U WIN.png')
+            win_screen = pygame.image.load('sprite/photohunt/U WIN.png')
             win.blit(win_screen, (0,0))
             bg_sound_ph1.stop()
             PLAY_PH1 = False ;PLAY_MAIN = True
-            score_value, sec, health_value = 0, 62, 3
+            score_value, sec, health_value, stage = 0, 62, 3, 0
         elif health_value == 0 or sec <= 0:
-            lose_screen = pygame.image.load('data/pic/U lose.png')
+            lose_screen = pygame.image.load('sprite/photohunt/U lose.png')
             win.blit(lose_screen, (0,0))
             bg_sound_ph1.stop()
             PLAY_PH1 = False ;PLAY_MAIN = True
-            score_value, sec, health_value = 0, 62, 3
+            score_value, sec, health_value, stage = 0, 62, 3, 0
 
     elif PLAY_PH2:
         pygame.time.delay(30)
-        # bg_sound_ph2.play(-1)
         sec -= 0.05
+        if stage == 0:
+            bg_sound_ph2.play(-1)
+            stage = 1
         if sec < 61:
             stage = 1
             win.blit(bg_ph_2, (0, 0))
@@ -1146,27 +1195,35 @@ while run:
                     print(mx, my)
                     print(health_value)
                     if ((545 < mx < 610 and 459 < my < 489) or (1162 < mx < 1225 and 454 < my < 492)) and foundph2_1 == 1: # แก้ววายด้านขวา
+                        c_sound.play()
                         score_value += 1
                         foundph2_1 = 2
                     elif ((251 < mx < 281 and 495 < my < 525) or (878 < mx < 915 and 493 < my < 528)) and foundph2_2 == 1: # สามเหลี่ยม
+                        c_sound.play()
                         score_value += 1
                         foundph2_2 = 2
                     elif ((555 < mx < 587 and 653 < my < 686) or (1175 < mx < 1210 and 653 < my < 686)) and foundph2_3 == 1: #ไวโอลิน
+                        c_sound.play()
                         score_value += 1
                         foundph2_3 = 2
                     elif ((85 < mx < 133 and 521 < my < 562) or (709 < mx < 757 and 523 < my < 560)) and foundph2_4 == 1: # กระเป๋า
+                        c_sound.play()
                         score_value += 1
                         foundph2_4 = 2
                     elif ((129 < mx < 170 and 430 < my < 468) or (759 < mx < 793 and 433 < my < 468)) and foundph2_5 == 1: #ลิ้นชัก
+                        c_sound.play()
                         score_value += 1
                         foundph2_5 = 2
                     elif ((406 < mx < 486 and 326 < my < 373) or (1037 < mx < 1104 and 326 < my < 376)) and foundph2_6 == 1: #กระดาษไรไม่รุ
+                        c_sound.play()
                         score_value += 1
                         foundph2_6 = 2
                     elif ((231 < mx < 277 and 221 < my < 256) or (853 < mx < 911 and 223 < my < 259)) and foundph2_7 == 1: #ผลไม้?
+                        c_sound.play()
                         score_value += 1
                         foundph2_7 = 2
                     elif ((355 < mx < 395 and 440 < my < 510) or (970 < mx < 1010 and 440 < my < 510)) and foundph2_8 == 1:
+                        c_sound.play()
                         score_value += 1
                         foundph2_8 = 2
                     #wrong click
@@ -1180,6 +1237,7 @@ while run:
                                                 not((355 < mx < 395 and 440 < my < 510) or (970 < mx < 1010 and 440 < my < 510)):
                     # else:
                         if health_value > 0:
+                            w_sound.play()
                             health_value -= 1
         if foundph2_1 == 2: # แก้ววายด้านขวา
             drawcorrect(536, 425)
@@ -1259,25 +1317,27 @@ while run:
         sec_show = font_ph.render('Time Left: ' + str(int(sec)), True, (255, 255, 255))
         win.blit(sec_show, (525, 10))
         if sec > 61:
-            rules = pygame.image.load('data/pic/RULES.png')
+            rules = pygame.image.load('sprite/photohunt/RULES.png')
             win.blit(rules,(0,0))
         if score_value == 8:
-            win_screen = pygame.image.load('data/pic/U WIN.png')
+            win_screen = pygame.image.load('sprite/photohunt/U WIN.png')
             win.blit(win_screen, (0,0))
             bg_sound_ph2.stop()
             PLAY_PH2 = False ;PLAY_MAIN = True
-            score_value, sec, health_value = 0, 62, 3
+            score_value, sec, health_value, stage = 0, 62, 3, 0
         elif health_value <= 0 or sec <= 0:
-            lose_screen = pygame.image.load('data/pic/U lose.png')
+            lose_screen = pygame.image.load('sprite/photohunt/U lose.png')
             win.blit(lose_screen, (0,0))
             bg_sound_ph2.stop()
             PLAY_PH2 = False ;PLAY_MAIN = True
-            score_value, sec, health_value = 0, 62, 3
+            score_value, sec, health_value, stage = 0, 62, 3, 0
 
     elif PLAY_PH3:
         pygame.time.delay(30)
-        #bg_sound_ph3.play(-1)
         sec -= 0.05
+        if stage == 0:
+            bg_sound_ph3.play(-1)
+            stage = 1
         if sec < 61:
             stage = 1
             win.blit(bg_ph_3, (0, 0))
@@ -1291,22 +1351,28 @@ while run:
                     print(mx, my)
                     print(health_value)
                     if ((578 < mx < 617 and 242 < my < 282) or (1182 < mx < 1217 and 242 < my < 282)) and foundph3_1 == 1: # หมีบน
+                        c_sound.play()
                         score_value += 1
                         foundph3_1 = 2
                     elif ((513 < mx < 570 and 324 < my < 381) or (1104 < mx < 1167 and 324 < my < 381)) and foundph3_2 == 1: # เก้าอี้
+                        c_sound.play()
                         score_value += 1
                         foundph3_2 = 2
                     elif ((216 < mx < 251 and 549 < my < 582) or (811 < mx < 841 and 549 < my < 582)) and foundph3_3 == 1: # ไข่มุก
+                        c_sound.play()
                         score_value += 1
                         WALKCOUNT = 0
                         foundph3_3 = 2
                     elif ((156 < mx < 191 and 237 < my < 302) or (748 < mx < 791 and 237 < my < 302)) and foundph3_4 == 1: # แก้วบนชั้นวาง ชั้น 2
+                        c_sound.play()
                         score_value += 1
                         foundph3_4 = 2
                     elif ((259 < mx < 289 and 394 < my < 434) or (849 < mx < 892 and 394 < my < 434)) and foundph3_5 == 1: # หมีล่าง
+                        c_sound.play()
                         score_value += 1
                         foundph3_5 = 2
                     elif ((111 < mx < 142 and 185 < my < 229) or (700 < mx < 736 and 185 < my < 229)) and foundph3_6 == 1: #ขวดแก้วชั้นบน
+                        c_sound.play()
                         score_value += 1
                         foundph3_6 = 2
                     #wrong click
@@ -1318,6 +1384,7 @@ while run:
                                         not((111 < mx < 142 and 185 < my < 229) or (700 < mx < 736 and 185 < my < 229)):
                     # else:
                         if health_value > 0:
+                            w_sound.play()
                             health_value -= 1
 
         if foundph3_1 == 2: # หมีบน
@@ -1382,20 +1449,20 @@ while run:
         sec_show = font_ph.render('Time Left: ' + str(int(sec)), True, (255, 255, 255))
         win.blit(sec_show, (525, 10))
         if sec > 61:
-            rules = pygame.image.load('data/pic/RULES.png')
+            rules = pygame.image.load('sprite/photohunt/RULES.png')
             win.blit(rules,(0,0))
         if score_value == 6:
-            win_screen = pygame.image.load('data/pic/U WIN.png')
+            win_screen = pygame.image.load('sprite/photohunt/U WIN.png')
             win.blit(win_screen, (0,0))
             bg_sound_ph3.stop()
             PLAY_PH3 = False ;PLAY_MAIN = True
-            score_value, sec, health_value = 0, 62, 3
+            score_value, sec, health_value, stage = 0, 62, 3, 0
         elif health_value <= 0 or sec <= 0:
-            lose_screen = pygame.image.load('data/pic/U lose.png')
+            lose_screen = pygame.image.load('sprite/photohunt/U lose.png')
             win.blit(lose_screen, (0,0))
             bg_sound_ph3.stop()
             PLAY_PH3 = False ;PLAY_MAIN = True
-            score_value, sec, health_value = 0, 62, 3
+            score_value, sec, health_value, stage = 0, 62, 3, 0
 
 
 #-----------------MAIN GAME-----------------------------------------------

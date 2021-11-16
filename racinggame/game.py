@@ -109,8 +109,8 @@ class mon:
             if self.moncount + 1 >= len(self.monster):
                 self.moncount = 0
             wmon, hmon = self.monster[self.moncount].get_rect().size
-            print(wmon, hmon)
-            if y < self.posy < y+hplay-100 and x < self.posx < x+wplay-100 and cooldown > 2:
+            # print(wmon, hmon)
+            if y < self.posy < y+hplay-80 and x < self.posx < x+wplay-80 and cooldown > 2:
                 heart -= 1
                 cooldown = 0
             # if self.posy-180 < y < self.posy-10 and self.posx-100 < x < self.posx-50 and cooldown > 2:
@@ -154,7 +154,7 @@ bbubl1 = mon(1280, 525, bbubl); bbubl2 = mon(1280, 525, bbubl); bbubl3 = mon(128
 bbubl4 = mon(1280, 350, bbubl); bbubl5 = mon(1280, 350, bbubl); bbubl6 = mon(1280, 350, bbubl)
 bbubl7 = mon(1280, 450, bbubl); bbubl8 = mon(1280, 450, bbubl); bbubl9 = mon(1280, 450, bbubl)
 ghost1 = mon(1280, 500, ghost); ghost2 = mon(1280, 500, ghost); ghost3 = mon(1280, 150, ghost); ghost4 = mon(1280, 150, ghost)
-poisonbot1 = mon(1280, 280, poisonbot)
+poisonbot1 = mon(1280, 280, poisonbot); bird10 = mon(1280, 360, bird)
 clock1 = mon(1280, 360, clock); clock2 = mon(1280, 360, clock); clock3 = mon(1280, 360, clock)
 
 bird1 = mon(1280, 140, bird); bird2 = mon(1280, 140, bird); bird3 = mon(1280, 140, bird)
@@ -251,28 +251,21 @@ while run:
     if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and x > 10:
         x -= vel
         left = True
-        # right = False
-        # check = 'LEFT'
     elif (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and x < bg_wildth-150:
         x += vel
         right = True
-        # left = False
-        # check = 'RIGHT'
     elif (keys[pygame.K_w] or keys[pygame.K_UP]) and y > 5:
         y -= vel
         right = True
-        # left = False
-        # check = 'RIGHT'
     elif (keys[pygame.K_s] or keys[pygame.K_DOWN]) and y < bg_height-250:
         y += vel
         right = True
-        # left = False
-        # check = 'RIGHT'
     else:
         right = False
-        # left = False
 
 #---------------------------------------------------- stage1 หอนาฬิกา [1 - 60] -------------------------------------------------------------------------
+    bird10.spawn(3, 20, 0)
+
     rbubl1.spawn(5, 7, 0); rbubl2.spawn(18, 7, 0); rbubl3.spawn(31, 7, 0)
     rbubl4.spawn(17, 7, 0); rbubl5.spawn(42, 7, 0); rbubl6.spawn(53, 7, 0); rbubl7.spawn(56, 7, 0)
     bbubl1.spawn(10, 7, 0); bbubl2.spawn(31, 7, 0); bbubl3.spawn(48, 7, 0)

@@ -286,7 +286,7 @@ def wall(wall=[(0,0,0,0)]):
     global PLAYER_RADIUS
     global PLAYER_POSITION_X
     global PLAYER_POSITION_Y
-    if keys[pygame.K_a] and X > vel and open_book == False:
+    if keys[pygame.K_a] and X > vel and open_book == False and safe < 1:
         for i,j,k,l in wall:
             if i < X < j and k < Y < l-15:
                 adam = 0
@@ -299,7 +299,7 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = False
         CHECK = 'LEFT'
-    elif keys[pygame.K_d] and open_book == False:
+    elif keys[pygame.K_d] and open_book == False and safe < 1:
         for i,j,k,l in wall:
             if i-15 < X < j-15 and k < Y < l-15:
                 adam = 0
@@ -312,7 +312,7 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = False
         CHECK = 'RIGHT'
-    elif keys[pygame.K_s] and open_book == False:
+    elif keys[pygame.K_s] and open_book == False and safe < 1:
         for i,j,k,l in wall:
             if i < X < j-15 and k-15 < Y < l-15:
                 adam = 0
@@ -325,7 +325,7 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = True
         CHECK = 'DOWN'
-    elif keys[pygame.K_w] and open_book == False:
+    elif keys[pygame.K_w] and open_book == False and safe < 1:
         for i,j,k,l in wall:
             if i < X < j-15 and k < Y < l:
                 adam = 0
@@ -378,7 +378,26 @@ def drawcorrect(posx, posy):
         win.blit(correctImg[WALKCOUNT], (posx, posy))
     WALKCOUNT += 1
 
+#----------Puzzle--------------------
+safe, cd_pz, down_pz, up_pz = 0, 0, 5, 5
+safe_img, bar, arrow = pygame.image.load("sprite/puzzle/lock.png"), pygame.image.load("sprite/puzzle/bar.png"), pygame.image.load("sprite/puzzle/arrow.png")
+bat, bone, candle = pygame.image.load("sprite/puzzle/bat.png"), pygame.image.load("sprite/puzzle/bone.png"), pygame.image.load("sprite/puzzle/candle.png")
+candy, hat, poison = pygame.image.load("sprite/puzzle/candy.png"), pygame.image.load("sprite/puzzle/hat.png"), pygame.image.load("sprite/puzzle/poison.png")
+pot, pumpkin, rip = pygame.image.load("sprite/puzzle/pot.png"), pygame.image.load("sprite/puzzle/pumpkin.png"), pygame.image.load("sprite/puzzle/rip.png")
+spider, web = pygame.image.load("sprite/puzzle/spider.png"), pygame.image.load("sprite/puzzle/web.png")
+col_up = {10 : hat, 0 : bat, 1 : candy, 2 : candle, 3 : poison, 4 : web, 5 : rip, 6 : pumpkin, 7 : spider, 8 : bone, 9 : pot}
+col_mid = {0 : hat, 1 : bat, 2 : candy, 3 : candle, 4 : poison, 5 : web, 6 : rip, 7 : pumpkin, 8 : spider, 9 : bone, 10 : pot}
+col_down = {1 : hat, 2 : bat, 3 : candy, 4 : candle, 5 : poison, 6 : web, 7 : rip, 8 : pumpkin, 9 : spider, 10 : bone, 0 : pot}
+row1, row2, row3, row4 = 0, 0 ,0 ,0
+row = {1 : row1, 2 : row2, 3 : row3, 4 : row4}
+rowza = 1
+arrow_pos = {1:540 , 2:610, 3:677, 4:740}
+yrow = {1:410, 2:410, 3:410, 4:410}
 
+def col(row, xrow, yrow):
+    win.blit(col_down[row], (xrow, yrow))
+    win.blit(col_mid[row], (xrow, yrow+90))
+    win.blit(col_up[row], (xrow, yrow+180))
 #---------------------------------------------------------------------------
 """mainloop"""
 while run:
@@ -445,6 +464,7 @@ while run:
             wall(walls["canteen"])
             rel_x = -X % bg_width
             rel_y = -Y % bg_height
+            bg_hall.stop()
             
             if X >= 1203:
                 X = 28
@@ -476,6 +496,10 @@ while run:
             else:
                 stage_height = 950
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
+            if 918 <= X <= 1098 and 88 <= Y <= 118:
+                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                if keys[pygame.K_f]:
+                    safe += 1
     #--------------eastcor1--------------
         elif goeastcor_1 == True:
             wall(walls["eastcor1"])
@@ -484,7 +508,7 @@ while run:
 
             if X <= 13:
                 bg = pygame.image.load("sprite/canteen.jpg")
-                X = 1188
+                X = 1108
                 Y = 478
                 goeastcor_1 = False
                 gocanteen = True
@@ -1053,27 +1077,27 @@ while run:
                     mx, my = pygame.mouse.get_pos()
                     print(mx, my)
                     print(health_value)
-                    if ((155 < mx < 195 and 150 < my < 239) or (740 < mx < 780 and 150 < my < 239)) and foundph1_1 == 1:  # เทียน
+                    if ((153 < mx < 195 and 150 < my < 239) or (740 < mx < 780 and 150 < my < 239)) and foundph1_1 == 1:  # เทียน
                         c_sound.play()
                         score_value += 1
                         foundph1_1 = 2
-                    elif ((590 < mx < 634 and 92 < my < 202) or (1183 < mx < 1217 and 92 < my < 202)) and foundph1_2 == 1:  # หนังสือ
+                    elif ((569 < mx < 616 and 92 < my < 202) or (1183 < mx < 1217 and 92 < my < 202)) and foundph1_2 == 1:  # หนังสือ
                         c_sound.play()
                         score_value += 1
                         foundph1_2 = 2
-                    elif ((265 < mx < 310 and 280 < my < 360) or (840 < mx < 885 and 280 < my < 360)) and foundph1_3 == 1:  # อะไรไม่รุข้างหน้าต่าง
+                    elif ((245 < mx < 326 and 280 < my < 360) or (840 < mx < 885 and 280 < my < 360)) and foundph1_3 == 1:  # อะไรไม่รุข้างหน้าต่าง
                         c_sound.play()
                         score_value += 1
                         foundph1_3 = 2
-                    elif ((575 < mx < 638 and 312 < my < 373) or (1165 < mx < 1221 and 312 < my < 373)) and foundph1_4 == 1:  # หนังสือชั้น 3
+                    elif ((563 < mx < 616 and 312 < my < 373) or (1165 < mx < 1221 and 312 < my < 373)) and foundph1_4 == 1:  # หนังสือชั้น 3
                         c_sound.play()
                         score_value += 1
                         foundph1_4 = 2
-                    elif ((130 < mx < 173 and 492 < my < 527) or (700 < mx < 760 and 492 < my < 527)) and foundph1_5 == 1:  # ไม้ไรสักอย่าง
+                    elif ((125 < mx < 173 and 492 < my < 527) or (700 < mx < 760 and 492 < my < 527)) and foundph1_5 == 1:  # ไม้ไรสักอย่าง
                         c_sound.play()
                         score_value += 1
                         foundph1_5 = 2
-                    elif ((360 < mx < 436 and 470 < my < 528) or (942 < mx < 1022 and 470 < my < 528)) and foundph1_6 == 1:  # ถ้วย
+                    elif ((350 < mx < 425 and 470 < my < 528) or (942 < mx < 1022 and 470 < my < 528)) and foundph1_6 == 1:  # ถ้วย
                         c_sound.play()
                         score_value += 1
                         foundph1_6 = 2
@@ -1082,25 +1106,25 @@ while run:
                         score_value += 1
                         foundph1_7 = 2
                     # wrong click
-                    if not((155 < mx < 195 and 150 < my < 239) or (740 < mx < 780 and 150 < my < 239)) and \
-                        not((590 < mx < 634 and 92 < my < 202) or (1183 < mx < 1217 and 92 < my < 202)) and \
-                        not((265 < mx < 310 and 280 < my < 360) or (840 < mx < 885 and 280 < my < 360)) and \
-                        not((575 < mx < 638 and 312 < my < 373) or (1165 < mx < 1221 and 312 < my < 373)) and \
-                        not((130 < mx < 173 and 492 < my < 527) or (700 < mx < 760 and 492 < my < 527)) and \
-                        not((360 < mx < 436 and 470 < my < 528) or (942 < mx < 1022 and 470 < my < 528)) and \
+                    if not((153 < mx < 195 and 150 < my < 239) or (740 < mx < 780 and 150 < my < 239)) and \
+                        not((569 < mx < 616 and 92 < my < 202) or (1183 < mx < 1217 and 92 < my < 202)) and \
+                        not((245 < mx < 326 and 280 < my < 360) or (840 < mx < 885 and 280 < my < 360)) and \
+                        not((563 < mx < 616 and 312 < my < 373) or (1165 < mx < 1221 and 312 < my < 373)) and \
+                        not((125 < mx < 173 and 492 < my < 527) or (700 < mx < 760 and 492 < my < 527)) and \
+                        not((350 < mx < 425 and 470 < my < 528) or (942 < mx < 1022 and 470 < my < 528)) and \
                         not((60 < mx < 134 and 650 < my < 703) or (649 < mx < 727 and 671 < my < 703)):
                         if health_value > 0:
                             w_sound.play()
                             health_value -= 1
-        if foundph1_1 == 2:
-            drawcorrect(125, 157)
+        if foundph1_1 == 2: # เทียน
+            drawcorrect(112, 157)
             drawcorrect(712, 157)
             if WALKCOUNT > 16:
                 WALKCOUNT = 0
-                bg_ph_1.blit(correctImg[16], (125, 157))
+                bg_ph_1.blit(correctImg[16], (112, 157))
                 bg_ph_1.blit(correctImg[16], (712, 157))
                 foundph1_1 = 3
-        if foundph1_2 == 2:
+        if foundph1_2 == 2: # หนังสือ
             drawcorrect(550, 100)
             drawcorrect(1140, 100)
             if WALKCOUNT > 16:
@@ -1108,31 +1132,31 @@ while run:
                 bg_ph_1.blit(correctImg[16], (550, 100))
                 bg_ph_1.blit(correctImg[16], (1140, 100))
                 foundph1_2 = 3
-        if foundph1_3 == 2:
-            drawcorrect(237, 290)
-            drawcorrect(811, 290)
+        if foundph1_3 == 2: # อะไรไม่รุข้างหน้าต่าง
+            drawcorrect(221, 275)
+            drawcorrect(811, 275)
             if WALKCOUNT > 16:
                 WALKCOUNT = 0
-                bg_ph_1.blit(correctImg[16], (237, 290))
-                bg_ph_1.blit(correctImg[16], (811, 290))
+                bg_ph_1.blit(correctImg[16], (221, 275))
+                bg_ph_1.blit(correctImg[16], (811, 275))
                 foundph1_3 = 3
-        if foundph1_4 == 2:
-            drawcorrect(550, 300)
-            drawcorrect(1140, 300)
+        if foundph1_4 == 2: # หนังสือชั้น 3
+            drawcorrect(550, 285)
+            drawcorrect(1140, 285)
             if WALKCOUNT > 16:
                 WALKCOUNT = 0
-                bg_ph_1.blit(correctImg[16], (550, 300))
-                bg_ph_1.blit(correctImg[16], (1140, 300))
+                bg_ph_1.blit(correctImg[16], (550, 285))
+                bg_ph_1.blit(correctImg[16], (1140, 285))
                 foundph1_4 = 3
-        if foundph1_5 == 2:
-            drawcorrect(95, 470)
-            drawcorrect(688, 470)
+        if foundph1_5 == 2: # ไม้ไรสักอย่าง
+            drawcorrect(95, 450)
+            drawcorrect(688, 450)
             if WALKCOUNT > 16:
                 WALKCOUNT = 0
-                bg_ph_1.blit(correctImg[16], (95, 470))
-                bg_ph_1.blit(correctImg[16], (688, 470))
+                bg_ph_1.blit(correctImg[16], (95, 450))
+                bg_ph_1.blit(correctImg[16], (688, 450))
                 foundph1_5 = 3
-        if foundph1_6 == 2:
+        if foundph1_6 == 2: # ถ้วย
             drawcorrect(348, 440)
             drawcorrect(937, 440)
             if WALKCOUNT > 16:
@@ -1140,13 +1164,13 @@ while run:
                 bg_ph_1.blit(correctImg[16], (348, 440))
                 bg_ph_1.blit(correctImg[16], (937, 440))
                 foundph1_6 = 3
-        if foundph1_7 == 2:
-            drawcorrect(640, 645)
-            drawcorrect(52, 645)
+        if foundph1_7 == 2: # ไห้ไรสักอย่าง
+            drawcorrect(640,617)
+            drawcorrect(52,617)
             if WALKCOUNT > 16:
                 WALKCOUNT = 0
-                bg_ph_1.blit(correctImg[16], (640, 645))
-                bg_ph_1.blit(correctImg[16], (52, 645))
+                bg_ph_1.blit(correctImg[16], (640, 617))
+                bg_ph_1.blit(correctImg[16], (52, 617))
                 foundph1_7 = 3
         if health_value == 3:
             win.blit(HeartImg, (1050, 0))
@@ -1465,7 +1489,6 @@ while run:
             PLAY_PH3 = False ;PLAY_MAIN = True
             score_value, sec, health_value, stage = 0, 62, 3, 0
 
-
 #-----------------MAIN GAME-----------------------------------------------
 
     if open_book and PLAY_MAIN:
@@ -1515,6 +1538,72 @@ while run:
 
         print(nextpage, book_anim)
         win.blit(book_img[book_anim], (0, 0))
+
+    if safe >= 1:
+        if keys[pygame.K_f] and safe > 5:
+            safe = -2
+        win.blit(bar, (533, 455))
+
+        # win.blit(colum[row1], (548, yrow))
+        # win.blit(colum[row2], (618, yrow))
+        # win.blit(colum[row3], (685, yrow))
+        # win.blit(colum[row4], (748, yrow))
+
+        if keys[pygame.K_d] and cd_pz > 5 and up_pz > 5 and down_pz > 5:
+            rowza += 1
+            cd_pz = -2
+        if keys[pygame.K_a] and cd_pz > 5 and up_pz > 5 and down_pz > 5:
+            rowza -= 1
+            cd_pz = -2
+        if rowza < 1:
+            rowza = 4
+        elif rowza > 4:
+            rowza = 1
+
+        if keys[pygame.K_w] and up_pz > 5 and cd_pz > 5:
+            row[rowza] += 1
+            cd_pz = -2
+            up_pz = -5
+            yrow[rowza] = 510
+            if row[rowza] < 0:
+                row[rowza] = 10
+            elif row[rowza] > 10:
+                row[rowza] = 0
+            row1 = row[1]
+            row2 = row[2]
+            row3 = row[3]
+            row4 = row[4]
+        if keys[pygame.K_s] and down_pz > 5 and cd_pz > 5:
+            row[rowza] -= 1
+            cd_pz = -2
+            down_pz = -5
+            yrow[rowza] = 310
+            if row[rowza] < 0:
+                row[rowza] = 10
+            elif row[rowza] > 10:
+                row[rowza] = 0
+            row1 = row[1]
+            row2 = row[2]
+            row3 = row[3]
+            row4 = row[4]
+        col(row1, 548, yrow[1])
+        col(row2, 615, yrow[2])
+        col(row3, 682, yrow[3])
+        col(row4, 748, yrow[4])
+        if up_pz < 5:
+            yrow[rowza] -= 10
+        if down_pz < 5:
+            yrow[rowza] += 10
+
+
+        win.blit(safe_img, (450,50))
+        win.blit(arrow, (arrow_pos[rowza], 400))
+        safe += 1
+        cd_pz += 1
+        up_pz += 1
+        down_pz += 1
+        # print(row)
+        print("row1", row1, "row2", row2, "row3", row3, "row4", row4)
 
     if PLAY_FRONT == True:
         frontgame()

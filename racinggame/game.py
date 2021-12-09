@@ -1,4 +1,5 @@
 import pygame
+from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
 pygame.init()
 
 wildth, height = 1280, 720
@@ -120,16 +121,20 @@ class mon:
             win.blit(self.monster[self.moncount], (self.posx, self.posy))
             self.moncount += 1
 
-            if bounce:
-                if self.posy < 0:
-                    self.pas = True
-                elif self.posy > 620:
-                    self.pas = False
-                if self.pas:
-                    speedy *= -1
 
-            self.posx -= speedx
-            self.posy += speedy
+            if bounce:
+                if self.posy <= 0:
+                    self.pas = True
+                elif self.posy > 720:
+                    self.pas = False
+                if self.posy < 0 or self.pas:
+                    self.posy += speedy
+                else:
+                    self.posy -= speedy
+                self.posx -= speedx
+            else:
+                self.posx -= speedx
+                self.posy += speedy
 
 
 walkright, nowalk = readvar('front.txt', 'racing/broom'), readvar('front.txt', 'racing/broom')
@@ -147,27 +152,90 @@ spider, bat, bird = readvar('stage 2.txt', 'spider'), readvar('stage 2.txt', 'ba
 
 bluebook, purbook, redbook = readvar('stage 3.txt', 'bluebook'), readvar('stage 3.txt', 'purbook'), readvar('stage 3.txt', 'redbook')
 
-#----------------------------------------------------------- stage 1 หอนาฬิกา ----------------------------------------------------------------
-rbubl1 = mon(1280, 160, rbubl); rbubl2 = mon(1280, 560, rbubl); rbubl3 = mon(1280, 160, rbubl)
-rbubl4 = mon(1280, 160, rbubl); rbubl5 = mon(1280, 220, rbubl); rbubl6 = mon(1280, 220, rbubl); rbubl7 = mon(1280, 220, rbubl)
-bbubl1 = mon(1280, 525, bbubl); bbubl2 = mon(1280, 525, bbubl); bbubl3 = mon(1280, 525, bbubl)
-bbubl4 = mon(1280, 350, bbubl); bbubl5 = mon(1280, 350, bbubl); bbubl6 = mon(1280, 350, bbubl)
-bbubl7 = mon(1280, 450, bbubl); bbubl8 = mon(1280, 450, bbubl); bbubl9 = mon(1280, 450, bbubl)
-ghost1 = mon(1280, 500, ghost); ghost2 = mon(1280, 500, ghost); ghost3 = mon(1280, 150, ghost); ghost4 = mon(1280, 150, ghost)
-poisonbot1 = mon(1280, 280, poisonbot); bird10 = mon(1280, 360, bird)
-clock1 = mon(1280, 360, clock); clock2 = mon(1280, 360, clock); clock3 = mon(1280, 360, clock)
+#----------------------------------------------------------- stage 1 ----------------------------------------------------------------
+bird1 = mon(1280,320,bird); bird8 = mon(1280,190,bird); bird15 = mon(1280,90,bird); bird22 = mon(1280,290,bird)
+bird2 = mon(1280,100,bird); bird9 = mon(1280,290,bird); bird16 = mon(1280,450,bird)
+bird3 = mon(1280,500,bird); bird10 = mon(1280,480,bird); bird17 = mon(1280,310,bird)
+bird4 = mon(1280,450,bird); bird11 = mon(1280,310,bird); bird18 = mon(1280,70,bird)
+bird5 = mon(1280,350,bird); bird12 = mon(1280,310,bird); bird19 = mon(1280,150,bird)
+bird6 = mon(1280,100,bird); bird13 = mon(1280,310,bird); bird20 = mon(1280,500,bird)
+bird7 = mon(1280,400,bird); bird14 = mon(1280,20,bird); bird21 = mon(1280,70,bird)
+#--------------------------------------------------------- bounce ------------------------------------------------------------
+bird_1b = mon(1280,0,bird)
+bird_2b = mon(1280,720,bird)
+bird_3b = mon(1280,0,bird)
+bird_4b = mon(1280,720,bird)
+bird_5b = mon(1280,0,bird)
+#--------------------------------------------------------- disco ------------------------------------------------------------
+bird01 = mon(1280,10,bird)
+bird02 = mon(1280,610,bird)
+bird03 = mon(1280,310,bird)
+bird04 = mon(1280,90,bird)
+bird05 = mon(1280,10,bird)
+bird06 = mon(1280,10,bird)
+bird07 = mon(1280,80,bird)
+bird08 = mon(1280,610,bird)
+bird09 = mon(1280,90,bird)
+#----------------------------------------------------------- stage 2 ----------------------------------------------------------------
+clock1 = mon(1280,310,clock)
+clock2 = mon(1280,220,clock)
+clock3 = mon(1280,70,clock)
+clock4 = mon(1280,160,clock)
+clock5 = mon(1280,370,clock)
+clock6 = mon(1280,600,clock)
+clock7 = mon(1280,130,clock)
+clock8 = mon(1280,130,clock)
+clock9 = mon(1280,340,clock)
+clock10 = mon(1280,250,clock)
+clock11 = mon(1280,438,clock)
+clock12 = mon(1280,50,clock)
+clock13 = mon(1280,150,clock)
 
-bird1 = mon(1280, 140, bird); bird2 = mon(1280, 140, bird); bird3 = mon(1280, 140, bird)
-bird4 = mon(1280, 190, bird); bird5 = mon(1280, 190, bird); bird6 = mon(1280, 190, bird)
-bird7 = mon(1280, 240, bird); bird8 = mon(1280, 240, bird); bird9 = mon(1280, 240, bird)
-spider1 = mon(670, 0, spider); spider2 = mon(670, 0, spider)
-pump1 = mon(500, 0, pump); pump2 = mon(500, 0, pump); pump3 = mon(500, 0, pump); pump4 = mon(500, 0, pump)
-bat1 = mon(1280, 150, bat); bat2 = mon(1280, 200, bat); bat3 = mon(1280, 250, bat)
-onefairy1 = mon(1280, 340, onefairy); onefairy2 = mon(1280, 480, onefairy); onefairy3 = mon(1280, 480, onefairy)
-twofairy1 = mon(1280, 400, twofairy); twofairy2 = mon(1280, 400, twofairy); twofairy3 = mon(1280, 600, twofairy); twofairy4 = mon(1280, 600, twofairy)
-broom1 = mon(1280, 500, broom); broom2 = mon(1280, 500, broom)
-broom3 = mon(1280, 530, broom); broom4 = mon(1280, 530, broom); broom5 = mon(1280, 530, broom)
+clock14 = mon(1280,310,clock)
+clock15 = mon(1280,600,clock)
+clock16 = mon(1280,510,clock)
+clock17 = mon(1280,84,clock)
+clock18 = mon(1280,182,clock)
 
+clock19 = mon(70,720,clock)
+clock20 = mon(1190,0,clock)
+clock21 = mon(70,720,clock)
+clock22 = mon(1190,0,clock)
+clock23 = mon(70,720,clock)
+clock24 = mon(1190,0,clock)
+clock25 = mon(70,720,clock)
+clock26 = mon(1190,0,clock)
+
+clock27 = mon(1280,26,clock)
+clock28 = mon(1280,639,clock)
+clock29 = mon(1280,0,clock)
+#--------------------------------------------------------- bounce ------------------------------------------------------------
+clock1b = mon(1280,0,clock)
+clock2b = mon(1280,720,clock)
+clock3b = mon(1280,0,clock)
+clock4b = mon(1280,720,clock)
+clock5b = mon(1280,0,clock)
+clock6b = mon(1280,720,clock)
+clock7b = mon(1280,0,clock)
+clock8b = mon(1280,720,clock)
+clock9b = mon(1280,0,clock)
+clock10b = mon(1280,720,clock)
+
+clock11b = mon(1280,0,clock)
+clock12b = mon(0,207,clock)
+clock13b = mon(1280,234,clock)
+clock14b = mon(0,452,clock)
+clock15b = mon(1280,310,clock)
+clock16b = mon(0,100,clock)
+clock17b = mon(1280,720,clock)
+clock18b = mon(0,0,clock)
+# #--------------------------------------------------------- disco ------------------------------------------------------------
+clock01 = mon(1280,386,clock)
+clock02 = mon(1280,50,clock)
+clock03 = mon(1280,310,clock)
+clock04 = mon(1280,40,clock)
+clock05 = mon(1280,611,clock)
+# ----------------------------------------------------------- stage 3 ----------------------------------------------------------------
 bluebook1 = mon(1280, 260, bluebook); bluebook2 = mon(1280, 260, bluebook); bluebook3 = mon(1280, 260, bluebook)
 bluebook4 = mon(1280, 260, bluebook); bluebook5 = mon(1280, 260, bluebook); bluebook6 = mon(1280, 260, bluebook)
 bluebook7 = mon(1280, 260, bluebook); bluebook8 = mon(1280, 100, bluebook); bluebook9 = mon(1280, 100, bluebook)
@@ -180,7 +248,30 @@ redbook7 = mon(1280, 480, redbook); redbook8 = mon(1280, 480, redbook); redbook9
 redbook10 = mon(1280, 560, redbook); redbook11 = mon(1280, 560, redbook); redbook12 = mon(1280, 560, redbook)
 redbook13 = mon(1280, 560, redbook); redbook14 = mon(1280, 640, redbook); redbook15 = mon(1280, 640, redbook); redbook16 = mon(1280, 640, redbook)
 purbook1 = mon(-10, 360, purbook); purbook2 = mon(-10, 360, purbook)
-
+# #--------------------------------------------------------- bounce ------------------------------------------------------------
+bluebook_1b = mon(1280,0,bluebook)
+bluebook_2b = mon(1280,720,bluebook)
+bluebook_3b = mon(1280,0,bluebook)
+bluebook_4b = mon(1280,720,bluebook)
+bluebook_5b = mon(1280,0,bluebook)
+bluebook_6b = mon(1280,720,bluebook)
+bluebook_7b = mon(1280,0,bluebook)
+bluebook_8b = mon(1280,720,bluebook)
+bluebook_9b = mon(1280,0,bluebook)
+bluebook_10b = mon(1280,720,bluebook)
+bluebook_11b = mon(1280,0,bluebook)
+bluebook_12b = mon(1280,720,bluebook)
+bluebook_13b = mon(1280,0,bluebook)
+bluebook_14b = mon(1280,720,bluebook)
+bluebook_15b = mon(1280,0,bluebook)
+bluebook_16b = mon(1280,720,bluebook)
+bluebook_17b = mon(1280,0,bluebook)
+bluebook_18b = mon(1280,720,bluebook)
+# #--------------------------------------------------------- disco -------------------------------------------------------------
+bluebook01 = mon(1280,50,bluebook)
+bluebook02 = mon(1280,50,bluebook)
+bluebook03 = mon(1280,550,bluebook)
+bluebook04 = mon(1280,100,bluebook)
 # -------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -214,6 +305,9 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mx, my = pygame.mouse.get_pos()
+            print(mx, my)
         elif keys[pygame.K_ESCAPE]:
             run = False
 
@@ -263,29 +357,88 @@ while run:
     else:
         right = False
 
-#---------------------------------------------------- stage1 หอนาฬิกา [1 - 60] -------------------------------------------------------------------------
-    bird10.spawn(3, 20, 0)
+#----------------------------------------------------------- stage 1 ----------------------------------------------------------------
+    bird2.spawn(9,7,0); bird9.spawn(22,7,0); bird16.spawn(33,20,0)
+    bird3.spawn(10,7,0); bird10.spawn(25,7,0); bird17.spawn(47,15,0)
+    bird4.spawn(14,7,0); bird11.spawn(27,7,0)
+    bird5.spawn(14.5,7,0); bird12.spawn(29,7,0)
+    bird6.spawn(17,7,0); bird13.spawn(33,7,0)
+    bird7.spawn(20,7,0); bird14.spawn(33,7,0)
+    bird18.spawn(49,12,0)
+    bird19.spawn(49,12,0)
+    bird20.spawn(49,12,0)
+    bird21.spawn(49,12,0)
+    bird22.spawn(49,12,0)
+#--------------------------------------------------------- bounce ------------------------------------------------------------
+    bird_1b.spawn(41,13,20,bounce=True)
+    bird_2b.spawn(41,13,20,bounce=True)
+    bird_3b.spawn(43,13,20,bounce=True)
+    bird_4b.spawn(43,13,20,bounce=True)
+    bird_5b.spawn(52,13,20,bounce=True)
 
-    rbubl1.spawn(5, 7, 0); rbubl2.spawn(18, 7, 0); rbubl3.spawn(31, 7, 0)
-    rbubl4.spawn(17, 7, 0); rbubl5.spawn(42, 7, 0); rbubl6.spawn(53, 7, 0); rbubl7.spawn(56, 7, 0)
-    bbubl1.spawn(10, 7, 0); bbubl2.spawn(31, 7, 0); bbubl3.spawn(48, 7, 0)
-    bbubl4.spawn(25, 7, 0); bbubl5.spawn(33, 7, 0); bbubl6.spawn(46, 7, 0)
-    bbubl7.spawn(10, 7, 0); bbubl8.spawn(10, 7, 0); bbubl9.spawn(10, 7, 0)
-    ghost1.spawn(20, 30, 0); ghost2.spawn(13, 25, 0); ghost3.spawn(22, 25, 0); ghost4.spawn(35, 25, 0)
-    poisonbot1.spawn(55, 12, -12, bounce=True)
-    clock1.spawn(16, 20, 0); clock2.spawn(39, 20, 0); clock3.spawn(52, 20, 0)
+#--------------------------------------------------------- disco ------------------------------------------------------------
+    bird01.spawn(18,20,0)
+    bird02.spawn(20,20,0)
+    bird03.spawn(24,20,0)
+    bird04.spawn(40,20,0)
+    bird05.spawn(25,20,0)
+    bird06.spawn(30,20,0)
+    bird07.spawn(35,20,0)
+    bird08.spawn(29,20,0)
+    bird09.spawn(50,20,0)
+#----------------------------------------------------------- stage 2 ----------------------------------------------------------------
+    clock1.spawn(69,10,0)
+    clock2.spawn(69.3,10,0)
+    clock3.spawn(72,10,0)
+    clock4.spawn(72.3,10,0)
+    clock5.spawn(74,10,0)
+    clock6.spawn(74,10,0)
+    clock7.spawn(75,10,0)
+    clock8.spawn(75.3,10,0)
+    clock9.spawn(77,10,0)
+    clock10.spawn(77.3,10,0)
+    clock11.spawn(77.8,10,0)
+    clock12.spawn(78,10,0)
+    clock13.spawn(78.3,10,0)
 
-#------------------------------------------------------- stage 2 ป่า [61 - 120] ------------------------------------------------
-    bird1.spawn(68, 7, 0); bird2.spawn(84, 7, 0); bird3.spawn(104, 7, 0)
-    bird4.spawn(68, 7, 0); bird5.spawn(84, 7, 0); bird6.spawn(104, 7, 0)
-    bird7.spawn(71, 7, 0); bird8.spawn(105, 7, 0); bird9.spawn(111, 7, 0)
-    spider1.spawn(74, 0, 7); spider2.spawn(89, 0, 7)
-    pump1.spawn(82, 0, 7); pump2.spawn(89, 0, 7); pump3.spawn(96, 0, 7); pump4.spawn(107, 0, 7)
-    bat1.spawn(80, 20, 0); bat2.spawn(96, 20, 0); bat3.spawn(83, 25, 0)
-    onefairy1.spawn(98, 7, 0); onefairy2.spawn(75, 7, 0); onefairy3.spawn(94, 7, 0)
-    twofairy1.spawn(80, 7, 0); twofairy2.spawn(107, 7, 0); twofairy3.spawn(69, 7, 0); twofairy4.spawn(88, 7, 0)
-    broom1.spawn(94, 20, 0); broom2.spawn(105, 20, 0)
-    broom3.spawn(70, 20, 0); broom4.spawn(90, 20, 0); broom5.spawn(110, 20, 0)
+    clock14.spawn(87,10,0)
+    clock15.spawn(88,10,0)
+    clock16.spawn(88.3,10,0)
+    clock17.spawn(89,10,0)
+    clock18.spawn(89.3,10,0)
+
+    clock19.spawn(96,0,-10)
+    clock20.spawn(96,0,10)
+    clock21.spawn(100,0,-10)
+    clock22.spawn(100,0,10)
+    clock23.spawn(104,0,-10)
+    clock24.spawn(104,0,10)
+    clock25.spawn(108,0,-10)
+    clock26.spawn(108,0,10)
+#--------------------------------------------------------- bounce ------------------------------------------------------------
+    clock1b.spawn(81,20,20,bounce=True)
+    clock2b.spawn(81,20,20,bounce=True)
+    clock3b.spawn(82,20,20,bounce=True)
+    clock4b.spawn(82,20,20,bounce=True)
+    clock5b.spawn(83,20,20,bounce=True)
+    clock6b.spawn(83,20,20,bounce=True)
+    clock7b.spawn(84,20,20,bounce=True)
+    clock8b.spawn(84,20,20,bounce=True)
+    clock9b.spawn(85,20,20,bounce=True)
+    clock10b.spawn(85,20,20,bounce=True)
+
+    clock11b.spawn(97,10,10,bounce=True)
+    clock12b.spawn(97,-10,10,bounce=True)
+    clock13b.spawn(103,10,10,bounce=True)
+    clock14b.spawn(103,-10,10,bounce=True)
+    clock15b.spawn(109,10,10,bounce=True)
+    clock16b.spawn(109,-10,10,bounce=True)
+#--------------------------------------------------------- disco ------------------------------------------------------------
+    clock01.spawn(73,20,0)
+    clock02.spawn(75,20,0)
+    clock03.spawn(78,20,0)
+    clock04.spawn(88,20,0)
+    clock05.spawn(89,20,0)
 #------------------------------------------------------ stage 3 ห้องสมุด [121 - 180] -----------------------------------------------------
     bluebook1.spawn(129, 10, 0); bluebook2.spawn(134, 10, 0); bluebook3.spawn(145, 10, 0)
     bluebook4.spawn(152, 10, 0); bluebook5.spawn(162, 10, 0); bluebook6.spawn(167, 10, 0)
@@ -299,7 +452,22 @@ while run:
     redbook10.spawn(139, 10, 0); redbook11.spawn(144, 10, 0); redbook12.spawn(149, 10, 0)
     redbook13.spawn(155, 10, 0); redbook14.spawn(127, 10, 0); redbook15.spawn(137, 10, 0); redbook16.spawn(152, 10, 0)
     purbook1.spawn(165, -10, 0); purbook2.spawn(156, -10, 0)
-
+# #--------------------------------------------------------- bounce ------------------------------------------------------------
+    bluebook_1b.spawn(132,20,20,bounce=True)
+    bluebook_2b.spawn(137,20,20,bounce=True)
+    bluebook_3b.spawn(142,20,20,bounce=True)
+    bluebook_4b.spawn(147,20,20,bounce=True)
+    bluebook_5b.spawn(152,20,20,bounce=True)
+    bluebook_6b.spawn(157,20,20,bounce=True)
+    bluebook_7b.spawn(162,20,20,bounce=True)
+    bluebook_8b.spawn(167,20,20,bounce=True)
+    bluebook_9b.spawn(172,20,20,bounce=True)
+# #--------------------------------------------------------- disco -------------------------------------------------------------
+    bluebook01.spawn(129,20,0)
+    bluebook02.spawn(150,20,0)
+    bluebook03.spawn(139,20,0)
+    bluebook04.spawn(140,20,0)
+#-------------------------------------------------------------------------------------------------------------------------------
     cooldown += 0.05
 
     if heart == 5:

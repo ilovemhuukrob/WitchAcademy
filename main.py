@@ -1,5 +1,6 @@
 import pygame, json
 from pygame import mixer
+from pygame import display
 
 pygame.init()
 
@@ -9,7 +10,15 @@ width = 1280
 height = 720
 win = pygame.display.set_mode((width, height))
 pygame.display.set_caption("W <it> CH AcademY")
-bg = pygame.image.load("sprite/entryhall.jpg")
+# bg = pygame.image.load("sprite/entryhall.jpg")
+
+mapping = open("map.txt", "r").read()
+mapping = dict(json.loads(mapping))
+idmap = "00"
+print(mapping)
+bg = pygame.image.load(mapping[idmap])
+bg2 = pygame.image.load(mapping[idmap])
+
 bgfront = pygame.image.load("sprite/front.jpg").convert()
 BG_SCROLLING, ANIM = 0, 0
 bg_width, bg_height = bg.get_rect().size
@@ -27,76 +36,51 @@ start_scrolling_y = height/2
 stage_height = 720
 stage_position_y = 0
 
-X, Y, vel, WALKCOUNT, CHECK = 508, 178, 15, 0, 'DOWN'
+X, Y, vel, WALK_AVI, CHECK = 508, 598, 15, 0, 'UP'
 
 mainClock = pygame.time.Clock()
 
 run = True
-PLAY_FRONT, PLAY_MAIN, PLAY_PH1, PLAY_PH2, PLAY_PH3 = True, False, False, False, False
+PLAY_FRONT, PLAY_MAIN, PLAY_PH1, PLAY_PH2, PLAY_PH3 = False, True, False, False, False
 LEFT, RIGHT = False, False
 DOWN, UP = False, False
 
-gohallway = False
-gopath = False
-gomeeting = False
-gofirstaid = False
-gobattle = False
-gocanteen = False
-goclass_1 = False
-goclass_2 = False
-goclass_3 = False
-gowestgar = False
-goeastgar = False
-goentry = True
-gohalls = False
-
-gowestcor_1 = False
-gowestcor_2 = False
-goeastcor_1 = False
-goeastcor_2 = False
-
-classroom1 = False
-classroom2 = False
-classroom3 = False
-
-goresearch = False
-goteach = False
-goapothe = False
-gowestfor = False
-goeastfor = False
-goforest = False
-
 
 #----------------Sound--------------------------------
-bg_hall = pygame.mixer.Sound("sound/178.mp3"); bg_hall.set_volume(0.5)
+bg_hall = pygame.mixer.Sound("sound/178.mp3"); bg_hall.set_volume(0.0)
 bg_opendoor = pygame.mixer.Sound("sound\Wood Door - Open_Close.mp3")
 
 #--------------------------------------------
 walls = open("walls.txt", 'r').read()
 walls = dict(json.loads(walls))
-POSX_SHE, POSX_ASME, POSX_AVI, BLACK = 300, -150, -300, 0
+POSX_SHE, POSX_ESME, POSX_AVI, BLACK = 300, -150, -300, 0
 logo = pygame.image.load('sprite/logo.png')
 press = pygame.image.load('sprite/press.png')
 
 #---------------------------------------------------------------------------
 def readvar(file, string):
     """readline variable"""
-    f, mylist = open(file, 'r'), []
+    f, mylist = open(file, 'r', encoding="utf8"), []
     while True:
         s = f.readline()
         if s == '':
             break
         d = s.split()
-        if d[0].count(string) == 1:
+        if file == 'dialog.txt':
+            mylist.append(s.strip('\n'))
+        elif d[0].count(string) == 1:
             mylist.append(pygame.image.load(d[0]))
     return mylist
 
-walkr, walkl = readvar('var.txt', 'walkr'), readvar('var.txt', 'walkl')
-walkd, walku = readvar('var.txt', 'walkd'), readvar('var.txt', 'walku')
-#sup01 = readvar('support.txt', 'sup01')
+avilia_walkr, avilia_walkl = readvar('var.txt', 'avilia/walkr'), readvar('var.txt', 'avilia/walkl')
+avilia_walkd, avilia_walku = readvar('var.txt', 'avilia/walkd'), readvar('var.txt', 'avilia/walku')
+esme_walkr, esme_walkl = readvar('var.txt', 'esme/walkr'), readvar('var.txt', 'esme/walkl')
+she_walkr, she_walkl = readvar('var.txt', 'sheree/walkr'), readvar('var.txt', 'sheree/walkl')
+she_push = readvar('var.txt', 'sheree/push')
+esme_fail = readvar('var.txt', 'esme/fail')
 sheree_b = readvar('front.txt', 'sheree')
-asme_b = readvar('front.txt', 'asme')
-avilia_b = readvar('front.txt', 'broom')
+esme_b = readvar('front.txt', 'esme/broom')
+avilia_b = readvar('front.txt', 'avilia/broom')
 FRONTANIM = False
 
 book_img = readvar('front.txt', 'map')
@@ -109,21 +93,22 @@ book_map = True
 book_inven = False
 book_menu = False
 
-for i in range(9):
-    walkr[i] = pygame.transform.scale(walkr[i], (int(width*0.07), int(height*0.13)))
-    walkl[i] = pygame.transform.scale(walkl[i], (int(width*0.07), int(height*0.13)))
-    walkd[i] = pygame.transform.scale(walkd[i], (int(width*0.07), int(height*0.13)))
-    walku[i] = pygame.transform.scale(walku[i], (int(width*0.07), int(height*0.13)))
 
-#---------------------------------------------------------------------------
-def fadescreen(): 
-    fade = pygame.Surface((1280, 720))
-    fade.fill((0,0,0))
-    for alpha in range(0, 150):
-        fade.set_alpha(alpha)
-        win.blit(fade, (0,0))
-        pygame.display.update()
-        pygame.time.delay(5)
+# for i in range(9):
+#     walkr[i] = pygame.transform.scale(walkr[i], (int(width*0.07), int(height*0.13)))
+#     walkl[i] = pygame.transform.scale(walkl[i], (int(width*0.07), int(height*0.13)))
+#     walkd[i] = pygame.transform.scale(walkd[i], (int(width*0.07), int(height*0.13)))
+#     walku[i] = pygame.transform.scale(walku[i], (int(width*0.07), int(height*0.13)))
+
+# #---------------------------------------------------------------------------
+# def fadescreen(): 
+#     fade = pygame.Surface((1280, 720))
+#     fade.fill((0,0,0))
+#     for alpha in range(0, 150):
+#         fade.set_alpha(alpha)
+#         win.blit(fade, (0,0))
+#         pygame.display.update()
+#         pygame.time.delay(5)
 #---------------------------------------------------------------------------
 def frontgame():
     """front game"""
@@ -132,11 +117,12 @@ def frontgame():
     global ANIM
     global POSX_SHE
     global POSX_AVI
-    global POSX_ASME
+    global POSX_ESME
     global PLAY_MAIN
     global PLAY_FRONT
     global FRONTANIM
 
+    pygame.time.delay(30)
     BG_SCROLLING -= 1
     win.blit(bgfront, (BG_SCROLLING, 0))
     win.blit(bgfront, (BG_SCROLLING+1280, 0))
@@ -146,59 +132,308 @@ def frontgame():
 
     win.blit(logo, ((603/2), 80))
     if ANIM + 1 >= 42:ANIM = 0
-    if ANIM <= 22 and FRONTANIM == False:win.blit(press, ((1280/2)-(203/2), 500))
+    if ANIM <= 22 and FRONTANIM == False:
+        win.blit(press, ((1280/2)-(203/2), 500))
     win.blit(sheree_b[ANIM], (POSX_SHE, 400))
     win.blit(avilia_b[ANIM], (POSX_AVI, 390))
-    win.blit(asme_b[ANIM], (POSX_ASME, 420))
+    win.blit(esme_b[ANIM], (POSX_ESME, 420))
     if BLACK < 100:BLACK += 2.25
     if POSX_SHE < 750:POSX_SHE += 10
     if POSX_AVI < 160:POSX_AVI += 10
-    if POSX_ASME < 300:POSX_ASME += 10
+    if POSX_ESME < 300:POSX_ESME += 10
     if BG_SCROLLING <= -1280:BG_SCROLLING = 0
     if FRONTANIM:
         if POSX_SHE < 1280:POSX_SHE += 20
-        if POSX_ASME < 1280:POSX_ASME += 20
+        if POSX_ESME < 1280:POSX_ESME += 20
         if POSX_AVI < 1280:POSX_AVI += 20
         if POSX_AVI == 1280:
-            fadescreen()
+            fadeout()
+            fadein()
             FRONTANIM = False
             PLAY_MAIN = True
             PLAY_FRONT = False
-    elif keys[pygame.K_SPACE] and BLACK == 101.25:FRONTANIM = True
+            BLACK, ANIM = 0, 0
+    elif keys[pygame.K_SPACE] and BLACK == 101.25:
+        FRONTANIM = True
     ANIM += 1
 #---------------------------------------------------------------------------
 def redrawGameWindow():
     """blit the main character"""
-    global WALKCOUNT
+    global WALK_AVI
 
-    if WALKCOUNT + 1 >= 9: #กัน out of range
-        WALKCOUNT = 0
+    if WALK_AVI + 1 >= 9: #กัน out of range
+        WALK_AVI = 0
 
     if RIGHT:
-        win.blit(walkr[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        WALKCOUNT += 1
+        win.blit(avilia_walkr[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        WALK_AVI += 1
 
     elif LEFT:
-        win.blit(walkl[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        WALKCOUNT += 1
+        win.blit(avilia_walkl[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        WALK_AVI += 1
 
     elif DOWN:
-        win.blit(walkd[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        WALKCOUNT += 1
+        win.blit(avilia_walkd[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        WALK_AVI += 1
 
     elif UP:
-        win.blit(walku[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        WALKCOUNT += 1
+        win.blit(avilia_walku[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        WALK_AVI += 1
         
     elif RIGHT == False and LEFT == False and DOWN == False and UP == False:
         if CHECK == 'RIGHT':
-            win.blit(walkr[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            win.blit(avilia_walkr[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'LEFT':
-            win.blit(walkl[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            win.blit(avilia_walkl[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'DOWN':
-            win.blit(walkd[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            win.blit(avilia_walkd[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'UP':
-            win.blit(walku[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            win.blit(avilia_walku[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+#---------------------------------------------------------------------------
+def fadeout():
+    """ fade out screen """
+    fade = pygame.Surface((1280, 720))
+    fade.fill((0,0,0))
+    for alpha in range(0, 150):
+        fade.set_alpha(alpha)
+        win.blit(fade, (0,0))
+        pygame.display.update()
+        pygame.time.delay(5)
+#---------------------------------------------------------------------------
+def fadein():
+    """ fade in screen """
+    fade = pygame.Surface((1280, 720))
+    fade.fill((0,0,0))
+    for alpha in range(150, 0, -1):
+        fade.set_alpha(alpha)
+        win.blit(bg, (-508, -272))
+        redrawGameWindow()
+        win.blit(fade, (0,0))
+        pygame.display.update()
+#---------------------------------------------------------------------------
+dialogbox = readvar('var.txt', 'dialogbox')
+nabox = readvar('var.txt', 'nabox')
+lstdialog = readvar('dialog.txt', '')
+apple = pygame.image.load('sprite/apple.png')
+dia_she = pygame.image.load('sprite/sheree/sheree.png')
+dia_esme = pygame.image.load('sprite/esme/esme.png')
+dia_avi = pygame.image.load('sprite/avilia/avilia.png')
+font = pygame.font.Font('sprite/alagard.ttf', 21)
+bubble = readvar('var.txt', 'bubble')
+sad, upset, shock = readvar('var.txt', 'sad'), readvar('var.txt', 'upset'), readvar('var.txt', 'shock')
+sad, upset, shock = bubble+sad+sad, bubble+upset+upset, bubble+shock+shock
+ANIMB = 0
+
+play_dialog = False
+nextdia = False
+posx_txt = 200
+posy_txt = 80
+counttxt = 0
+countd = 0
+
+
+play_cutscene = False
+STORY1 = True
+
+WALK_ESME, WALK_SHE = 0, 0
+
+def redrawdialog(countd):
+    """ blit dialog """
+    global ANIM, counttxt
+    global posx_txt, posy_txt
+    if ANIM >= 10:
+        ANIM = 9
+    win.blit(dialogbox[ANIM], ((1280/2)-(dialogbox[ANIM].get_rect().size[0]/2), 450))
+    if ANIM == 9:
+        if lstdialog[countd].split()[0] == 'Sheree':
+            win.blit(dia_she, (141.5, 450))
+        if lstdialog[countd].split()[0] == 'Esme':
+            win.blit(dia_esme, (141.5, 450))
+        if lstdialog[countd].split()[0] == 'Avilia':
+            win.blit(dia_avi, (141.5, 450))
+        if counttxt <= len(lstdialog[countd].split(':')[1])-1:
+            message = font.render(lstdialog[countd].split(':')[1][counttxt], True, (0, 0, 0))
+            dialogbox[9].blit(message, (posx_txt, posy_txt))
+            posx_txt += message.get_rect().size[0]+0.5
+        if posx_txt >= 950:
+            posx_txt, posy_txt = 202, 120
+        counttxt += 1
+    ANIM += 1
+
+def shepush():
+    global WALK_SHE, POSX_SHE, POSY_SHE
+    if WALK_SHE+1 >= 12:
+        WALK_SHE = 11
+    win.blit(she_push[WALK_SHE], (POSX_SHE, POSY_SHE))
+    WALK_SHE += 1
+
+def esmefail(way):
+    global WALK_ESME, POSX_ESME, POSY_ESME
+    win.blit(esme_fail[WALK_ESME], (POSX_ESME, POSY_ESME))
+    if way == 'down':
+        WALK_ESME += 1
+        if WALK_ESME > 9:
+            WALK_ESME = 9
+    if way == 'up':
+        WALK_ESME -= 1
+        if WALK_ESME < 0:
+            WALK_ESME = 0
+
+def aviwalk(way, stop):
+    global WALK_AVI, POSX_AVI, POSY_AVI
+    if WALK_AVI+1 >= 9:
+        WALK_AVI = 0
+    if way == 'right':
+        if POSX_AVI != stop:
+            POSX_AVI += 5
+            WALK_AVI += 1
+        win.blit(avilia_walkr[WALK_AVI], (POSX_AVI, POSY_AVI))
+    if way == 'left':
+        if POSX_AVI != stop:
+            POSX_AVI -= 5
+            WALK_AVI += 1
+        win.blit(avilia_walkl[WALK_AVI], (POSX_AVI, POSY_AVI))
+
+def shewalk(way, stop):
+    global WALK_SHE, POSX_SHE, POSY_SHE
+    if WALK_SHE+1 >= 9:
+        WALK_SHE = 0
+    if way == 'right':
+        if POSX_SHE != stop:
+            POSX_SHE += 5
+            WALK_SHE += 1
+        win.blit(she_walkr[WALK_SHE], (POSX_SHE, POSY_SHE))
+    if way == 'left':
+        if POSX_SHE != stop:
+            POSX_SHE -= 5
+            WALK_SHE += 1
+        win.blit(she_walkl[WALK_SHE], (POSX_SHE, POSY_SHE))
+
+def esmewalk(way, stop):
+    global WALK_ESME, POSX_ESME, POSY_ESME
+    if WALK_ESME+1 >= 9:
+        WALK_ESME = 0
+    if way == 'right':
+        if POSX_ESME != stop:
+            POSX_ESME += 5
+            WALK_ESME += 1
+        win.blit(esme_walkr[WALK_ESME], (POSX_ESME, POSY_ESME))
+    if way == 'left':
+        if POSX_ESME != stop:
+            POSX_ESME -= 5
+            WALK_ESME += 1
+        win.blit(esme_walkl[WALK_ESME], (POSX_ESME, POSY_ESME))
+
+def shebroom(way, stop):
+    global WALK_SHE, POSX_SHE, POSY_SHE
+    if WALK_SHE+1 >= 17:
+        WALK_SHE = 0
+    she_copy = sheree_b[WALK_SHE].copy()
+    she_copy = pygame.transform.scale(she_copy, (130, 130))
+    if way == 'left':
+        win.blit(pygame.transform.flip(she_copy, True, False), (POSX_SHE-50, POSY_SHE))
+        if POSX_SHE != stop:
+            POSX_SHE -= 10
+    WALK_SHE += 1
+
+def redrawbubble(emo, posx, posy):
+    """ blit bubble emo """
+    global ANIMB
+    if emo == 'sad':
+        win.blit(sad[ANIMB], (posx, posy))
+    if emo == 'upset':
+        win.blit(upset[ANIMB], (posx, posy))
+    if emo == 'shock':
+        win.blit(shock[ANIMB], (posx, posy))
+    ANIMB += 1
+
+def redrawblack():
+    """ blit black """
+    global BLACK
+    pygame.draw.rect(win, (0), [0, 0, 1280, BLACK])
+    pygame.draw.rect(win, (0), [0, 722-BLACK, 1280, 100])
+
+def cutscene():
+    """ blit cutscene """
+    global STORY1, play_dialog, play_cutscene
+    global ANIM, ANIMB
+    global countd, counttxt, posx_txt, posy_txt, nextdia
+    global POSX_ESME, POSY_ESME, WALK_ESME
+    global POSX_SHE, POSY_SHE, WALK_SHE
+    if play_dialog:
+        redrawdialog(countd)
+    if STORY1:
+        if lstdialog[countd].split()[0] == 'End':
+            play_dialog, STORY1 = False, False
+            if not play_cutscene:
+                if BLACK < 0: STORY1 = False
+        if countd in [0, 1, 2, 3, 4, 5, 6]: aviwalk('left', 1150)
+        if countd in [0, 1]:
+            esmewalk('right', 750)
+            shewalk('right', 600)
+            if POSX_ESME == 750: play_dialog = True
+        if countd in [2]:
+            esmewalk('left', 750)
+            shewalk('right', 600)
+        if countd in [3]:
+            if counttxt in range(40, 60):
+                redrawbubble('sad', POSX_ESME+2, POSY_ESME-40)
+            else: ANIMB = 0
+            if POSX_SHE == 680:
+                shepush()
+                if counttxt >= 80:
+                    posx_apple, posy_apple = POSX_ESME-25, POSY_ESME+60
+                    win.blit(apple, (posx_apple, posy_apple))
+                    esmefail('down')
+                else: esmewalk('left', 750)
+            elif counttxt >= 59:
+                esmewalk('left', 750)
+                shewalk('right', 680)
+            else:
+                esmewalk('left', 750)
+                shewalk('right', 600)
+        if countd in [4, 5, 6, 7, 8, 9, 10]:
+            if counttxt in range(0, 20) and countd in [4]:
+                win.blit(apple, (POSX_ESME-25-(counttxt*2), POSY_ESME+60-counttxt))
+            shewalk('right', 680)
+            esmefail('down')
+        if countd in range(7, 70):
+            aviwalk('left', 810)
+            esmefail('up')
+        if countd in [11]:
+            if counttxt in range(0, 20):
+                redrawbubble('upset', POSX_SHE+2, POSY_SHE-40)
+            else: ANIMB = 0
+            shewalk('left', 630)
+        if countd in range(12, 16):
+            shewalk('right', 630)
+        if countd in [16]:
+            if counttxt in range(33, 44):
+                redrawbubble('shock', POSX_ESME+2, POSY_ESME-40)
+                redrawbubble('shock', POSX_AVI+20, POSY_AVI-40)
+            if counttxt >= 32:
+                shebroom('left', -100)
+                POSY_SHE -= 2.5
+            else:
+                ANIMB = 0
+                shewalk('right', 630)
+    if keys[pygame.K_SPACE] and play_dialog and counttxt >= len(lstdialog[countd].split(':')[1])-1:
+        if countd in [3] and counttxt >= 90:
+            nextdia = True
+        if countd in [7] and counttxt >= 65:
+            nextdia = True
+        if countd in [16] and counttxt >= 105:
+            nextdia = True
+        elif countd not in [3, 7, 16]:
+            nextdia = True
+    elif nextdia:
+        if not keys[pygame.K_SPACE]:
+            countd += 1
+            if lstdialog[countd-1].split()[0] != lstdialog[countd].split()[0]: ANIM = 0
+            counttxt, posx_txt, posy_txt = 0, 200, 80
+            dialogbox[9] = pygame.image.load('sprite/dialogbox10.png')
+            nextdia = False
+#    print(counttxt)
 #---------------------------------------------------------------------------
 def scrolling():
     """scrolling background_ph"""
@@ -233,48 +468,11 @@ def scrolling():
 #     else:
 #         PLAYER_POSITION_Y = start_scrolling_y
 #         stage_position_y += -vel
-#---------------------------------------------------------------------------
-
-#---------------------------------------------------------------------------
-
-SUP_POS_X = 958
-SUP_POS_Y = 237
-SUPCOUNT = 0
-mapping = [pygame.image.load("sprite/hallway.jpg")]
-
-SUP_L = True
-SUP_R = False
-
-# def redrawsup():
-#     """blit support character"""
-#     global bg
-#     global SUP_POS_X
-#     global SUP_POS_Y
-#     global SUPCOUNT
-#     global SUP_L
-#     global SUP_R
-
-#     if SUP_L:
-#         if SUPCOUNT + 1 >= 9:
-#             SUPCOUNT = 0
-#         SUP_POS_X -= 7.5
-#         bg.blit(sup01[SUPCOUNT], (SUP_POS_X, SUP_POS_Y))
-#     if SUP_POS_X == 58.0:
-#         SUPCOUNT = 9
-#         SUP_L = False
-#         SUP_R = True
-#     if SUP_R:
-#         if SUPCOUNT + 1 >= 19:
-#             SUPCOUNT = 9
-#         SUP_POS_X += 7.5
-#         bg.blit(sup01[SUPCOUNT], (SUP_POS_X, SUP_POS_Y))
-#     if SUP_POS_X == 965.5:
-#         SUP_R = False
-#         SUP_L = True
-#     SUPCOUNT += 1
-#---------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 def wall(wall=[(0,0,0,0)]):
     """wall"""
+    global rel_x
+    global rel_y
     global X
     global Y
     global BOOK
@@ -286,52 +484,56 @@ def wall(wall=[(0,0,0,0)]):
     global PLAYER_RADIUS
     global PLAYER_POSITION_X
     global PLAYER_POSITION_Y
-    if keys[pygame.K_a] and X > vel and open_book == False and safe < 1:
+    if keys[pygame.K_a] and X > vel and open_book == False and safe < 1 and not play_cutscene:
         for i,j,k,l in wall:
             if i < X < j and k < Y < l-15:
                 adam = 0
                 break
             else:
                 adam = vel
+        print(i,j,k,l)
         X -= adam
         RIGHT = False
         LEFT = True
         UP = False
         DOWN = False
         CHECK = 'LEFT'
-    elif keys[pygame.K_d] and open_book == False and safe < 1:
+    elif keys[pygame.K_d] and open_book == False and safe < 1 and not play_cutscene:
         for i,j,k,l in wall:
             if i-15 < X < j-15 and k < Y < l-15:
                 adam = 0
                 break
             else:
                 adam = vel
+        print(i,j,k,l)
         X += adam
         RIGHT = True
         LEFT = False
         UP = False
         DOWN = False
         CHECK = 'RIGHT'
-    elif keys[pygame.K_s] and open_book == False and safe < 1:
+    elif keys[pygame.K_s] and open_book == False and safe < 1 and not play_cutscene:
         for i,j,k,l in wall:
             if i < X < j-15 and k-15 < Y < l-15:
                 adam = 0
                 break
             else:
                 adam = vel
+        print(i,j,k,l)
         Y += adam
         RIGHT = False
         LEFT = False
         UP = False
         DOWN = True
         CHECK = 'DOWN'
-    elif keys[pygame.K_w] and open_book == False and safe < 1:
+    elif keys[pygame.K_w] and open_book == False and safe < 1 and not play_cutscene:
         for i,j,k,l in wall:
             if i < X < j-15 and k < Y < l:
                 adam = 0
                 break
             else:
                 adam = vel
+        print(i,j,k,l)
         Y -= adam
         RIGHT = False
         LEFT = False
@@ -345,6 +547,134 @@ def wall(wall=[(0,0,0,0)]):
         DOWN = False
 
     scrolling()
+    rel_x = -X % bg_width
+    rel_y = -Y % bg_height
+
+#-----------------------------------------------------------------------
+change = False
+
+def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
+    global X
+    global Y
+    global bg
+    global bg2
+    if change:
+        return idmapold, change
+    change = False
+    if l <= X <= r and u <= Y <= d:
+        bg = pygame.image.load(mapping[str(idmapnew)])
+        bg2 = pygame.image.load(mapping[str(idmapnew)])
+        X = nx
+        Y = ny
+        change = True
+        return idmapnew, change
+    return idmapold, change
+        
+
+class sup:
+    def __init__(self, name, posx, posy):
+        self.name = readvar('support.txt', name)
+        self.count = 0
+        self.sub_l = True
+        self.sub_r = False
+        self.sub_u = True
+        self.sub_d = False
+        self.posx = posx
+        self.posy = posy
+
+    def standr(self):
+        bg.blit(self.name[0], (self.posx, self.posy))
+
+    def standl(self):
+        bg.blit(self.name[1], (self.posx, self.posy))
+    
+    def standu(self):
+        bg.blit(self.name[2], (self.posx, self.posy))
+    
+    def standd(self):
+        bg.blit(self.name[3], (self.posx, self.posy))
+
+    def walkrl(self, turnl, turnr):
+        if self.sub_l:
+            if self.count+1 >= 9:
+                self.count = 0
+            self.posx -= 7.5
+            bg.blit(self.name[self.count], (self.posx, self.posy))
+        if self.posx <= turnl:
+            self.count = 9
+            self.sub_l = False
+            self.sub_r = True
+        if self.sub_r:
+            if self.count+1 >= 19:
+                self.count = 9
+            self.posx += 7.5
+            bg.blit(self.name[self.count], (self.posx, self.posy))
+        if self.posx >= turnr:
+            self.sub_l = True
+            self.sub_r = False
+        self.count += 1
+
+    def walkud(self, turnu, turnd):
+        if self.sub_u:
+            if self.count+1 >= 9:
+                self.count = 0
+            self.posy -= 7.5
+            bg.blit(self.name[self.count], (self.posx, self.posy))
+        if self.posy <= turnu:
+            self.count = 9
+            self.sub_u = False
+            self.sub_d = True
+        if self.sub_d:
+            if self.count+1 >= 19:
+                self.count = 9
+            self.posx += 7.5
+            bg.blit(self.name[self.count], (self.posx, self.posy))
+        if self.posy >= turnd:
+            self.sub_u = True
+            self.sub_d = False
+        self.count += 1
+
+#---------------------------sup----------------------------------------------
+
+# sup07 = sup("sub07", 958, 237)
+
+#---------------------------------------------------------------------------
+# sup07 = readvar('support.txt', 'sub07')
+
+# SUP_POS_X = 958
+# SUP_POS_Y = 237
+# SUPCOUNT = 0
+
+# SUP_L = True
+# SUP_R = False
+# def redrawsup():
+#     """blit support character"""
+#     global bg
+#     global SUP_POS_X
+#     global SUP_POS_Y
+#     global SUPCOUNT
+#     global SUP_L
+#     global SUP_R
+
+#     if SUP_L:
+#         if SUPCOUNT + 1 >= 9:
+#             SUPCOUNT = 0
+#         SUP_POS_X -= 7.5
+#         bg.blit(sup07[SUPCOUNT], (SUP_POS_X, SUP_POS_Y))
+#     if SUP_POS_X == 58.0:
+#         SUPCOUNT = 9
+#         SUP_L = False
+#         SUP_R = True
+#     if SUP_R:
+#         if SUPCOUNT + 1 >= 19:
+#             SUPCOUNT = 9
+#         SUP_POS_X += 7.5
+#         bg.blit(sup07[SUPCOUNT], (SUP_POS_X, SUP_POS_Y))
+#     if SUP_POS_X == 965.5:
+#         SUP_R = False
+#         SUP_L = True
+#     SUPCOUNT += 1
+#---------------------------------------------------------------------------
 
 
 #------------------Photohunt--------------------------------------
@@ -401,7 +731,7 @@ def col(row, xrow, yrow):
 #---------------------------------------------------------------------------
 """mainloop"""
 while run:
-    pygame.time.delay(30)
+    # pygame.time.delay(30)
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -412,81 +742,52 @@ while run:
             open_book = True
 
     if PLAY_MAIN:
-    #--------------hallway---------------
-        if gohallway == True: #HALLWAY
+        pygame.time.delay(45)
+    #--------------hallway-01--------------
+        if idmap == "01": #HALLWAY
             # redrawsup()
-            # bg_hall.play(-1,fade_ms=5000)
+            bg_hall.play(-1,fade_ms=5000)
             wall(walls["hallway"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
+            # sup07.walkrl(58, 965)
+            idmap, change = changemap(0, 1280, 598, 720, 508, 43, idmap, "00", change)
+            idmap, change = changemap(0, 13, 328, 388, 1123, 343, idmap, "11", change)
+            idmap, change = changemap(0, 1280, 0, 13, X, 583, idmap, "09", change)
+            idmap, change = changemap(1198, 1280, 0, 720, 33, 163, idmap, "02", change)
 
-            if X == 13 and Y >= 328 and Y <= 388:
-                bg = pygame.image.load("sprite/Path.jpg")
-                X = 1123
-                Y = 343
-                gohallway = False
-                gopath = True
-                gofirstaid = False
-                gocanteen = False
-            elif Y >= 598:
-                bg_hall.stop()
-                bg = pygame.image.load("sprite/entryhall.jpg")
-                X = 508
-                Y = 43
-                gohallway = False
-                goentry = True
-            elif Y <= 13:
-                bg = pygame.image.load("sprite/firstaidroom.jpg")
-                Y = 583
-                gohallway = False
-                gopath = False
-                gofirstaid = True
-                gocanteen = False
-            elif X >= 1198:
-                bg = pygame.image.load("sprite/canteen.jpg")
-                X = 33
-                Y = 163
-                gohallway = False
-                gopath = False
-                gofirstaid = False
-                gocanteen = True
-            elif X >= 628:
-                win.blit(bg ,(-628, rel_y-bg_height))
-                bg.blit(mapping[0], (0, 0))
-            elif Y >= 358:
-                win.blit(bg ,(rel_x-bg_width, -358))
-                bg.blit(mapping[0], (0, 0))
-            else:
-                win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
-                bg.blit(mapping[0], (0, 0))
-    #--------------canteen---------------
-        elif gocanteen == True: #CANTEEN
+            if not change:
+                if X >= 628:
+                    win.blit(bg ,(-628, rel_y-bg_height))
+                elif Y >= 358:
+                    win.blit(bg ,(rel_x-bg_width, -358))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
+                bg.blit(bg2 ,(0, 0))
+            change = False
+    #--------------canteen-02--------------
+        elif idmap == "02": #CANTEEN
             wall(walls["canteen"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
             bg_hall.stop()
-            
             if X >= 1203:
                 X = 28
                 Y = 463
                 stage_height = 720
                 bg = pygame.image.load("sprite/eastcorridor_1.jpg")
-                gocanteen = False
-                goeastcor_1 = True
+                bg2 = pygame.image.load("sprite/eastcorridor_1.jpg")
+                idmap = "03"
             elif Y >= 778 and Y <= 838 and X >= 828:
                 X = 28
                 Y = 223
                 stage_height = 720
                 bg = pygame.image.load("sprite/eastgarden.jpg")
-                gocanteen = False
-                goeastgar = True
+                bg2 = pygame.image.load("sprite/eastgarden.jpg")
+                idmap = "08"
             elif X <= 13 and Y >= 148 and Y <= 163:
                 X = 1168
                 Y = 238
                 stage_height = 720
                 bg = pygame.image.load("sprite/hallway.jpg")
-                gohallway = True
-                gocanteen = False
+                bg2 = pygame.image.load("sprite/hallway.jpg")
+                idmap = "01"
             elif X >= 798 and Y >= 283 and Y <= 598:
                 stage_height = 720
                 win.blit(bg ,(-453, -283))
@@ -500,34 +801,18 @@ while run:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
                     safe += 1
-    #--------------eastcor1--------------
-        elif goeastcor_1 == True:
+    #--------------eastcor1-03-------------
+        elif idmap == "03":
             wall(walls["eastcor1"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if X <= 13:
-                bg = pygame.image.load("sprite/canteen.jpg")
-                X = 1108
-                Y = 478
-                goeastcor_1 = False
-                gocanteen = True
-            elif Y <= 13:
-                bg = pygame.image.load("sprite/eastcorridor_2.jpg")
-                Y = 583
-                goeastcor_1 = False
-                goeastcor_2 = True
-            elif Y >= 628:
-                bg = pygame.image.load("sprite/eastgarden.jpg")
-                X = 388
-                Y = 28
-                goeastcor_1 = False
-                goeastgar = True
-            elif Y >= 178:
-                win.blit(bg ,(-28, -178))
-            else:
-                win.blit(bg ,(-28, rel_y-bg_height))
-            if 1128 <= X <= 1198 and 463 <= Y < 523:
+            idmap, change = changemap(0,13,0,720,1108,478,idmap,"02", change)
+            idmap, change = changemap(0,1280,0,13,X,583,idmap,"04", change)
+            idmap, change = changemap(0,1280,628,1280,388,28,idmap,"08", change)
+            if not change:
+                if Y >= 178:
+                    win.blit(bg ,(-28, -178))
+                else:
+                    win.blit(bg ,(-28, rel_y-bg_height))
+            if 1138 <= X <= 1198 and 463 <= Y < 523:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
                     bg_hall.stop()
@@ -535,10 +820,9 @@ while run:
                     bg = pygame.image.load("sprite/classroom.jpg")
                     X = 58
                     Y = 268
-                    goeastcor_1 = False
-                    classroom1 = True
+                    idmap = "05"
                     CHECK = "RIGHT"
-            if 1128 <= X <= 1198 and 103 <= Y < 148:
+            if 1138 <= X <= 1198 and 103 <= Y < 148:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
                     bg_hall.stop()
@@ -546,35 +830,18 @@ while run:
                     bg = pygame.image.load("sprite/classroom.jpg")
                     X = 58
                     Y = 268
-                    goeastcor_1 = False
-                    classroom2 = True
+                    idmap = "06"
                     CHECK = "RIGHT"
-    #--------------eastcor2--------------
-        elif goeastcor_2 == True:
+            change = False
+    #--------------eastcor2-04-------------
+        elif idmap == "04":
             wall(walls["eastcor2"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if Y >= 632:
-                bg = pygame.image.load("sprite/eastcorridor_1.jpg")
-                Y = 28
-                goeastcor_2 = False
-                goeastcor_1 = True
-            elif X <= 13:
-                bg = pygame.image.load("sprite/battleroom.jpg")
-                X = 1198
-                Y = 343
-                goeastcor_2 = False
-                gobattle = True
-            elif Y <= 13:
-                bg = pygame.image.load("sprite/eastforest.jpg")
-                X = 1123
-                Y = 613
-                goeastcor_2 = False
-                goeastfor = True
-            else:
+            idmap, change = changemap(0,1280,632,1280,X,28,idmap,"03", change)
+            idmap, change = changemap(0,13,0,720,1123,343,idmap,"10", change)
+            idmap, change = changemap(0,1280,0,13,1123,613,idmap,"19", change)
+            if not change:
                 win.blit(bg ,(-28, -13))
-            if 1128 <= X <= 1198 and 328 <= Y < 373:
+            if 1138 <= X <= 1198 and 328 <= Y <= 373:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
                     bg_hall.stop()
@@ -582,14 +849,12 @@ while run:
                     bg = pygame.image.load("sprite/classroom.jpg")
                     X = 58
                     Y = 268
-                    goeastcor_2 = False
-                    classroom3 = True
+                    idmap = "07"
                     CHECK = "RIGHT"
-    #--------------classroom-------------
-        elif classroom1 == True:
+            change = False
+    #--------------classroom-05------------
+        elif idmap == "05":
             wall(walls["classroom"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
 
             win.blit(bg ,(-238, -118))
             if 13 <= X <= 28 and 253 <= Y < 283:
@@ -599,15 +864,12 @@ while run:
                     bg = pygame.image.load("sprite/eastcorridor_1.jpg")
                     X = 1093
                     Y = 493
-                    goeastcor_1 = True
-                    classroom1 = False
+                    idmap = "03"
                     CHECK = "LEFT"
                     bg_hall.play(-1,fade_ms=5000)
-    #--------------classroom2--------------
-        elif classroom2 == True:
+    #--------------classroom2-06-------------
+        elif idmap == "06":
             wall(walls["classroom"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
 
             win.blit(bg ,(-238, -118))
             if 13 <= X <= 28 and 253 <= Y < 283:
@@ -617,15 +879,12 @@ while run:
                     bg = pygame.image.load("sprite/eastcorridor_1.jpg")
                     X = 1093
                     Y = 133
-                    goeastcor_1 = True
-                    classroom2 = False
+                    idmap = "03"
                     CHECK = "LEFT"
                     bg_hall.play(-1,fade_ms=5000)
-    #--------------classroom3--------------
-        elif classroom3 == True:
+    #--------------classroom3-07-------------
+        elif idmap == '07':
             wall(walls["classroom"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
 
             win.blit(bg ,(-238, -118))
             if 13 <= X <= 28 and 253 <= Y < 283:
@@ -635,338 +894,221 @@ while run:
                     bg = pygame.image.load("sprite/eastcorridor_2.jpg")
                     X = 1093
                     Y = 358
-                    goeastcor_2 = True
-                    classroom3 = False
+                    idmap = "04"
                     CHECK = "LEFT"
                     bg_hall.play(-1,fade_ms=5000)
-    #--------------eastgarden------------
-        elif goeastgar == True:
+    #--------------eastgarden-08-----------
+        elif idmap == "08":
             wall(walls["eastgar"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
             if X <= 13:
                 bg = pygame.image.load("sprite/canteen.jpg")
                 stage_height = 950
                 X = 813
                 Y = 823
-                goeastgar = False
-                gocanteen = True
+                idmap = "02"
             elif Y <= 13:
                 bg = pygame.image.load("sprite/eastcorridor_1.jpg")
                 X = 433
                 Y = 613
-                goeastgar = False
-                goeastcor_1 = True
+                idmap = "03"
             else:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
-    #--------------firstaid--------------
-        elif gofirstaid == True: #FIRSTAID ROOM
+    #--------------firstaid-09-------------
+        elif idmap == "09": #FIRSTAID ROOM
             wall(walls["firstaid"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if Y >= 613:
-                bg = pygame.image.load("sprite/hallway.jpg")
-                X = 253
-                Y = 43
-                gohallway = True
-                gofirstaid = False
-                gobattle = False
-            elif X >= 1207:
-                bg = pygame.image.load("sprite/battleroom.jpg")
-                X = 28
-                Y = 373
-                gohallway = False
-                gofirstaid = False
-                gobattle = True
-            elif Y >= 13 and X >= 703:
-                win.blit(bg ,(-703, -13))
-            elif Y >= 13:
-                win.blit(bg ,(rel_x-bg_width, -13))
-            elif X >= 703:
-                win.blit(bg ,(-703, rel_y-bg_height))
-            else:
-                win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
-    #---------------battle---------------
-        elif gobattle == True: #BATTLE ROOM
+            idmap,change = changemap(0,1280,613,1280,253,43,idmap,"01", change)
+            idmap,change = changemap(1207,1280,0,720,28,373,idmap,"10", change)
+            if not change:
+                if Y >= 13 and X >= 703:
+                    win.blit(bg ,(-703, -13))
+                elif Y >= 13:
+                    win.blit(bg ,(rel_x-bg_width, -13))
+                elif X >= 703:
+                    win.blit(bg ,(-703, rel_y-bg_height))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
+            change = False
+    #---------------battle-10--------------
+        elif idmap == "10": #BATTLE ROOM
             wall(walls["battle"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-            
-            if X <= 13:
-                bg = pygame.image.load("sprite/firstaidroom.jpg")
-                X = 1168
-                Y = 493
-                gobattle = False
-                gofirstaid = True
-            elif X >= 1222:
-                bg = pygame.image.load("sprite/eastcorridor_2.jpg")
-                X = 28
-                Y = 373
-                gobattle = False
-                goeastcor_2 = True
-            elif X >= 523 and Y >= 103:
-                win.blit(bg ,(-523, -103))
-            elif Y >= 103:
-                win.blit(bg ,(rel_x-bg_width, -103))
-            elif X >= 523:
-                win.blit(bg ,(-523, -103))
-            else:
-                win.blit(bg ,(rel_x-bg_width, -103))
-    #----------------path----------------
-        elif gopath == True:
+            idmap, change = changemap(0,13,0,720,1168,493,idmap,"09", change)
+            idmap,change = changemap(1222,1280,0,720,28,373,idmap,"04", change)
+            if not change:
+                if X >= 523 and Y >= 103:
+                    win.blit(bg ,(-523, -103))
+                elif Y >= 103:
+                    win.blit(bg ,(rel_x-bg_width, -103))
+                elif X >= 523:
+                    win.blit(bg ,(-523, -103))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, -103))
+            change = False
+    #----------------path-11---------------
+        elif idmap == "11":
             wall(walls["path"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-            
-            if X >= 1168:
-                bg = pygame.image.load("sprite/hallway.jpg")
-                X = 28
-                Y = 358
-                gohallway = True
-                gopath = False
-            elif X <= 13:
-                bg = pygame.image.load("sprite/westcorridor_1.jpg")
-                X = 1183
-                Y = 373
-                gopath = False
-                gowestcor_1 = True
-            elif Y <= 13:
-                bg = pygame.image.load("sprite/meetingroom.jpg")
-                X = 433
-                Y = 553
-                gopath = False
-                gomeeting = True
-            elif (X <= 598 and Y >= 313) or (X <= 598 and Y < 313):
-                win.blit(bg ,(-598, -313))
-            elif X >= 1108:
-                win.blit(bg ,(-1108, -313))
-            elif Y < 313 or Y >= 313:
-                win.blit(bg ,(rel_x-bg_width, -313))
-    #--------------meeting---------------
-        elif gomeeting == True: #MEETING ROOM
+            idmap, change = changemap(1168,1280,0,720,28,358,idmap,"01", change)
+            idmap, change = changemap(0,13,0,720,1183,373,idmap,"15", change)
+            idmap, change = changemap(0,1280,0,13,433,553,idmap,"12", change)
+            if not change:
+                if (X <= 598 and Y >= 313) or (X <= 598 and Y < 313):
+                    win.blit(bg ,(-598, -313))
+                elif X >= 1108:
+                    win.blit(bg ,(-1108, -313))
+                elif Y < 313 or Y >= 313:
+                    win.blit(bg ,(rel_x-bg_width, -313))
+            change = False
+            if not STORY1:
+                if BLACK > 0:
+                    BLACK -= 4
+                play_cutscene = False
+                redrawblack()
+            if STORY1:
+                if not play_cutscene:
+                    POSX_ESME, POSY_ESME = 300, 343
+                    POSX_SHE, POSY_SHE = 150, 343
+                    POSX_AVI, POSY_AVI = 1150, 343
+                    play_cutscene = True
+                if BLACK < 100:
+                    BLACK += 4
+                redrawblack()
+                cutscene()
+    #--------------meeting-12--------------
+        elif idmap == "12": #MEETING ROOM
             wall(walls["meeting"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if X >= 403 and X <= 448 and Y > 553:
-                bg = pygame.image.load("sprite/path.jpg")
-                gomeeting = False
-                gopath = True
-                X = 733
-                Y = 28
-            elif X >= 523 and Y >= 418:
-                win.blit(bg ,(-523, -418))
-            elif X >= 523:
-                win.blit(bg ,(-523, rel_y-bg_height))
-            elif Y >= 418:
-                win.blit(bg ,(rel_x-bg_width, -418))
-            else:
-                win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
-    #--------------entryhall-------------
-        elif goentry == True:
+            idmap, change = changemap(403,448,553,720,733,28,idmap,"11", change)
+            if not change:
+                if X >= 523 and Y >= 418:
+                    win.blit(bg ,(-523, -418))
+                elif X >= 523:
+                    win.blit(bg ,(-523, rel_y-bg_height))
+                elif Y >= 418:
+                    win.blit(bg ,(rel_x-bg_width, -418))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
+            change = False
+    #--------------entryhall-00------------
+        elif idmap == "00":
             wall(walls["entryhall"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if X <= 13:
-                bg = pygame.image.load("sprite/halls.jpg")
-                X = 1153
-                Y = 178
-                goentry = False
-                gohalls = True
-            elif Y <= 13:
-                bg = pygame.image.load("sprite/hallway.jpg")
-                X = 463
-                Y = 583
-                bg_hall.play(-1,fade_ms=5000)
-                goentry = False
-                gohallway = True
-            elif X >= 763 and Y >= 272:
-                win.blit(bg ,(-763, -272))
-            elif X >= 763:
-                win.blit(bg ,(-763, rel_y-bg_height))
-            elif Y >= 272:
-                win.blit(bg ,(rel_x-bg_width, -272))
-            else:
-                win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
-    #----------------hall----------------
-        elif gohalls == True:
+            idmap, change = changemap(0, 1280, 0, 13, 463, 583, idmap, "01", change)
+            idmap, change = changemap(0, 13, 0, 720, 1153, 178, idmap, "13", change)
+            if not change:
+                if X >= 763 and Y >= 272:
+                    win.blit(bg ,(-763, -272))
+                elif X >= 763:
+                    win.blit(bg ,(-763, rel_y-bg_height))
+                elif Y >= 272:
+                    win.blit(bg ,(rel_x-bg_width, -272))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
+            change = False
+    #----------------hall-13---------------
+        elif idmap == "13":
             wall(walls["hall"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if X <= 13:
-                bg = pygame.image.load("sprite/westgarden.jpg")
-                X = 1123
-                gohalls = False
-                gowestgar = True
-            elif X >= 1207:
-                X = 28
-                Y = 133
-                bg = pygame.image.load("sprite/entryhall.jpg")
-                gohalls = False
-                goentry = True
-            elif X >= 160 and Y >= 287:
-                win.blit(bg ,(-160, -287))
-            elif X >= 160:
-                win.blit(bg ,(-160, rel_y-bg_height))
-            elif Y >= 287:
-                win.blit(bg ,(rel_x-bg_width, -287))
-            else:
-                win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
-    #-------------westgarden-------------
-        elif gowestgar == True:
+            idmap, change = changemap(0,13,0,720,1123,223,idmap, "14", change)
+            idmap, change = changemap(1207, 1280, 0, 720, 28, 133, idmap, "00", change)
+            if not change:
+                if X >= 160 and Y >= 287:
+                    win.blit(bg ,(-160, -287))
+                elif X >= 160:
+                    win.blit(bg ,(-160, rel_y-bg_height))
+                elif Y >= 287:
+                    win.blit(bg ,(rel_x-bg_width, -287))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
+            change = False
+    #-------------westgarden-14------------
+        elif idmap == "14":
             wall(walls["westgar"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if X >= 1207:
-                bg = pygame.image.load("sprite/halls.jpg")
-                X = 73
-                gowestgar = False
-                gohalls = True
-            elif Y <= 13:
-                bg = pygame.image.load("sprite/westcorridor_1.jpg")
-                X = 748
-                Y = 613
-                gowestgar = False
-                gowestcor_1 = True
-            else:
+            idmap, change = changemap(1207,1280,0,720,73,Y,idmap,"13", change)
+            idmap, change = changemap(0,1280,0,13,748,613,idmap,"15", change)
+            if not change:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
-    #--------------westcor1--------------
-        elif gowestcor_1 == True:
+            change = False
+    #--------------westcor1-15-------------
+        elif idmap == "15":
             wall(walls["westcor1"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if Y >= 628:
-                bg = pygame.image.load("sprite/westgarden.jpg")
-                X = 832
-                Y = 28
-                gowestcor_1 = False
-                gowestgar = True
-            elif Y <= 13:
-                bg = pygame.image.load("sprite/westcorridor_2.jpg")
-                Y = 508
-                gowestcor_1 = False
-                gowestcor_2 = True
-            elif X >= 1198:
-                bg = pygame.image.load("sprite/path.jpg")
-                X = 28
-                Y = 343
-                gowestcor_1 = False
-                gopath = True
-            elif Y >= 365:
-                win.blit(bg ,(-28, -365))
-            else:
-                win.blit(bg ,(-28, rel_y-bg_height))
-            if 13 <= X <= 28 and 313 <= Y < 388 and gopath == False:
-                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
-                if keys[pygame.K_f]:
-                    bg_hall.stop()
-                    bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/apothecaryroom.jpg")
-                    X = 973
-                    Y = 433
-                    gowestcor_1 = False
-                    goapothe = True
-                    CHECK = "LEFT"
-            if 13 <= X <= 28 and 103 <= Y < 163:
-                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
-                if keys[pygame.K_f]:
-                    bg_hall.stop()
-                    bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/teacherroom.jpg")
-                    X = 958
-                    Y = 373
-                    gowestcor_1 = False
-                    goteach = True
-                    CHECK = "LEFT"
-    #--------------westcor2--------------
-        elif gowestcor_2 == True:
+            idmap, change = changemap(0,1280,628,720,832,28,idmap,"14", change)
+            idmap, change = changemap(0,1280,0,13,X,502,idmap,"16", change)
+            idmap,change = changemap(1198,1280,0,720,28,343,idmap,"11", change)
+            if not change:
+                if Y >= 365:
+                    win.blit(bg ,(-28, -365))
+                else:
+                    win.blit(bg ,(-28, rel_y-bg_height))
+                if 13 <= X <= 28 and 313 <= Y < 388:
+                    win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                    if keys[pygame.K_f]:
+                        bg_hall.stop()
+                        bg_opendoor.play(maxtime=1400)
+                        bg = pygame.image.load("sprite/apothecaryroom.jpg")
+                        X = 973
+                        Y = 433
+                        idmap = "20"
+                        CHECK = "LEFT"
+                if 13 <= X <= 28 and 103 <= Y < 163:
+                    win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                    if keys[pygame.K_f]:
+                        bg_hall.stop()
+                        bg_opendoor.play(maxtime=1400)
+                        bg = pygame.image.load("sprite/teacherroom.jpg")
+                        X = 958
+                        Y = 373
+                        idmap = "21"
+                        CHECK = "LEFT"
+            change = False
+    #--------------westcor2-16-------------
+        elif idmap == "16":
             wall(walls["westcor2"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
+            idmap ,change = changemap(0,1280,613,720,X,103,idmap,"15", change)
+            idmap , change = changemap(0,1280,0,13,43,598,idmap,"17", change)
 
-            if Y >= 613:
-                bg = pygame.image.load("sprite/westcorridor_1.jpg")
-                Y = 103
-                gowestcor_2 = False
-                gowestcor_1 = True
-            elif Y <= 13:
-                bg = pygame.image.load("sprite/westforest.jpg")
-                X = 43
-                Y = 598
-                gowestcor_2 = False
-                gowestfor = True
-            elif Y >= 73:
-                win.blit(bg ,(-28, -73))
-            else:
-                win.blit(bg ,(-28, rel_y-bg_height))
-            if 13 <= X <= 28 and 208 <= Y < 358:
-                win.fill((255,0,0), rect=[X+20,Y-50,50,50])
-                if keys[pygame.K_f]:
-                    bg_hall.stop()
-                    bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/researchroom.jpg")
-                    X = 973
-                    Y = 433
-                    gowestcor_2 = False
-                    goresearch = True
-                    CHECK = "LEFT"
-    #-------------westforest-------------
-        elif gowestfor == True:
+            if not change:
+                if Y >= 73:
+                    win.blit(bg ,(-28, -73))
+                else:
+                    win.blit(bg ,(-28, rel_y-bg_height))
+                if 13 <= X <= 28 and 208 <= Y < 358:
+                    win.fill((255,0,0), rect=[X+20,Y-50,50,50])
+                    if keys[pygame.K_f]:
+                        bg_hall.stop()
+                        bg_opendoor.play(maxtime=1400)
+                        bg = pygame.image.load("sprite/researchroom.jpg")
+                        X = 973
+                        Y = 433
+                        idmap = "22"
+                        CHECK = "LEFT"
+            change = False
+    #-------------westforest-17------------
+        elif idmap == "17":
             wall(walls["westfor"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if Y >= 628:
-                bg = pygame.image.load("sprite/westcorridor_2.jpg")
-                gowestfor = False
-                gowestcor_2 = True
-                X = 598
-                Y = 28
-            elif X >= 1213:
-                bg = pygame.image.load("sprite/forest.jpg")
-                X = 28
-                Y = 418
-                gowestfor = False
-                goforest = True
-            elif X >= 583:
-                win.blit(bg ,(-583, -58))
-            else:
-                win.blit(bg ,(rel_x-bg_width, -58))
-    #--------------forest----------------
-        elif goforest == True:
+            idmap ,change = changemap(0,1280,628,720,598,28,idmap,"16", change)
+            idmap, change = changemap(1213,1280,0,720,28,418,idmap,"18", change)
+            if not change:
+                if X >= 583:
+                    win.blit(bg ,(-583, -58))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, -58))
+            change = False
+    #--------------forest-18---------------
+        elif idmap == "18":
             wall(walls["forest"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
-            if X <= 13:
-                bg = pygame.image.load("sprite/westforest.jpg")
-                X = 1198
-                goforest = False
-                gowestfor = True
-            elif X >= 1213:
-                bg = pygame.image.load("sprite/eastforest.jpg")
-                X = 28
-                goforest = False
-                goeastfor = True
-            elif X >= 523 and Y >= 425:
-                win.blit(bg ,(-523, -425))
-            elif X >= 523:
-                win.blit(bg ,(-523, rel_y-bg_height))
-            elif Y >= 425:
-                win.blit(bg ,(rel_x-bg_width, -425))
-            else:
-                win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
-    #-------------eastforest--------------
-        elif goeastfor == True:
+            idmap, change = changemap(0,13,0,720,1198,Y,idmap,"17", change)
+            idmap, change = changemap(1213,1280,0,720,28,Y,idmap,"19", change)
+            if not change:
+                if X >= 523 and Y >= 425:
+                    win.blit(bg ,(-523, -425))
+                elif X >= 523:
+                    win.blit(bg ,(-523, rel_y-bg_height))
+                elif Y >= 425:
+                    win.blit(bg ,(rel_x-bg_width, -425))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
+            change = False
+    #-------------eastforest-19-------------
+        elif idmap == "19":
             wall(walls["eastfor"])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
+            idmap ,change = changemap(0,13,0,720,1198,418,idmap,"18", change)
+            idmap,change = changemap(0,1280,628,720,598,28,idmap,"04", change)
 
             if X <= 13:
                 bg = pygame.image.load("sprite/forest.jpg")
@@ -978,18 +1120,16 @@ while run:
                 bg = pygame.image.load("sprite/eastcorridor_2.jpg")
                 X = 598
                 Y = 28
-                goeastfor = False
-                goeastcor_2 = True
-            elif X >= 583:
-                win.blit(bg ,(-583, -58))
-            else:
-                win.blit(bg ,(rel_x-bg_width, -58))
-    #------------apothecaryroom-----------
-        elif goapothe == True:
+                idmap = "04"
+            if not change:
+                if X >= 583:
+                    win.blit(bg ,(-583, -58))
+                else:
+                    win.blit(bg ,(rel_x-bg_width, -58))
+            change = False
+    #------------apothecaryroom-20----------
+        elif idmap == "20":
             wall(walls['apothecaryroom'])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
-
             win.blit(bg ,(-238, -58))
             if 1168 <= X <= 1280 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -998,8 +1138,7 @@ while run:
                     bg = pygame.image.load("sprite/westcorridor_1.jpg")
                     X = 58
                     Y = 343
-                    gowestcor_1 = True
-                    goapothe = False
+                    idmap = "15"
                     CHECK = "RIGHT"
                     bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[403,580,50,50])
@@ -1008,11 +1147,9 @@ while run:
                 if keys[pygame.K_f]:
                     PLAY_PH1 = True
                     PLAY_MAIN = False
-    #------------teacherroom--------------
-        elif goteach == True:
+    #------------teacherroom-21-------------
+        elif idmap == "21":
             wall(walls['teacherroom'])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
 
             win.blit(bg ,(-238, -58))
             if 1168 <= X <= 1630 and 358 <= Y < 493:
@@ -1022,8 +1159,7 @@ while run:
                     bg = pygame.image.load("sprite/westcorridor_1.jpg")
                     X = 58
                     Y = 133
-                    gowestcor_1 = True
-                    goteach = False
+                    idmap = "15"
                     CHECK = "RIGHT"
                     bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[800,433,50,50])
@@ -1032,11 +1168,9 @@ while run:
                 if keys[pygame.K_f]:
                     PLAY_PH3 = True
                     PLAY_MAIN = False
-    #------------researchroom-------------
-        elif goresearch == True:
+    #------------researchroom-22------------
+        elif idmap == "22":
             wall(walls['researchroom'])
-            rel_x = -X % bg_width
-            rel_y = -Y % bg_height
 
             win.blit(bg ,(-238, -58))
             if 1168 <= X <= 1630 and 358 <= Y < 493:
@@ -1046,8 +1180,7 @@ while run:
                     bg = pygame.image.load("sprite/westcorridor_2.jpg")
                     X = 58
                     Y = 298
-                    gowestcor_2 = True
-                    goteach = False
+                    idmap = "16"
                     CHECK = "RIGHT"
                     bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[223,450,50,50])
@@ -1056,7 +1189,8 @@ while run:
                 if keys[pygame.K_f]:
                     PLAY_PH2 = True
                     PLAY_MAIN = False
-        redrawGameWindow()
+        if not play_cutscene:
+            redrawGameWindow()
 
 #-----------------Photohunt--------------------
     elif PLAY_PH1:
@@ -1609,6 +1743,11 @@ while run:
         frontgame()
     pygame.display.update()
     
-    print(X, Y)
+    # print(X, Y)
+    # print(idmap)
+
+    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        mx, my = pygame.mouse.get_pos()
+        print(mx, my)
 
 pygame.quit()

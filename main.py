@@ -30,7 +30,7 @@ stage_position_y = 0
 X, Y, vel, WALK_AVI, CHECK = 508, 598, 15, 0, 'UP'
 
 run = True
-PLAY_FRONT, PLAY_MAIN, PLAY_PH1, PLAY_PH2, PLAY_PH3 = True, False, False, False, False
+PLAY_FRONT, PLAY_MAIN, PLAY_PH1, PLAY_PH2, PLAY_PH3 = False, True, False, False, False
 LEFT, RIGHT = False, False
 DOWN, UP = False, False
 
@@ -227,7 +227,6 @@ posx_txt = 200
 posy_txt = 80
 counttxt = 0
 countd = 0
-CHECKB = False
 
 play_cutscene = False
 STORY1 = True
@@ -276,50 +275,50 @@ def esmefail(way):
         if WALK_ESME < 0:
             WALK_ESME = 0
 
-def aviwalkl(stop):
+def aviwalk(way, stop):
     global WALK_AVI, POSX_AVI, POSY_AVI
     if WALK_AVI+1 >= 9:
         WALK_AVI = 0
-    if POSX_AVI != stop:
-        POSX_AVI -= 5
-        WALK_AVI += 1
-    win.blit(avilia_walkl[WALK_AVI], (POSX_AVI, POSY_AVI))
+    if way == 'right':
+        if POSX_AVI != stop:
+            POSX_AVI += 5
+            WALK_AVI += 1
+        win.blit(avilia_walkr[WALK_AVI], (POSX_AVI, POSY_AVI))
+    if way == 'left':
+        if POSX_AVI != stop:
+            POSX_AVI -= 5
+            WALK_AVI += 1
+        win.blit(avilia_walkl[WALK_AVI], (POSX_AVI, POSY_AVI))
 
-def shewalkr(stop):
+def shewalk(way, stop):
     global WALK_SHE, POSX_SHE, POSY_SHE
     if WALK_SHE+1 >= 9:
         WALK_SHE = 0
-    if POSX_SHE != stop:
-        POSX_SHE += 5
-        WALK_SHE += 1
-    win.blit(she_walkr[WALK_SHE], (POSX_SHE, POSY_SHE))
+    if way == 'right':
+        if POSX_SHE != stop:
+            POSX_SHE += 5
+            WALK_SHE += 1
+        win.blit(she_walkr[WALK_SHE], (POSX_SHE, POSY_SHE))
+    if way == 'left':
+        if POSX_SHE != stop:
+            POSX_SHE -= 5
+            WALK_SHE += 1
+        win.blit(she_walkl[WALK_SHE], (POSX_SHE, POSY_SHE))
 
-def shewalkl(stop):
-    global WALK_SHE, POSX_SHE, POSY_SHE
-    if WALK_SHE+1 >= 9:
-        WALK_SHE = 0
-    if POSX_SHE != stop:
-        POSX_SHE -= 5
-        WALK_SHE += 1
-    win.blit(she_walkl[WALK_SHE], (POSX_SHE, POSY_SHE))
-
-def esmewalkr(stop):
+def esmewalk(way, stop):
     global WALK_ESME, POSX_ESME, POSY_ESME
     if WALK_ESME+1 >= 9:
         WALK_ESME = 0
-    if POSX_ESME != stop:
-        POSX_ESME += 5
-        WALK_ESME += 1
-    win.blit(esme_walkr[WALK_ESME], (POSX_ESME, POSY_ESME))
-
-def esmewalkl(stop):
-    global WALK_ESME, POSX_ESME, POSY_ESME
-    if WALK_ESME+1 >= 9:
-        WALK_ESME = 0
-    if POSX_ESME != stop:
-        POSX_ESME -= 5
-        WALK_ESME += 1
-    win.blit(esme_walkl[WALK_ESME], (POSX_ESME, POSY_ESME))
+    if way == 'right':
+        if POSX_ESME != stop:
+            POSX_ESME += 5
+            WALK_ESME += 1
+        win.blit(esme_walkr[WALK_ESME], (POSX_ESME, POSY_ESME))
+    if way == 'left':
+        if POSX_ESME != stop:
+            POSX_ESME -= 5
+            WALK_ESME += 1
+        win.blit(esme_walkl[WALK_ESME], (POSX_ESME, POSY_ESME))
 
 def shebroom(way, stop):
     global WALK_SHE, POSX_SHE, POSY_SHE
@@ -335,47 +334,47 @@ def shebroom(way, stop):
 
 def redrawbubble(emo, posx, posy):
     """ blit bubble emo """
-    global ANIMB, CHECKB
-    if CHECKB:
-        if emo == 'sad':
-            win.blit(sad[ANIMB], (posx, posy))
-        if ANIMB >= 11:
-            ANIMB = 0
-            CHECKB = False
-        ANIMB += 1
+    global ANIMB
+    if ANIMB >= 11:
+        ANIMB = 0
+    if emo == 'sad':
+        win.blit(sad[ANIMB], (posx, posy))
+    ANIMB += 1
+
+def redrawblack():
+    """ blit black """
+    global BLACK
+    pygame.draw.rect(win, (0), [0, 0, 1280, BLACK])
+    pygame.draw.rect(win, (0), [0, 722-BLACK, 1280, 100])
 
 def cutscene():
     """ blit cutscene """
     global STORY1, play_dialog, play_cutscene
-    global BLACK, ANIM, ANIMB, CHECKB
+    global ANIM, ANIMB
     global countd, counttxt, posx_txt, posy_txt, nextdia
     global POSX_ESME, POSY_ESME, WALK_ESME
     global POSX_SHE, POSY_SHE, WALK_SHE
-    pygame.draw.rect(win, (0), [0, 0, 1280, BLACK])
-    pygame.draw.rect(win, (0), [0, 722-BLACK, 1280, 100])
-    if BLACK < 100:
-        BLACK += 4
     if play_dialog:
         redrawdialog(countd)
     if STORY1:
         if lstdialog[countd].split()[0] == 'End':
-            play_dialog, play_cutscene, STORY1 = False, False, False
+            play_dialog, STORY1 = False, False
+            if not play_cutscene:
+                if BLACK < 0:
+                    STORY1 = False
         if countd in [0, 1, 2, 3, 4, 5, 6]:
-            aviwalkl(1150)
+            aviwalk('left', 1150)
         if countd in [0, 1]:
-            esmewalkr(750)
-            shewalkr(600)
+            esmewalk('right', 750)
+            shewalk('right', 600)
             if POSX_ESME == 750:
                 play_dialog = True
         if countd in [2]:
-            esmewalkl(750)
-            shewalkr(600)
+            esmewalk('left', 750)
+            shewalk('right', 600)
         if countd in [3]:
             if counttxt in range(41, 53):
-                CHECKB = True
                 redrawbubble('sad', POSX_ESME+2, POSY_ESME-40)
-                if not CHECKB:
-                    ANIMB = 0
             if POSX_SHE == 680:
                 shepush()
                 if counttxt >= 80:
@@ -383,31 +382,31 @@ def cutscene():
                     win.blit(apple, (posx_apple, posy_apple))
                     esmefail('down')
                 else:
-                    esmewalkl(750)
+                    esmewalk('left', 750)
             elif counttxt >= 59:
-                esmewalkl(750)
-                shewalkr(680)
+                esmewalk('left', 750)
+                shewalk('right', 680)
             else:
-                esmewalkl(750)
-                shewalkr(600)
+                esmewalk('left', 750)
+                shewalk('right', 600)
         if countd in [4, 5, 6, 7, 8, 9, 10]:
             if counttxt in range(0, 20) and countd in [4]:
                 win.blit(apple, (POSX_ESME-25-(counttxt*2), POSY_ESME+60-counttxt))
-            shewalkr(680)
+            shewalk('right', 680)
             esmefail('down')
         if countd in range(7, 70):
-            aviwalkl(810)
+            aviwalk('left', 810)
             esmefail('up')
         if countd in [11]:
-            shewalkl(650)
+            shewalk('left', 650)
         if countd in range(12, 16):
-            shewalkr(650)
+            shewalk('right', 650)
         if countd in [16]:
             if counttxt >= 32:
                 shebroom('left', -100)
                 POSY_SHE -= 2.5
             else:
-                shewalkr(650)
+                shewalk('right', 650)
     if keys[pygame.K_SPACE] and play_dialog and counttxt >= len(lstdialog[countd].split(':')[1])-1:
         if countd in [3] and counttxt >= 90:
             nextdia = True
@@ -423,7 +422,7 @@ def cutscene():
             counttxt, posx_txt, posy_txt = 0, 200, 80
             dialogbox[9] = pygame.image.load('sprite/dialogbox10.png')
             nextdia = False
-
+    print(counttxt)
 #---------------------------------------------------------------------------
 def scrolling():
     """scrolling background_ph"""
@@ -924,12 +923,20 @@ while run:
                 win.blit(bg ,(-1108, -313))
             elif Y < 313 or Y >= 313:
                 win.blit(bg ,(rel_x-bg_width, -313))
+            if not STORY1:
+                if BLACK > 0:
+                    BLACK -= 4
+                play_cutscene = False
+                redrawblack()
             if STORY1:
                 if not play_cutscene:
                     POSX_ESME, POSY_ESME = 300, 343
                     POSX_SHE, POSY_SHE = 150, 343
                     POSX_AVI, POSY_AVI = 1150, 343
                     play_cutscene = True
+                if BLACK < 100:
+                    BLACK += 4
+                redrawblack()
                 cutscene()
     #--------------meeting---------------
         elif gomeeting == True: #MEETING ROOM

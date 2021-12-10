@@ -217,8 +217,8 @@ dia_esme = pygame.image.load('sprite/esme/esme.png')
 dia_avi = pygame.image.load('sprite/avilia/avilia.png')
 font = pygame.font.Font('sprite/alagard.ttf', 21)
 bubble = readvar('var.txt', 'bubble')
-sad = readvar('var.txt', 'sad')
-sad = bubble+sad
+sad, upset, shock = readvar('var.txt', 'sad'), readvar('var.txt', 'upset'), readvar('var.txt', 'shock')
+sad, upset, shock = bubble+sad+sad, bubble+upset+upset, bubble+shock+shock
 ANIMB = 0
 
 play_dialog = False
@@ -335,10 +335,12 @@ def shebroom(way, stop):
 def redrawbubble(emo, posx, posy):
     """ blit bubble emo """
     global ANIMB
-    if ANIMB >= 11:
-        ANIMB = 0
     if emo == 'sad':
         win.blit(sad[ANIMB], (posx, posy))
+    if emo == 'upset':
+        win.blit(upset[ANIMB], (posx, posy))
+    if emo == 'shock':
+        win.blit(shock[ANIMB], (posx, posy))
     ANIMB += 1
 
 def redrawblack():
@@ -360,29 +362,26 @@ def cutscene():
         if lstdialog[countd].split()[0] == 'End':
             play_dialog, STORY1 = False, False
             if not play_cutscene:
-                if BLACK < 0:
-                    STORY1 = False
-        if countd in [0, 1, 2, 3, 4, 5, 6]:
-            aviwalk('left', 1150)
+                if BLACK < 0: STORY1 = False
+        if countd in [0, 1, 2, 3, 4, 5, 6]: aviwalk('left', 1150)
         if countd in [0, 1]:
             esmewalk('right', 750)
             shewalk('right', 600)
-            if POSX_ESME == 750:
-                play_dialog = True
+            if POSX_ESME == 750: play_dialog = True
         if countd in [2]:
             esmewalk('left', 750)
             shewalk('right', 600)
         if countd in [3]:
-            if counttxt in range(41, 53):
+            if counttxt in range(40, 60):
                 redrawbubble('sad', POSX_ESME+2, POSY_ESME-40)
+            else: ANIMB = 0
             if POSX_SHE == 680:
                 shepush()
                 if counttxt >= 80:
                     posx_apple, posy_apple = POSX_ESME-25, POSY_ESME+60
                     win.blit(apple, (posx_apple, posy_apple))
                     esmefail('down')
-                else:
-                    esmewalk('left', 750)
+                else: esmewalk('left', 750)
             elif counttxt >= 59:
                 esmewalk('left', 750)
                 shewalk('right', 680)
@@ -398,31 +397,39 @@ def cutscene():
             aviwalk('left', 810)
             esmefail('up')
         if countd in [11]:
-            shewalk('left', 650)
+            if counttxt in range(0, 20):
+                redrawbubble('upset', POSX_SHE+2, POSY_SHE-40)
+            else: ANIMB = 0
+            shewalk('left', 630)
         if countd in range(12, 16):
-            shewalk('right', 650)
+            shewalk('right', 630)
         if countd in [16]:
+            if counttxt in range(33, 44):
+                redrawbubble('shock', POSX_ESME+2, POSY_ESME-40)
+                redrawbubble('shock', POSX_AVI+20, POSY_AVI-40)
             if counttxt >= 32:
                 shebroom('left', -100)
                 POSY_SHE -= 2.5
             else:
-                shewalk('right', 650)
+                ANIMB = 0
+                shewalk('right', 630)
     if keys[pygame.K_SPACE] and play_dialog and counttxt >= len(lstdialog[countd].split(':')[1])-1:
         if countd in [3] and counttxt >= 90:
             nextdia = True
         if countd in [7] and counttxt >= 65:
             nextdia = True
-        elif countd not in [3, 7]:
+        if countd in [16] and counttxt >= 105:
+            nextdia = True
+        elif countd not in [3, 7, 16]:
             nextdia = True
     elif nextdia:
         if not keys[pygame.K_SPACE]:
             countd += 1
-            if lstdialog[countd-1].split()[0] != lstdialog[countd].split()[0]:
-                ANIM = 0
+            if lstdialog[countd-1].split()[0] != lstdialog[countd].split()[0]: ANIM = 0
             counttxt, posx_txt, posy_txt = 0, 200, 80
             dialogbox[9] = pygame.image.load('sprite/dialogbox10.png')
             nextdia = False
-    print(counttxt)
+#     print(counttxt)
 #---------------------------------------------------------------------------
 def scrolling():
     """scrolling background_ph"""

@@ -36,12 +36,12 @@ start_scrolling_y = height/2
 stage_height = 720
 stage_position_y = 0
 
-X, Y, vel, WALKCOUNT, CHECK = 508, 178, 15, 0, 'DOWN'
+X, Y, vel, WALK_AVI, CHECK = 508, 598, 15, 0, 'UP'
 
 mainClock = pygame.time.Clock()
 
 run = True
-PLAY_FRONT, PLAY_MAIN, PLAY_PH1, PLAY_PH2, PLAY_PH3 = True, False, False, False, False
+PLAY_FRONT, PLAY_MAIN, PLAY_PH1, PLAY_PH2, PLAY_PH3 = False, True, False, False, False
 LEFT, RIGHT = False, False
 DOWN, UP = False, False
 
@@ -53,29 +53,34 @@ bg_opendoor = pygame.mixer.Sound("sound\Wood Door - Open_Close.mp3")
 #--------------------------------------------
 walls = open("walls.txt", 'r').read()
 walls = dict(json.loads(walls))
-POSX_SHE, POSX_ASME, POSX_AVI, BLACK = 300, -150, -300, 0
+POSX_SHE, POSX_ESME, POSX_AVI, BLACK = 300, -150, -300, 0
 logo = pygame.image.load('sprite/logo.png')
 press = pygame.image.load('sprite/press.png')
 
 #---------------------------------------------------------------------------
 def readvar(file, string):
     """readline variable"""
-    f, mylist = open(file, 'r'), []
+    f, mylist = open(file, 'r', encoding="utf8"), []
     while True:
         s = f.readline()
         if s == '':
             break
         d = s.split()
-        if d[0].count(string) == 1:
+        if file == 'dialog.txt':
+            mylist.append(s.strip('\n'))
+        elif d[0].count(string) == 1:
             mylist.append(pygame.image.load(d[0]))
     return mylist
 
-walkr, walkl = readvar('var.txt', 'walkr'), readvar('var.txt', 'walkl')
-walkd, walku = readvar('var.txt', 'walkd'), readvar('var.txt', 'walku')
-# sup07 = readvar('support.txt', 'sub07')
+avilia_walkr, avilia_walkl = readvar('var.txt', 'avilia/walkr'), readvar('var.txt', 'avilia/walkl')
+avilia_walkd, avilia_walku = readvar('var.txt', 'avilia/walkd'), readvar('var.txt', 'avilia/walku')
+esme_walkr, esme_walkl = readvar('var.txt', 'esme/walkr'), readvar('var.txt', 'esme/walkl')
+she_walkr, she_walkl = readvar('var.txt', 'sheree/walkr'), readvar('var.txt', 'sheree/walkl')
+she_push = readvar('var.txt', 'sheree/push')
+esme_fail = readvar('var.txt', 'esme/fail')
 sheree_b = readvar('front.txt', 'sheree')
-asme_b = readvar('front.txt', 'asme')
-avilia_b = readvar('front.txt', 'broom')
+esme_b = readvar('front.txt', 'esme/broom')
+avilia_b = readvar('front.txt', 'avilia/broom')
 FRONTANIM = False
 
 book_img = readvar('front.txt', 'map')
@@ -88,21 +93,22 @@ book_map = True
 book_inven = False
 book_menu = False
 
-for i in range(9):
-    walkr[i] = pygame.transform.scale(walkr[i], (int(width*0.07), int(height*0.13)))
-    walkl[i] = pygame.transform.scale(walkl[i], (int(width*0.07), int(height*0.13)))
-    walkd[i] = pygame.transform.scale(walkd[i], (int(width*0.07), int(height*0.13)))
-    walku[i] = pygame.transform.scale(walku[i], (int(width*0.07), int(height*0.13)))
 
-#---------------------------------------------------------------------------
-def fadescreen(): 
-    fade = pygame.Surface((1280, 720))
-    fade.fill((0,0,0))
-    for alpha in range(0, 150):
-        fade.set_alpha(alpha)
-        win.blit(fade, (0,0))
-        pygame.display.update()
-        pygame.time.delay(5)
+# for i in range(9):
+#     walkr[i] = pygame.transform.scale(walkr[i], (int(width*0.07), int(height*0.13)))
+#     walkl[i] = pygame.transform.scale(walkl[i], (int(width*0.07), int(height*0.13)))
+#     walkd[i] = pygame.transform.scale(walkd[i], (int(width*0.07), int(height*0.13)))
+#     walku[i] = pygame.transform.scale(walku[i], (int(width*0.07), int(height*0.13)))
+
+# #---------------------------------------------------------------------------
+# def fadescreen(): 
+#     fade = pygame.Surface((1280, 720))
+#     fade.fill((0,0,0))
+#     for alpha in range(0, 150):
+#         fade.set_alpha(alpha)
+#         win.blit(fade, (0,0))
+#         pygame.display.update()
+#         pygame.time.delay(5)
 #---------------------------------------------------------------------------
 def frontgame():
     """front game"""
@@ -111,11 +117,12 @@ def frontgame():
     global ANIM
     global POSX_SHE
     global POSX_AVI
-    global POSX_ASME
+    global POSX_ESME
     global PLAY_MAIN
     global PLAY_FRONT
     global FRONTANIM
 
+    pygame.time.delay(30)
     BG_SCROLLING -= 1
     win.blit(bgfront, (BG_SCROLLING, 0))
     win.blit(bgfront, (BG_SCROLLING+1280, 0))
@@ -125,59 +132,308 @@ def frontgame():
 
     win.blit(logo, ((603/2), 80))
     if ANIM + 1 >= 42:ANIM = 0
-    if ANIM <= 22 and FRONTANIM == False:win.blit(press, ((1280/2)-(203/2), 500))
+    if ANIM <= 22 and FRONTANIM == False:
+        win.blit(press, ((1280/2)-(203/2), 500))
     win.blit(sheree_b[ANIM], (POSX_SHE, 400))
     win.blit(avilia_b[ANIM], (POSX_AVI, 390))
-    win.blit(asme_b[ANIM], (POSX_ASME, 420))
+    win.blit(esme_b[ANIM], (POSX_ESME, 420))
     if BLACK < 100:BLACK += 2.25
     if POSX_SHE < 750:POSX_SHE += 10
     if POSX_AVI < 160:POSX_AVI += 10
-    if POSX_ASME < 300:POSX_ASME += 10
+    if POSX_ESME < 300:POSX_ESME += 10
     if BG_SCROLLING <= -1280:BG_SCROLLING = 0
     if FRONTANIM:
         if POSX_SHE < 1280:POSX_SHE += 20
-        if POSX_ASME < 1280:POSX_ASME += 20
+        if POSX_ESME < 1280:POSX_ESME += 20
         if POSX_AVI < 1280:POSX_AVI += 20
         if POSX_AVI == 1280:
-            fadescreen()
+            fadeout()
+            fadein()
             FRONTANIM = False
             PLAY_MAIN = True
             PLAY_FRONT = False
-    elif keys[pygame.K_SPACE] and BLACK == 101.25:FRONTANIM = True
+            BLACK, ANIM = 0, 0
+    elif keys[pygame.K_SPACE] and BLACK == 101.25:
+        FRONTANIM = True
     ANIM += 1
 #---------------------------------------------------------------------------
 def redrawGameWindow():
     """blit the main character"""
-    global WALKCOUNT
+    global WALK_AVI
 
-    if WALKCOUNT + 1 >= 9: #กัน out of range
-        WALKCOUNT = 0
+    if WALK_AVI + 1 >= 9: #กัน out of range
+        WALK_AVI = 0
 
     if RIGHT:
-        win.blit(walkr[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        WALKCOUNT += 1
+        win.blit(avilia_walkr[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        WALK_AVI += 1
 
     elif LEFT:
-        win.blit(walkl[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        WALKCOUNT += 1
+        win.blit(avilia_walkl[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        WALK_AVI += 1
 
     elif DOWN:
-        win.blit(walkd[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        WALKCOUNT += 1
+        win.blit(avilia_walkd[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        WALK_AVI += 1
 
     elif UP:
-        win.blit(walku[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        WALKCOUNT += 1
+        win.blit(avilia_walku[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        WALK_AVI += 1
         
     elif RIGHT == False and LEFT == False and DOWN == False and UP == False:
         if CHECK == 'RIGHT':
-            win.blit(walkr[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            win.blit(avilia_walkr[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'LEFT':
-            win.blit(walkl[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            win.blit(avilia_walkl[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'DOWN':
-            win.blit(walkd[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            win.blit(avilia_walkd[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'UP':
-            win.blit(walku[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            win.blit(avilia_walku[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+#---------------------------------------------------------------------------
+def fadeout():
+    """ fade out screen """
+    fade = pygame.Surface((1280, 720))
+    fade.fill((0,0,0))
+    for alpha in range(0, 150):
+        fade.set_alpha(alpha)
+        win.blit(fade, (0,0))
+        pygame.display.update()
+        pygame.time.delay(5)
+#---------------------------------------------------------------------------
+def fadein():
+    """ fade in screen """
+    fade = pygame.Surface((1280, 720))
+    fade.fill((0,0,0))
+    for alpha in range(150, 0, -1):
+        fade.set_alpha(alpha)
+        win.blit(bg, (-508, -272))
+        redrawGameWindow()
+        win.blit(fade, (0,0))
+        pygame.display.update()
+#---------------------------------------------------------------------------
+dialogbox = readvar('var.txt', 'dialogbox')
+nabox = readvar('var.txt', 'nabox')
+lstdialog = readvar('dialog.txt', '')
+apple = pygame.image.load('sprite/apple.png')
+dia_she = pygame.image.load('sprite/sheree/sheree.png')
+dia_esme = pygame.image.load('sprite/esme/esme.png')
+dia_avi = pygame.image.load('sprite/avilia/avilia.png')
+font = pygame.font.Font('sprite/alagard.ttf', 21)
+bubble = readvar('var.txt', 'bubble')
+sad, upset, shock = readvar('var.txt', 'sad'), readvar('var.txt', 'upset'), readvar('var.txt', 'shock')
+sad, upset, shock = bubble+sad+sad, bubble+upset+upset, bubble+shock+shock
+ANIMB = 0
+
+play_dialog = False
+nextdia = False
+posx_txt = 200
+posy_txt = 80
+counttxt = 0
+countd = 0
+
+
+play_cutscene = False
+STORY1 = True
+
+WALK_ESME, WALK_SHE = 0, 0
+
+def redrawdialog(countd):
+    """ blit dialog """
+    global ANIM, counttxt
+    global posx_txt, posy_txt
+    if ANIM >= 10:
+        ANIM = 9
+    win.blit(dialogbox[ANIM], ((1280/2)-(dialogbox[ANIM].get_rect().size[0]/2), 450))
+    if ANIM == 9:
+        if lstdialog[countd].split()[0] == 'Sheree':
+            win.blit(dia_she, (141.5, 450))
+        if lstdialog[countd].split()[0] == 'Esme':
+            win.blit(dia_esme, (141.5, 450))
+        if lstdialog[countd].split()[0] == 'Avilia':
+            win.blit(dia_avi, (141.5, 450))
+        if counttxt <= len(lstdialog[countd].split(':')[1])-1:
+            message = font.render(lstdialog[countd].split(':')[1][counttxt], True, (0, 0, 0))
+            dialogbox[9].blit(message, (posx_txt, posy_txt))
+            posx_txt += message.get_rect().size[0]+0.5
+        if posx_txt >= 950:
+            posx_txt, posy_txt = 202, 120
+        counttxt += 1
+    ANIM += 1
+
+def shepush():
+    global WALK_SHE, POSX_SHE, POSY_SHE
+    if WALK_SHE+1 >= 12:
+        WALK_SHE = 11
+    win.blit(she_push[WALK_SHE], (POSX_SHE, POSY_SHE))
+    WALK_SHE += 1
+
+def esmefail(way):
+    global WALK_ESME, POSX_ESME, POSY_ESME
+    win.blit(esme_fail[WALK_ESME], (POSX_ESME, POSY_ESME))
+    if way == 'down':
+        WALK_ESME += 1
+        if WALK_ESME > 9:
+            WALK_ESME = 9
+    if way == 'up':
+        WALK_ESME -= 1
+        if WALK_ESME < 0:
+            WALK_ESME = 0
+
+def aviwalk(way, stop):
+    global WALK_AVI, POSX_AVI, POSY_AVI
+    if WALK_AVI+1 >= 9:
+        WALK_AVI = 0
+    if way == 'right':
+        if POSX_AVI != stop:
+            POSX_AVI += 5
+            WALK_AVI += 1
+        win.blit(avilia_walkr[WALK_AVI], (POSX_AVI, POSY_AVI))
+    if way == 'left':
+        if POSX_AVI != stop:
+            POSX_AVI -= 5
+            WALK_AVI += 1
+        win.blit(avilia_walkl[WALK_AVI], (POSX_AVI, POSY_AVI))
+
+def shewalk(way, stop):
+    global WALK_SHE, POSX_SHE, POSY_SHE
+    if WALK_SHE+1 >= 9:
+        WALK_SHE = 0
+    if way == 'right':
+        if POSX_SHE != stop:
+            POSX_SHE += 5
+            WALK_SHE += 1
+        win.blit(she_walkr[WALK_SHE], (POSX_SHE, POSY_SHE))
+    if way == 'left':
+        if POSX_SHE != stop:
+            POSX_SHE -= 5
+            WALK_SHE += 1
+        win.blit(she_walkl[WALK_SHE], (POSX_SHE, POSY_SHE))
+
+def esmewalk(way, stop):
+    global WALK_ESME, POSX_ESME, POSY_ESME
+    if WALK_ESME+1 >= 9:
+        WALK_ESME = 0
+    if way == 'right':
+        if POSX_ESME != stop:
+            POSX_ESME += 5
+            WALK_ESME += 1
+        win.blit(esme_walkr[WALK_ESME], (POSX_ESME, POSY_ESME))
+    if way == 'left':
+        if POSX_ESME != stop:
+            POSX_ESME -= 5
+            WALK_ESME += 1
+        win.blit(esme_walkl[WALK_ESME], (POSX_ESME, POSY_ESME))
+
+def shebroom(way, stop):
+    global WALK_SHE, POSX_SHE, POSY_SHE
+    if WALK_SHE+1 >= 17:
+        WALK_SHE = 0
+    she_copy = sheree_b[WALK_SHE].copy()
+    she_copy = pygame.transform.scale(she_copy, (130, 130))
+    if way == 'left':
+        win.blit(pygame.transform.flip(she_copy, True, False), (POSX_SHE-50, POSY_SHE))
+        if POSX_SHE != stop:
+            POSX_SHE -= 10
+    WALK_SHE += 1
+
+def redrawbubble(emo, posx, posy):
+    """ blit bubble emo """
+    global ANIMB
+    if emo == 'sad':
+        win.blit(sad[ANIMB], (posx, posy))
+    if emo == 'upset':
+        win.blit(upset[ANIMB], (posx, posy))
+    if emo == 'shock':
+        win.blit(shock[ANIMB], (posx, posy))
+    ANIMB += 1
+
+def redrawblack():
+    """ blit black """
+    global BLACK
+    pygame.draw.rect(win, (0), [0, 0, 1280, BLACK])
+    pygame.draw.rect(win, (0), [0, 722-BLACK, 1280, 100])
+
+def cutscene():
+    """ blit cutscene """
+    global STORY1, play_dialog, play_cutscene
+    global ANIM, ANIMB
+    global countd, counttxt, posx_txt, posy_txt, nextdia
+    global POSX_ESME, POSY_ESME, WALK_ESME
+    global POSX_SHE, POSY_SHE, WALK_SHE
+    if play_dialog:
+        redrawdialog(countd)
+    if STORY1:
+        if lstdialog[countd].split()[0] == 'End':
+            play_dialog, STORY1 = False, False
+            if not play_cutscene:
+                if BLACK < 0: STORY1 = False
+        if countd in [0, 1, 2, 3, 4, 5, 6]: aviwalk('left', 1150)
+        if countd in [0, 1]:
+            esmewalk('right', 750)
+            shewalk('right', 600)
+            if POSX_ESME == 750: play_dialog = True
+        if countd in [2]:
+            esmewalk('left', 750)
+            shewalk('right', 600)
+        if countd in [3]:
+            if counttxt in range(40, 60):
+                redrawbubble('sad', POSX_ESME+2, POSY_ESME-40)
+            else: ANIMB = 0
+            if POSX_SHE == 680:
+                shepush()
+                if counttxt >= 80:
+                    posx_apple, posy_apple = POSX_ESME-25, POSY_ESME+60
+                    win.blit(apple, (posx_apple, posy_apple))
+                    esmefail('down')
+                else: esmewalk('left', 750)
+            elif counttxt >= 59:
+                esmewalk('left', 750)
+                shewalk('right', 680)
+            else:
+                esmewalk('left', 750)
+                shewalk('right', 600)
+        if countd in [4, 5, 6, 7, 8, 9, 10]:
+            if counttxt in range(0, 20) and countd in [4]:
+                win.blit(apple, (POSX_ESME-25-(counttxt*2), POSY_ESME+60-counttxt))
+            shewalk('right', 680)
+            esmefail('down')
+        if countd in range(7, 70):
+            aviwalk('left', 810)
+            esmefail('up')
+        if countd in [11]:
+            if counttxt in range(0, 20):
+                redrawbubble('upset', POSX_SHE+2, POSY_SHE-40)
+            else: ANIMB = 0
+            shewalk('left', 630)
+        if countd in range(12, 16):
+            shewalk('right', 630)
+        if countd in [16]:
+            if counttxt in range(33, 44):
+                redrawbubble('shock', POSX_ESME+2, POSY_ESME-40)
+                redrawbubble('shock', POSX_AVI+20, POSY_AVI-40)
+            if counttxt >= 32:
+                shebroom('left', -100)
+                POSY_SHE -= 2.5
+            else:
+                ANIMB = 0
+                shewalk('right', 630)
+    if keys[pygame.K_SPACE] and play_dialog and counttxt >= len(lstdialog[countd].split(':')[1])-1:
+        if countd in [3] and counttxt >= 90:
+            nextdia = True
+        if countd in [7] and counttxt >= 65:
+            nextdia = True
+        if countd in [16] and counttxt >= 105:
+            nextdia = True
+        elif countd not in [3, 7, 16]:
+            nextdia = True
+    elif nextdia:
+        if not keys[pygame.K_SPACE]:
+            countd += 1
+            if lstdialog[countd-1].split()[0] != lstdialog[countd].split()[0]: ANIM = 0
+            counttxt, posx_txt, posy_txt = 0, 200, 80
+            dialogbox[9] = pygame.image.load('sprite/dialogbox10.png')
+            nextdia = False
+#    print(counttxt)
 #---------------------------------------------------------------------------
 def scrolling():
     """scrolling background_ph"""
@@ -228,7 +484,7 @@ def wall(wall=[(0,0,0,0)]):
     global PLAYER_RADIUS
     global PLAYER_POSITION_X
     global PLAYER_POSITION_Y
-    if keys[pygame.K_a] and X > vel and open_book == False and safe < 1:
+    if keys[pygame.K_a] and X > vel and open_book == False and safe < 1 and not play_cutscene:
         for i,j,k,l in wall:
             if i < X < j and k < Y < l-15:
                 adam = 0
@@ -242,7 +498,7 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = False
         CHECK = 'LEFT'
-    elif keys[pygame.K_d] and open_book == False and safe < 1:
+    elif keys[pygame.K_d] and open_book == False and safe < 1 and not play_cutscene:
         for i,j,k,l in wall:
             if i-15 < X < j-15 and k < Y < l-15:
                 adam = 0
@@ -256,7 +512,7 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = False
         CHECK = 'RIGHT'
-    elif keys[pygame.K_s] and open_book == False and safe < 1:
+    elif keys[pygame.K_s] and open_book == False and safe < 1 and not play_cutscene:
         for i,j,k,l in wall:
             if i < X < j-15 and k-15 < Y < l-15:
                 adam = 0
@@ -270,7 +526,7 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = True
         CHECK = 'DOWN'
-    elif keys[pygame.K_w] and open_book == False and safe < 1:
+    elif keys[pygame.K_w] and open_book == False and safe < 1 and not play_cutscene:
         for i,j,k,l in wall:
             if i < X < j-15 and k < Y < l:
                 adam = 0
@@ -314,9 +570,6 @@ def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
         return idmapnew, change
     return idmapold, change
         
-
-#------------------------sup------------------------------------------------
-# sup07 = readvar('support.txt', 'sub07')
 
 class sup:
     def __init__(self, name, posx, posy):
@@ -367,7 +620,7 @@ class sup:
                 self.count = 0
             self.posy -= 7.5
             bg.blit(self.name[self.count], (self.posx, self.posy))
-        if self.posy <= turnl:
+        if self.posy <= turnu:
             self.count = 9
             self.sub_u = False
             self.sub_d = True
@@ -376,14 +629,14 @@ class sup:
                 self.count = 9
             self.posx += 7.5
             bg.blit(self.name[self.count], (self.posx, self.posy))
-        if self.posy >= turnr:
+        if self.posy >= turnd:
             self.sub_u = True
             self.sub_d = False
         self.count += 1
 
 #---------------------------sup----------------------------------------------
 
-sup07 = sup("sub07", 958, 237)
+# sup07 = sup("sub07", 958, 237)
 
 #---------------------------------------------------------------------------
 # sup07 = readvar('support.txt', 'sub07')
@@ -478,7 +731,7 @@ def col(row, xrow, yrow):
 #---------------------------------------------------------------------------
 """mainloop"""
 while run:
-    pygame.time.delay(30)
+    # pygame.time.delay(30)
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -489,12 +742,13 @@ while run:
             open_book = True
 
     if PLAY_MAIN:
+        pygame.time.delay(45)
     #--------------hallway-01--------------
         if idmap == "01": #HALLWAY
             # redrawsup()
             bg_hall.play(-1,fade_ms=5000)
             wall(walls["hallway"])
-            sup07.walkrl(58, 965)
+            # sup07.walkrl(58, 965)
             idmap, change = changemap(0, 1280, 598, 720, 508, 43, idmap, "00", change)
             idmap, change = changemap(0, 13, 328, 388, 1123, 343, idmap, "11", change)
             idmap, change = changemap(0, 1280, 0, 13, X, 583, idmap, "09", change)
@@ -703,6 +957,21 @@ while run:
                 elif Y < 313 or Y >= 313:
                     win.blit(bg ,(rel_x-bg_width, -313))
             change = False
+            if not STORY1:
+                if BLACK > 0:
+                    BLACK -= 4
+                play_cutscene = False
+                redrawblack()
+            if STORY1:
+                if not play_cutscene:
+                    POSX_ESME, POSY_ESME = 300, 343
+                    POSX_SHE, POSY_SHE = 150, 343
+                    POSX_AVI, POSY_AVI = 1150, 343
+                    play_cutscene = True
+                if BLACK < 100:
+                    BLACK += 4
+                redrawblack()
+                cutscene()
     #--------------meeting-12--------------
         elif idmap == "12": #MEETING ROOM
             wall(walls["meeting"])
@@ -735,7 +1004,7 @@ while run:
     #----------------hall-13---------------
         elif idmap == "13":
             wall(walls["hall"])
-            idmap, change = changemap(0,13,0,720,1123,Y,idmap, "14", change)
+            idmap, change = changemap(0,13,0,720,1123,223,idmap, "14", change)
             idmap, change = changemap(1207, 1280, 0, 720, 28, 133, idmap, "00", change)
             if not change:
                 if X >= 160 and Y >= 287:
@@ -920,7 +1189,8 @@ while run:
                 if keys[pygame.K_f]:
                     PLAY_PH2 = True
                     PLAY_MAIN = False
-        redrawGameWindow()
+        if not play_cutscene:
+            redrawGameWindow()
 
 #-----------------Photohunt--------------------
     elif PLAY_PH1:

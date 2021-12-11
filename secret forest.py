@@ -125,20 +125,19 @@ def redrawMagic(wall=[(0,0,0,0)]):
             MAGIC_POSITION_Y = PLAYER_POSITION_Y+100
             # win.blit(magic[MAGICCOUNT], (MAGIC_POSITION_X, MAGIC_POSITION_Y))
         for i,j,k,l in wall:
-            if CHECK == "UP":
-                l -= 113
-            if CHECK == "RIGHT":
-                k += 0
-                i -= 60
-            if CHECK == "LEFT":
-                j -= 50
-            if i < MAGIC_POSITION_X < j and k-20 < MAGIC_POSITION_Y < l-50:
+            # if CHECK == "UP":
+            #     l -= 113
+            # if CHECK == "RIGHT":
+            #     i += 60
+            # if CHECK == "LEFT":
+            #     j -= 50
+            if i < MAGIC_POSITION_X+100 < j and k < MAGIC_POSITION_Y+100 < l:
                 showmagic = False
                 break
             else:
                 showmagic = True
-        print(MAGIC_POSITION_X, MAGIC_POSITION_Y)
-        print(i,j,k,l)
+        print("magic", MAGIC_POSITION_X+100, MAGIC_POSITION_Y+100)
+        print("i=",i,"j=",j,"k=",k,"l=",l)
         if showmagic:
             win.blit(magic[MAGICCOUNT], (MAGIC_POSITION_X, MAGIC_POSITION_Y))
     MAGICCOUNT += 1
@@ -286,10 +285,10 @@ class monf:
         return self.birth
 
 yellmon = monf(242, 242, yellow, deadyellow, 0)
-yellmon2 = monf(0, 300, yellow, deadyellow, 1)
-yellmon3 = monf(1280, 600, yellow, deadyellow, 2)
-yellmon4 = monf(1280, 242, yellow, deadyellow, 3)
-yellmon5 = monf(0, 242, yellow, deadyellow, 4)
+yellmon2 = monf(103, 298, yellow, deadyellow, 1)
+yellmon3 = monf(1018, 328, yellow, deadyellow, 2)
+yellmon4 = monf(583, 208, yellow, deadyellow, 3)
+yellmon5 = monf(583, 613, yellow, deadyellow, 4)
 
 #---------------------------------------------------------------------------
 def scrolling():
@@ -353,7 +352,7 @@ def secretfor(wall=[(0,0,0,0)]):
                 break
             else:
                 adam = vel
-        print(i,j,k,l)
+        # print(i,j,k,l)
         X -= adam
         RIGHT = False
         LEFT = True
@@ -367,7 +366,7 @@ def secretfor(wall=[(0,0,0,0)]):
                 break
             else:
                 adam = vel
-        print(i,j,k,l)
+        # print(i,j,k,l)
         X += adam
         RIGHT = True
         LEFT = False
@@ -381,7 +380,7 @@ def secretfor(wall=[(0,0,0,0)]):
                 break
             else:
                 adam = vel
-        print(i,j,k,l)
+        # print(i,j,k,l)
         Y += adam
         RIGHT = False
         LEFT = False
@@ -395,7 +394,7 @@ def secretfor(wall=[(0,0,0,0)]):
                 break
             else:
                 adam = vel
-        print(i,j,k,l)
+        # print(i,j,k,l)
         Y -= adam
         RIGHT = False
         LEFT = False
@@ -432,9 +431,9 @@ while run:
             win.blit(bg ,(-238, rel_y-bg_height))
 #---------------------------------------------------------------------------
 
-#     print(X, Y)
-#     print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
-#     print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
+    print(X, Y)
+    # print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
+    # print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
 
     if fight and gameover == False:
         if CIRCLE:

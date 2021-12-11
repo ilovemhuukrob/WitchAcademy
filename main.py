@@ -47,9 +47,14 @@ DOWN, UP = False, False
 
 
 #----------------Sound--------------------------------
-bg_hall = pygame.mixer.Sound("sound/178.mp3"); bg_hall.set_volume(0.0)
-bg_opendoor = pygame.mixer.Sound("sound\Wood Door - Open_Close.mp3")
-
+music = True
+cd_foot = 5
+bg_hall = pygame.mixer.Sound("sound/schooltheme.mp3"); bg_hall.set_volume(1.0)
+bg_opendoor = pygame.mixer.Sound("sound/Wood Door - Open_Close.mp3")
+bg_canteen = pygame.mixer.Sound("sound/canteen.mp3"); bg_canteen.set_volume(1.0)
+bg_corridor = pygame.mixer.Sound("sound/class.mp3"); bg_corridor.set_volume(1.0)
+bg_garden = pygame.mixer.Sound("sound/garden.mp3"); bg_garden.set_volume(1.0)
+foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
 #--------------------------------------------
 walls = open("walls.txt", 'r').read()
 walls = dict(json.loads(walls))
@@ -228,6 +233,8 @@ def wall(wall=[(0,0,0,0)]):
     global PLAYER_RADIUS
     global PLAYER_POSITION_X
     global PLAYER_POSITION_Y
+    global cd_foot
+    global foot
     if keys[pygame.K_a] and X > vel and open_book == False and safe < 1:
         for i,j,k,l in wall:
             if i < X < j and k < Y < l-15:
@@ -242,6 +249,10 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = False
         CHECK = 'LEFT'
+        if cd_foot > 10:
+            foot.play(maxtime=500)
+            music = False
+            cd_foot = -2
     elif keys[pygame.K_d] and open_book == False and safe < 1:
         for i,j,k,l in wall:
             if i-15 < X < j-15 and k < Y < l-15:
@@ -256,6 +267,10 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = False
         CHECK = 'RIGHT'
+        if cd_foot > 10:
+            foot.play(maxtime=500)
+            music = False
+            cd_foot = -2
     elif keys[pygame.K_s] and open_book == False and safe < 1:
         for i,j,k,l in wall:
             if i < X < j-15 and k-15 < Y < l-15:
@@ -270,6 +285,10 @@ def wall(wall=[(0,0,0,0)]):
         UP = False
         DOWN = True
         CHECK = 'DOWN'
+        if cd_foot > 10:
+            foot.play(maxtime=500)
+            music = False
+            cd_foot = -2
     elif keys[pygame.K_w] and open_book == False and safe < 1:
         for i,j,k,l in wall:
             if i < X < j-15 and k < Y < l:
@@ -284,12 +303,17 @@ def wall(wall=[(0,0,0,0)]):
         UP = True
         DOWN = False
         CHECK = 'UP'
+        if cd_foot > 10:
+            foot.play(maxtime=500)
+            music = False
+            cd_foot = -2
     else:
         RIGHT = False
         LEFT = False
         UP = False
         DOWN = False
-
+        foot.stop()
+    cd_foot += 1
     scrolling()
     rel_x = -X % bg_width
     rel_y = -Y % bg_height
@@ -302,6 +326,8 @@ def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
     global Y
     global bg
     global bg2
+    global music
+    global foot
     if change:
         return idmapold, change
     change = False
@@ -311,9 +337,112 @@ def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
         X = nx
         Y = ny
         change = True
+        # music = True
+        #=========================hall================================
+        if idmapold == '01' and idmapnew == '02': # hall ==> canteen
+            bg_hall.set_volume(0.4)
+            bg_canteen.play(-1)
+        #========================canteen==============================
+        # elif idmapold == '02' and idmapnew == '01': # canteen ==> hall
+        #     bg_canteen.stop()
+        #     bg_hall.set_volume(1.0)
+        # elif idmapold == '02' and idmapnew == '03': # canteen ==> eastcorridor1
+        #     bg_canteen.stop()
+        #     bg_hall.set_volume(0.4)
+        #     bg_corridor.play(-1)
+        #     foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
+        # elif idmapold == '02' and idmapnew == '08': # canteen ==> eastgarden
+        #     bg_hall.stop()
+        #     bg_canteen.stop()
+        #     bg_garden.play(-1).set_volume(0.7)
+        #     foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        #========================eastgarden===========================
+        # elif idmapold == '08' and idmapnew == '02': # eastgarden ==> canteen
+        #     bg_garden.stop()
+        #     bg_hall.play(-1).set_volume(0.4)
+        #     bg_canteen.play(-1)
+        # elif idmapold == '08' and idmapnew == '03': # eastgarden ==> eastcorridor1
+        #     bg_garden.stop()
+        #     bg_hall.play(-1).set_volume(0.4)
+        #     bg_corridor.play(-1)
+        #     foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
+        #========================eastcorridor1===========================
+        elif idmapold == '03' and idmapnew == '08': # eastcorridor1 ==> eastgarden
+            bg_corridor.stop()
+            bg_hall.stop()
+            bg_garden.play(-1).set_volume(0.7)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        elif idmapold == '03' and idmapnew == '02': # eastcorridor1 ==> canteen
+            bg_corridor.stop()
+            bg_hall.play(-1).set_volume(0.4)
+            bg_canteen.play(-1)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        #========================eastcorridor2===========================
+        elif idmapold == '04' and idmapnew == '19': # eastcorridor2 ==> eastforest
+            bg_corridor.stop()
+            bg_hall.stop()
+            bg_garden.play(-1).set_volume(0.7)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        elif idmapold == '04' and idmapnew == '10': # eastcorridor2 ==> battleroom
+            bg_corridor.stop()
+            bg_hall.play(-1).set_volume(1.0)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        #========================battleroom===========================
+        elif idmapold == '10' and idmapnew == '04': # battleroom ==> eastcorridor2
+            bg_hall.set_volume(0.4)
+            bg_corridor.play(-1)
+            foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
+        #========================eastforest===========================
+        elif idmapold == '19' and idmapnew == '04': # eastforest ==> eastcorridor2
+            bg_garden.stop()
+            bg_hall.play(-1).set_volume(0.4)
+            bg_corridor.play(-1)
+            foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
+        #========================westgargen===========================
+        elif idmapold == '14' and idmapnew == '13': # westgarden ==> sechall
+            bg_garden.stop()
+            bg_hall.play(-1).set_volume(1.0)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        elif idmapold == '14' and idmapnew == '15': # westgarden ==> westcorridor1
+            bg_garden.stop()
+            bg_hall.play(-1).set_volume(0.4)
+            bg_corridor.play(-1)
+            foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
+        #========================sechall===========================
+        elif idmapold == '13' and idmapnew == '14': # westgarden ==> sechall
+            bg_hall.stop()
+            bg_garden.play(-1).set_volume(0.7)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        #========================path==============================
+        elif idmapold == '11' and idmapnew == '15': # path ==> westcorridor1
+            bg_hall.set_volume(0.4)
+            bg_corridor.play(-1)
+            foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
+        #========================westcorridor1===========================
+        elif idmapold == '15' and idmapnew == '14': # westcorridor1 ==> westgarden
+            bg_corridor.stop()
+            bg_hall.stop()
+            bg_garden.play(-1).set_volume(0.7)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        elif idmapold == '15' and idmapnew == '11': # westcorridor1 ==> path
+            bg_corridor.stop()
+            bg_hall.play(-1).set_volume(1.0)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        #========================westcorridor2===========================
+        elif idmapold == '16' and idmapnew == '17': # westcorridor2 ==> westforest
+            bg_corridor.stop()
+            bg_hall.stop()
+            bg_garden.play(-1); bg_garden.set_volume(0.7)
+            foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
+        #========================westforest===========================
+        elif idmapold == '17' and idmapnew == '16': # westforest ==> westcorridor2
+            bg_garden.stop()
+            bg_hall.play(-1).set_volume(0.4)
+            bg_corridor.play(-1)
+            foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
         return idmapnew, change
     return idmapold, change
-        
+
 
 #------------------------sup------------------------------------------------
 # sup07 = readvar('support.txt', 'sub07')
@@ -523,11 +652,13 @@ while run:
     #--------------hallway-01--------------
         if idmap == "01": #HALLWAY
             # redrawsup()
+            # if music:
+            #     bg_canteen.stop()
+            #     bg_hall.play(-1)
+            #     music = False
             wall(walls["hallway"])
             sub_hallways_01.walkrl(1141, 1697)
             idmap, change = changemap(0, 1280, 598, 720, 508, 43, idmap, "00", change)
-            if change:
-                bg_hall.stop()
             idmap, change = changemap(0, 13, 328, 388, 1123, 343, idmap, "11", change)
             idmap, change = changemap(0, 1280, 0, 13, X, 583, idmap, "09", change)
             idmap, change = changemap(1198, 1280, 0, 720, 33, 163, idmap, "02", change)
@@ -546,7 +677,6 @@ while run:
             wall(walls["canteen"])
             sub_canteen_01.walkrl(-84, 1237)
             sub_canteen_02.walkud(643, 1445)
-            bg_hall.stop()
             if X >= 1203:
                 X = 28
                 Y = 463
@@ -554,6 +684,11 @@ while run:
                 bg = pygame.image.load("sprite/eastcorridor_1.jpg")
                 bg2 = pygame.image.load("sprite/eastcorridor_1.jpg")
                 idmap = "03"
+
+                bg_canteen.stop()
+                bg_hall.set_volume(0.4)
+                bg_corridor.play(-1)
+                foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
             elif Y >= 778 and Y <= 838 and X >= 828:
                 X = 28
                 Y = 223
@@ -561,6 +696,11 @@ while run:
                 bg = pygame.image.load("sprite/eastgarden.jpg")
                 bg2 = pygame.image.load("sprite/eastgarden.jpg")
                 idmap = "08"
+
+                bg_hall.stop()
+                bg_canteen.stop()
+                bg_garden.play(-1).set_volume(0.7)
+                foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
             elif X <= 13 and Y >= 148 and Y <= 163:
                 X = 1168
                 Y = 238
@@ -568,6 +708,9 @@ while run:
                 bg = pygame.image.load("sprite/hallway.jpg")
                 bg2 = pygame.image.load("sprite/hallway.jpg")
                 idmap = "01"
+
+                bg_canteen.stop()
+                bg_hall.play(-1)
             elif X >= 798 and Y >= 283 and Y <= 598:
                 stage_height = 720
                 win.blit(bg ,(-453, -283))
@@ -621,6 +764,9 @@ while run:
     #--------------eastcor2-04-------------
         elif idmap == "04":
             wall(walls["eastcor2"])
+            # if music:
+            #     bg_garden.stop()
+            #     music = False
             idmap, change = changemap(0,1280,632,1280,X,28,idmap,"03", change)
             idmap, change = changemap(0,13,0,720,1123,343,idmap,"10", change)
             idmap, change = changemap(0,1280,0,13,1123,613,idmap,"19", change)
@@ -688,8 +834,14 @@ while run:
     #--------------eastgarden-08-----------
         elif idmap == "08":
             wall(walls["eastgar"])
+            # if music:
+            #     bg_corridor.stop()
+            #     bg_canteen.stop()
+            #     bg_garden.play(-1).set_volume(0.7)
+            #     music = False
             sub_eastgar_01.walkrl(-50, 2556)
             sub_eastgar_02.walkrl(-50, 2556)
+            
             if X <= 13:
                 bg = pygame.image.load("sprite/canteen.jpg")
                 bg2 = pygame.image.load("sprite/canteen.jpg")
@@ -697,12 +849,21 @@ while run:
                 X = 813
                 Y = 823
                 idmap = "02"
+
+                bg_garden.stop()
+                bg_hall.play(-1).set_volume(0.4)
+                bg_canteen.play(-1)
             elif Y <= 13:
                 bg = pygame.image.load("sprite/eastcorridor_1.jpg")
                 bg2 = pygame.image.load("sprite/eastcorridor_1.jpg")
                 X = 433
                 Y = 613
                 idmap = "03"
+
+                bg_garden.stop()
+                bg_hall.play(-1).set_volume(0.4)
+                bg_corridor.play(-1)
+                foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
             else:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
                 bg.blit(bg2 ,(0, 0))
@@ -724,6 +885,10 @@ while run:
     #---------------battle-10--------------
         elif idmap == "10": #BATTLE ROOM
             wall(walls["battle"])
+            # if music:
+            #     bg_corridor.stop()
+            #     bg_hall.play(-1)
+            #     music = False
             idmap, change = changemap(0,13,0,720,1168,493,idmap,"09", change)
             idmap,change = changemap(1222,1280,0,720,28,373,idmap,"04", change)
             if not change:
@@ -770,11 +935,12 @@ while run:
     #--------------entryhall-00------------
         elif idmap == "00":
             wall(walls["entryhall"])
+            if music:
+                bg_hall.play(-1)
+                music = False
             sub_entryhalls_01.walkud(-500, 790)
             sub_entryhalls_02.walkud(0, 1500)
             idmap, change = changemap(0, 1280, 0, 13, 463, 583, idmap, "01", change)
-            if change:
-                bg_hall.play(-1, fade_ms=5000)
             idmap, change = changemap(0, 13, 0, 720, 1153, 178, idmap, "13", change)
             if not change:
                 if X >= 763 and Y >= 272:
@@ -808,6 +974,12 @@ while run:
     #-------------westgarden-14------------
         elif idmap == "14":
             wall(walls["westgar"])
+            # if music:
+            #     bg_hall.stop()
+            #     bg_corridor.stop()
+            #     bg_garden.stop()
+            #     bg_garden.play(-1).set_volume(0.7)
+            #     music = False
             sub_wastgar_01.walkrl(-104, 2569)
             sub_wastgar_02.walkrl(-104, 2569)
             sub_wastgar_03.walkrl(721, 2569)
@@ -856,6 +1028,9 @@ while run:
     #--------------westcor2-16-------------
         elif idmap == "16":
             wall(walls["westcor2"])
+            # if music:
+            #     bg_garden.stop()
+            #     music = False
             idmap ,change = changemap(0,1280,613,720,X,103,idmap,"15", change)
             idmap , change = changemap(0,1280,0,13,43,598,idmap,"17", change)
             if not change:
@@ -878,6 +1053,10 @@ while run:
     #-------------westforest-17------------
         elif idmap == "17":
             wall(walls["westfor"])
+            # if music:
+            #     bg_corridor.stop()
+            #     bg_garden.play(-1).set_volume(0.7)
+            #     music = False
             sub_wastforest_01.walkrl(441, 1447)
             idmap ,change = changemap(0,1280,628,720,598,28,idmap,"16", change)
             idmap, change = changemap(1213,1280,0,720,28,418,idmap,"18", change)
@@ -911,6 +1090,10 @@ while run:
     #-------------eastforest-19------------
         elif idmap == "19":
             wall(walls["eastfor"])
+            # if music:
+            #     bg_corridor.stop()
+            #     bg_garden.play(-1)
+            #     music = False
             sub_eastforest_01.walkrl(853, 1446)
             idmap ,change = changemap(0,13,0,720,1198,418,idmap,"18", change)
             idmap,change = changemap(0,1280,628,720,598,28,idmap,"04", change)
@@ -935,6 +1118,9 @@ while run:
     #------------apothecaryroom-20---------
         elif idmap == "20":
             wall(walls['apothecaryroom'])
+            # if music:
+            #     bg_corridor.stop()
+            #     music = False
             win.blit(bg ,(-238, -58))
             if 1168 <= X <= 1280 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -946,7 +1132,6 @@ while run:
                     Y = 343
                     idmap = "15"
                     CHECK = "RIGHT"
-                    bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[403,580,50,50])
             if 328 <= X <= 448 and 493 <= Y <= 523:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -956,7 +1141,9 @@ while run:
     #------------teacherroom-21------------
         elif idmap == "21":
             wall(walls['teacherroom'])
-
+            # if music:
+            #     bg_corridor.stop()
+            #     music = False
             win.blit(bg ,(-238, -58))
             if 1168 <= X <= 1630 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -968,7 +1155,6 @@ while run:
                     Y = 133
                     idmap = "15"
                     CHECK = "RIGHT"
-                    bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[800,433,50,50])
             if 763 <= X <= 808 and 343 <= Y <= 418:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -978,7 +1164,9 @@ while run:
     #------------researchroom-22-----------
         elif idmap == "22":
             wall(walls['researchroom'])
-
+            # if music:
+            #     bg_corridor.stop()
+            #     music = False
             win.blit(bg ,(-238, -58))
             if 1168 <= X <= 1630 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -990,7 +1178,6 @@ while run:
                     Y = 298
                     idmap = "16"
                     CHECK = "RIGHT"
-                    bg_hall.play(-1,fade_ms=5000)
             win.fill((0,0,255), rect=[223,450,50,50])
             if 118 <= X <= 283 and 373 <= Y <= 388:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -1481,7 +1668,7 @@ while run:
         win.blit(book_img[book_anim], (0, 0))
 
     if safe >= 1:
-        if keys[pygame.K_f] and safe > 5:
+        if keys[pygame.K_f] and safe > 15:
             safe = -2
         win.blit(bar, (533, 455))
 

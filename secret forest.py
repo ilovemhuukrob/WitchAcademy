@@ -431,13 +431,13 @@ while run:
             win.blit(bg ,(-238, rel_y-bg_height))
 #---------------------------------------------------------------------------
 
-    print(X, Y)
+    # print(X, Y)
     # print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
     # print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
 
     if fight and gameover == False:
         if CIRCLE:
-            redrawMagic(walls["secretfor"])
+            redrawMagic(walls["wallmagic"])
         # if YELLOW_POS_Y-PLAYER_POSITION_Y <= 30:
         #     redrawMonster()
         #     redrawGameWindow()

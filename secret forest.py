@@ -125,12 +125,8 @@ def redrawMagic(wall=[(0,0,0,0)]):
             MAGIC_POSITION_Y = PLAYER_POSITION_Y+100
             # win.blit(magic[MAGICCOUNT], (MAGIC_POSITION_X, MAGIC_POSITION_Y))
         for i,j,k,l in wall:
-            # if CHECK == "UP":
-            #     l -= 113
-            # if CHECK == "RIGHT":
-            #     i += 60
-            # if CHECK == "LEFT":
-            #     j -= 50
+            if CHECK == "DOWN":
+                k += 90
             if i < MAGIC_POSITION_X+100 < j and k < MAGIC_POSITION_Y+100 < l:
                 showmagic = False
                 break

@@ -1,7 +1,7 @@
 {
     "00" : "sprite/entryhallstart.jpg",
    "01" : "sprite/hallwaynpc.jpg",
-   "02" : "sprite/canteen.jpg",
+   "02" : "sprite/canteennpc.jpg",
    "03" : "sprite/eastcorridor_1npc.jpg",
    "04" : "sprite/eastcorridor_2npc.jpg",
    "05" : "sprite/classroom.jpg",

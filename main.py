@@ -247,7 +247,7 @@ posx_txt = 205
 posy_txt = 80
 counttxt = 0
 countd = 0
-checkpoint = 1
+checkpoint = 4
 
 play_cutscene = False
 STORY1, STORY2, STORY3 = True, False, False
@@ -766,75 +766,61 @@ def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
             bg_corridor.stop()
             bg_hall.stop()
             bg_garden.play(-1).set_volume(0.7)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         elif idmapold == '03' and idmapnew == '02': # eastcorridor1 ==> canteen
             bg_corridor.stop()
             bg_hall.play(-1).set_volume(0.4)
             bg_canteen.play(-1)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         #========================eastcorridor2===========================
         elif idmapold == '04' and idmapnew == '19': # eastcorridor2 ==> eastforest
             bg_corridor.stop()
             bg_hall.stop()
             bg_garden.play(-1).set_volume(0.7)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         elif idmapold == '04' and idmapnew == '10': # eastcorridor2 ==> battleroom
             bg_corridor.stop()
             bg_hall.play(-1).set_volume(1.0)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         #========================battleroom===========================
         elif idmapold == '10' and idmapnew == '04': # battleroom ==> eastcorridor2
             bg_hall.set_volume(0.4)
             bg_corridor.play(-1)
-            foot = pygame.mixer.Sound("sound\wood.mp3"); foot.set_volume(1.0)
         #========================eastforest===========================
         elif idmapold == '19' and idmapnew == '04': # eastforest ==> eastcorridor2
             bg_garden.stop()
             bg_hall.play(-1).set_volume(0.4)
             bg_corridor.play(-1)
-            foot = pygame.mixer.Sound("sound\wood.mp3"); foot.set_volume(1.0)
         #========================westgargen===========================
         elif idmapold == '14' and idmapnew == '13': # westgarden ==> sechall
             bg_garden.stop()
             bg_hall.play(-1).set_volume(1.0)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         elif idmapold == '14' and idmapnew == '15': # westgarden ==> westcorridor1
             bg_garden.stop()
             bg_hall.play(-1).set_volume(0.4)
             bg_corridor.play(-1)
-            foot = pygame.mixer.Sound("sound\wood.mp3"); foot.set_volume(1.0)
         #========================sechall===========================
         elif idmapold == '13' and idmapnew == '14': # westgarden ==> sechall
             bg_hall.stop()
             bg_garden.play(-1).set_volume(0.7)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         #========================path==============================
         elif idmapold == '11' and idmapnew == '15': # path ==> westcorridor1
             bg_hall.set_volume(0.4)
             bg_corridor.play(-1)
-            foot = pygame.mixer.Sound("sound\wood.mp3"); foot.set_volume(1.0)
         #========================westcorridor1===========================
         elif idmapold == '15' and idmapnew == '14': # westcorridor1 ==> westgarden
             bg_corridor.stop()
             bg_hall.stop()
             bg_garden.play(-1).set_volume(0.7)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         elif idmapold == '15' and idmapnew == '11': # westcorridor1 ==> path
             bg_corridor.stop()
             bg_hall.play(-1).set_volume(1.0)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         #========================westcorridor2===========================
         elif idmapold == '16' and idmapnew == '17': # westcorridor2 ==> westforest
             bg_corridor.stop()
             bg_hall.stop()
             bg_garden.play(-1); bg_garden.set_volume(0.7)
-            foot = pygame.mixer.Sound("sound\concrete.mp3"); foot.set_volume(1.0)
         #========================westforest===========================
         elif idmapold == '17' and idmapnew == '16': # westforest ==> westcorridor2
             bg_garden.stop()
             bg_hall.play(-1).set_volume(0.4)
             bg_corridor.play(-1)
-            foot = pygame.mixer.Sound("sound\wood.mp3"); foot.set_volume(1.0)
         return idmapnew, change
     return idmapold, change
         
@@ -1123,42 +1109,19 @@ bird5 = mon(1280,350,bird); bird12 = mon(1280,310,bird); bird19 = mon(1280,150,b
 bird6 = mon(1280,100,bird); bird13 = mon(1280,310,bird); bird20 = mon(1280,500,bird)
 bird7 = mon(1280,400,bird); bird14 = mon(1280,20,bird); bird21 = mon(1280,70,bird)
 #--------------------------------------------------------- bounce ------------------------------------------------------------
-bird_1b = mon(1280,0,bird)
-bird_2b = mon(1280,720,bird)
-bird_3b = mon(1280,0,bird)
-bird_4b = mon(1280,720,bird)
-bird_5b = mon(1280,0,bird)
+bird_1b = mon(1280,0,bird); bird_2b = mon(1280,720,bird); bird_3b = mon(1280,0,bird)
+bird_4b = mon(1280,720,bird); bird_5b = mon(1280,0,bird)
 #--------------------------------------------------------- disco ------------------------------------------------------------
-bird01 = mon(1280,10,bird)
-bird02 = mon(1280,610,bird)
-bird03 = mon(1280,310,bird)
-bird04 = mon(1280,90,bird)
-bird05 = mon(1280,10,bird)
-bird06 = mon(1280,10,bird)
-bird07 = mon(1280,80,bird)
-bird08 = mon(1280,610,bird)
-bird09 = mon(1280,90,bird)
+bird01 = mon(1280,10,bird); bird02 = mon(1280,610,bird); bird03 = mon(1280,310,bird)
+bird04 = mon(1280,90,bird); bird05 = mon(1280,10,bird); bird06 = mon(1280,10,bird)
+bird07 = mon(1280,80,bird); bird08 = mon(1280,610,bird); bird09 = mon(1280,90,bird)
 #----------------------------------------------------------- stage 2 ----------------------------------------------------------------
-clock1 = mon(1280,310,clock)
-clock2 = mon(1280,220,clock)
-clock3 = mon(1280,70,clock)
-clock4 = mon(1280,160,clock)
-clock5 = mon(1280,370,clock)
-clock6 = mon(1280,600,clock)
-clock7 = mon(1280,130,clock)
-clock8 = mon(1280,130,clock)
-clock9 = mon(1280,340,clock)
-clock10 = mon(1280,250,clock)
-clock11 = mon(1280,438,clock)
-clock12 = mon(1280,50,clock)
-clock13 = mon(1280,150,clock)
-
-clock14 = mon(1280,310,clock)
-clock15 = mon(1280,600,clock)
-clock16 = mon(1280,510,clock)
-clock17 = mon(1280,84,clock)
-clock18 = mon(1280,182,clock)
-
+clock1 = mon(1280,310,clock); clock2 = mon(1280,220,clock); clock3 = mon(1280,70,clock)
+clock4 = mon(1280,160,clock); clock5 = mon(1280,370,clock); clock6 = mon(1280,600,clock)
+clock7 = mon(1280,130,clock); clock8 = mon(1280,130,clock); clock9 = mon(1280,340,clock)
+clock10 = mon(1280,250,clock); clock11 = mon(1280,438,clock); clock12 = mon(1280,50,clock); clock13 = mon(1280,150,clock)
+clock14 = mon(1280,310,clock); clock15 = mon(1280,600,clock); clock16 = mon(1280,510,clock)
+clock17 = mon(1280,84,clock); clock18 = mon(1280,182,clock)
 clock19 = mon(70,720,clock)
 clock20 = mon(1190,0,clock)
 clock21 = mon(70,720,clock)
@@ -1262,6 +1225,13 @@ MAGIC_POSITION_X, MAGIC_POSITION_Y = 0, 0
 hp_player, fight, MAGICCOUNT = 50, False, 0
 CIRCLE_SF = False
 gameover_sf = False
+cd_fs = 0
+cd_fs2 = 0
+cd_fs3 = 0
+cd_fs4 = 0
+cd_fs5 = 0
+bgm_sf = pygame.mixer.Sound("sound/forest2.mp3"); bgm_sf.set_volume(1.0)
+roar = pygame.mixer.Sound("sound/roar.mp3"); roar.set_volume(1.0)
 
 rspell, lspell = readvar('var.txt', 'rspell'), readvar('var.txt', 'lspell')
 dspell, uspell = readvar('var.txt', 'dspell'), readvar('var.txt', 'uspell')
@@ -1337,7 +1307,7 @@ def redrawDead():
     if WALK_AVI >= 9:
         win.blit(deadplayer[8], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
     else:
-        win.blit(deadplayer[WALKCOUNT], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        win.blit(deadplayer[WALK_AVI], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
     WALK_AVI += 1
 
 def redrawGameWindow_sefor():
@@ -1402,9 +1372,11 @@ def secretfor(wall=[(0,0,0,0)]):
     global PLAYER_RADIUS
     global PLAYER_POSITION_X
     global PLAYER_POSITION_Y
+    global cd_foot
 
     if keys[pygame.K_SPACE] and gameover_sf == False and fight == True and CIRCLE_SF == False:
         CIRCLE_SF = True
+        foot.stop()
         pygame.mixer.Sound.play(c_sound)
         WALK_AVI = 0
     elif keys[pygame.K_a] and X > vel and gameover_sf == False and CIRCLE_SF == False:
@@ -1421,6 +1393,10 @@ def secretfor(wall=[(0,0,0,0)]):
         UP = False
         DOWN = False
         CHECK = 'LEFT'
+        if cd_foot > 10:
+            foot.play(maxtime=500)
+            cd_foot = -2
+        cd_foot += 1
     elif keys[pygame.K_d] and gameover_sf == False and CIRCLE_SF == False:
         for i,j,k,l in wall:
             if i-15 < X < j-15 and k < Y < l-15:
@@ -1435,6 +1411,10 @@ def secretfor(wall=[(0,0,0,0)]):
         UP = False
         DOWN = False
         CHECK = 'RIGHT'
+        if cd_foot > 10:
+            foot.play(maxtime=500)
+            cd_foot = -2
+        cd_foot += 1
     elif keys[pygame.K_s] and gameover_sf == False and CIRCLE_SF == False:
         for i,j,k,l in wall:
             if i < X < j-15 and k-15 < Y < l-15:
@@ -1449,6 +1429,10 @@ def secretfor(wall=[(0,0,0,0)]):
         UP = False
         DOWN = True
         CHECK = 'DOWN'
+        if cd_foot > 10:
+            foot.play(maxtime=500)
+            cd_foot = -2
+        cd_foot += 1
     elif keys[pygame.K_w] and gameover_sf == False and CIRCLE_SF == False:
         for i,j,k,l in wall:
             if i < X < j-15 and k < Y < l:
@@ -1463,11 +1447,16 @@ def secretfor(wall=[(0,0,0,0)]):
         UP = True
         DOWN = False
         CHECK = 'UP'
+        if cd_foot > 10:
+            foot.play(maxtime=500)
+            cd_foot = -2
+        cd_foot += 1
     else:
         RIGHT = False
         LEFT = False
         UP = False
         DOWN = False
+        foot.stop()
     scrolling()
 
 class monf:
@@ -1480,6 +1469,7 @@ class monf:
         self.monter = monter
         self.deadani = deadani
         self.birth = False
+        self.roar = True
 
     def redrawmonster(self):
         if self.dead == False:
@@ -1514,6 +1504,10 @@ class monf:
         global WALK_AVI
 
         self.birth = True
+
+        if self.roar:
+            roar.play()
+            self.roar = False
 
         if -15 <= self.posy-PLAYER_POSITION_Y <= 60 and self.dead == False and \
         abs(self.posx-PLAYER_POSITION_X) <= 19 and fight == True: #ฝั่งลบ มอนสูงกว่าคน
@@ -1609,11 +1603,9 @@ while run:
                 bg = pygame.image.load("sprite/eastcorridor_1npc.jpg")
                 bg2 = pygame.image.load("sprite/eastcorridor_1npc.jpg")
                 idmap = "03"
-
                 bg_canteen.stop()
                 bg_hall.set_volume(0.4)
                 bg_corridor.play(-1)
-                foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
             elif Y >= 778 and Y <= 838 and X >= 828:
                 X = 28
                 Y = 223
@@ -1621,11 +1613,9 @@ while run:
                 bg = pygame.image.load("sprite/eastgardennpc.jpg")
                 bg2 = pygame.image.load("sprite/eastgardennpc.jpg")
                 idmap = "08"
-
                 bg_hall.stop()
                 bg_canteen.stop()
                 bg_garden.play(-1).set_volume(0.7)
-                foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
             elif X <= 13 and Y >= 148 and Y <= 163:
                 X = 1168
                 Y = 238
@@ -1633,7 +1623,6 @@ while run:
                 bg = pygame.image.load("sprite/hallwaynpc.jpg")
                 bg2 = pygame.image.load("sprite/hallwaynpc.jpg")
                 idmap = "01"
-
                 bg_canteen.stop()
                 bg_hall.play(-1)
             elif X >= 798 and Y >= 283 and Y <= 598:
@@ -1771,17 +1760,15 @@ while run:
                 X = 813
                 Y = 823
                 idmap = "02"
-
                 bg_garden.stop()
                 bg_hall.play(-1).set_volume(0.4)
                 bg_canteen.play(-1)
             elif Y <= 13:
-                bg = pygame.image.load("sprite/eastcorridor_1.jpg")
-                bg2 = pygame.image.load("sprite/eastcorridor_1.jpg")
+                bg = pygame.image.load("sprite/eastcorridor_1npc.jpg")
+                bg2 = pygame.image.load("sprite/eastcorridor_1npc.jpg")
                 X = 433
                 Y = 613
                 idmap = "03"
-
                 bg_garden.stop()
                 bg_hall.play(-1).set_volume(0.4)
                 bg_corridor.play(-1)
@@ -2064,7 +2051,6 @@ while run:
                 else:
                     win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
                 if checkpoint >= 4:
-                    bg.fill((0,0,255), rect=[912,550,50,50])
                     if 418 <= X <= 463 and 238 <= Y <= 268:
                         redrawicon("door", X+27, Y-50)
                         if keys[pygame.K_f]:
@@ -2075,6 +2061,8 @@ while run:
                             CHECK = "UP"
                             bg = bg_sf
                             bg2 = bg_sf
+                            bg_garden.stop()
+                            bgm_sf.play()
 
             change = False
             if not STORY2:
@@ -2626,6 +2614,7 @@ while run:
         bg_scrolling_b -= 1
 
         if timeb >= 180:
+            bgm_3.stop()
             PLAY_BROOM, idmap, countd = False, "18", 28
             bg = pygame.image.load(mapping[idmap])
             POSX_ESME, POSY_ESME = 500, 400
@@ -2645,6 +2634,7 @@ while run:
             if stage_b == 2:
                 stage_b = 3
                 bgm_3.play()
+                bgm_2.stop()
 
         elif timeb >= 60:
             if fadebg2 == False:
@@ -2655,6 +2645,7 @@ while run:
             if stage_b == 1:
                 stage_b = 2
                 bgm_2.play()
+                bgm_1.stop()
             
         elif timeb >= 0:
             win.blit(bg_b1, (bg_scrolling_b, 0))
@@ -2828,7 +2819,7 @@ while run:
         secretfor(walls["secretfor"])
         rel_x = -X % bg_width
         rel_y = -Y % bg_height
-
+        cd_fs += 1
         if Y <= 253:
             fight = True
         if Y >= 662:
@@ -2839,6 +2830,8 @@ while run:
         # print(X, Y)
         # print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
         # print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
+        # if all([yellmon.deadmai(), yellmon2.deadmai(), yellmon3.deadmai(), yellmon4.deadmai(), yellmon5.deadmai()]):
+        #     fight = False
 
         if fight and gameover_sf == False:
             if CIRCLE_SF:
@@ -2851,10 +2844,18 @@ while run:
             #     redrawMonster()
             yellmon.spawn()
             if yellmon.deadmai():
-                yellmon2.spawn()
-                yellmon3.spawn()
-                yellmon4.spawn()
-                yellmon5.spawn()
+                if cd_fs >= 10:
+                    yellmon2.spawn()
+                    cd_fs2 += 1
+                if cd_fs2 >= 100:
+                    yellmon3.spawn()
+                    cd_fs3 += 1
+                if cd_fs3 >= 100:
+                    yellmon4.spawn()
+                    cd_fs4 += 1
+                if cd_fs4 >= 100:
+                    yellmon5.spawn()
+                    cd_fs5 += 1
             if yellmon.posyandplay() and yellmon.birthmai(): yellmon.redrawmonster()
             if yellmon2.posyandplay() and yellmon2.birthmai(): yellmon2.redrawmonster()
             if yellmon3.posyandplay() and yellmon3.birthmai(): yellmon3.redrawmonster()
@@ -2873,11 +2874,25 @@ while run:
             redrawDead()
             if WALK_AVI == 15:
                 fadescreen()
+                X, Y = 598, 613
                 gameover_sf = False
+                fight = False
+                yellmon = monf(242, 242, yellow, deadyellow, 0)
+                yellmon2 = monf(103, 298, yellow, deadyellow, 1)
+                yellmon3 = monf(1018, 328, yellow, deadyellow, 2)
+                yellmon4 = monf(583, 208, yellow, deadyellow, 3)
+                yellmon5 = monf(583, 613, yellow, deadyellow, 4)
+                cd_fs = 0
+                cd_fs2 = 0
+                cd_fs3 = 0
+                cd_fs4 = 0
+                cd_fs5 = 0
+                CHECK = "UP"
         else:
             redrawGameWindow_sefor()
 
         win.blit(fog ,(-238, rel_y-bg_height))
+
 
 #-----------------MAIN GAME-----------------------------------------------
 

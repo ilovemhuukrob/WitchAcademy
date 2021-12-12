@@ -26,11 +26,11 @@ stage_height = 720
 stage_position_y = 0
 
 X, Y, vel, WALKCOUNT, CHECK = 598, 613, 15, 0, 'UP'
-COUNTYEL, YELLOW_POS_X, YELLOW_POS_Y = 0, 242, 242
+# COUNTYEL, YELLOW_POS_X, YELLOW_POS_Y = 0, 242, 242
 MAGIC_POSITION_X, MAGIC_POSITION_Y = 0, 0
 hp_player, fight, MAGICCOUNT = 50, False, 0
-hp_yellow = 65
-yellowdead = False
+# hp_yellow = 65
+# yellowdead = False
 
 run = True
 LEFT, RIGHT = False, False
@@ -125,17 +125,15 @@ def redrawMagic(wall=[(0,0,0,0)]):
             MAGIC_POSITION_Y = PLAYER_POSITION_Y+100
             # win.blit(magic[MAGICCOUNT], (MAGIC_POSITION_X, MAGIC_POSITION_Y))
         for i,j,k,l in wall:
-            if CHECK == "UP":
-                l -= 113
-            if CHECK == "RIGHT":
-                j -= 60
-            if i < MAGIC_POSITION_X < j and k < MAGIC_POSITION_Y < l:
+            if CHECK == "DOWN":
+                k += 90
+            if i < MAGIC_POSITION_X+100 < j and k < MAGIC_POSITION_Y+100 < l:
                 showmagic = False
                 break
             else:
                 showmagic = True
-        print(MAGIC_POSITION_X, MAGIC_POSITION_Y)
-        print(i,j,k,l)
+        print("magic", MAGIC_POSITION_X+100, MAGIC_POSITION_Y+100)
+        print("i=",i,"j=",j,"k=",k,"l=",l)
         if showmagic:
             win.blit(magic[MAGICCOUNT], (MAGIC_POSITION_X, MAGIC_POSITION_Y))
     MAGICCOUNT += 1
@@ -198,45 +196,96 @@ def redrawGameWindow():
             win.blit(walkd[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'UP':
             win.blit(walku[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-
-    if -15 <= YELLOW_POS_Y-PLAYER_POSITION_Y <= 60 and yellowdead == False and\
-       abs(YELLOW_POS_X-PLAYER_POSITION_X) <= 19 and fight == True and CIRCLE == False:
-        if CHECK == 'RIGHT':
-            win.blit(damagewalkr, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        elif CHECK == 'LEFT':
-            win.blit(damagewalkl, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        elif CHECK == 'DOWN':
-            win.blit(damagewalkd, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-        elif CHECK == 'UP':
-            win.blit(damagewalku, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
 #---------------------------------------------------------------------------
-def redrawMonster():
-    """blit monster"""
-    global COUNTYEL
-    global YELLOW_POS_X
-    global YELLOW_POS_Y
-    global PLAYER_POSITION_X
-    global PLAYER_POSITION_Y
+class monf:
+    def __init__(self, posx, posy, monter, deadani, num):
+        self.posx = posx
+        self.posy = posy
+        self.count = num
+        self.dead = False
+        self.hp = 65
+        self.monter = monter
+        self.deadani = deadani
+        self.birth = False
+
+    def redrawmonster(self):
+        if self.dead == False:
+            if self.count + 1 >= 9: #กัน out of range
+                self.count = 0
+            if self.posx >= PLAYER_POSITION_X+15:
+                self.posx -= 5
+            if self.posx <= PLAYER_POSITION_X+15:
+                self.posx += 5
+            if self.posy >= PLAYER_POSITION_Y+25:
+                self.posy -= 5
+            if self.posy <= PLAYER_POSITION_Y+50:
+                self.posy += 5
+            win.blit(self.monter[self.count], (self.posx, self.posy))
+        elif self.dead:
+            if self.count <= 8:
+                pygame.time.delay(10)
+                win.blit(self.deadani[self.count], (self.posx, self.posy))
+            else:
+                self.posx, self.posy = 242, 242
+        self.count += 1
+
+    def spawn(self):
+        global PLAYER_POSITION_X
+        global PLAYER_POSITION_Y
+        global MAGIC_POSITION_X
+        global MAGIC_POSITION_Y
+        global fight
+        global hp_player
+        global gameover
+        global CIRCLE
+        global WALKCOUNT
+
+        self.birth = True
+
+        if -15 <= self.posy-PLAYER_POSITION_Y <= 60 and self.dead == False and \
+        abs(self.posx-PLAYER_POSITION_X) <= 19 and fight == True: #ฝั่งลบ มอนสูงกว่าคน
+            if hp_player <= 0:
+                hp_player, WALKCOUNT = 50, 0
+                self.posx, self.posy = 242, 242
+                fight = False
+                gameover = True
+                CIRCLE = False
+            else:
+                hp_player -= 0.5
+
+        if abs((MAGIC_POSITION_X+50)-self.posx) <= 50 and \
+        abs(MAGIC_POSITION_Y-self.posy) <= 100 and self.dead == False:
+            self.hp -= 2
+            if self.hp < 0:
+                self.count = 0
+                self.dead = True
+
+        if -15 <= self.posy-PLAYER_POSITION_Y <= 60 and self.dead == False and\
+       abs(self.posx-PLAYER_POSITION_X) <= 19 and fight == True and CIRCLE == False:
+            if CHECK == 'RIGHT':
+                win.blit(damagewalkr, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            elif CHECK == 'LEFT':
+                win.blit(damagewalkl, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            elif CHECK == 'DOWN':
+                win.blit(damagewalkd, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+            elif CHECK == 'UP':
+                win.blit(damagewalku, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+
+    def posyandplay(self):
+        return self.posy-PLAYER_POSITION_Y <= 30
     
-    if yellowdead == False:
-        if COUNTYEL + 1 >= 9: #กัน out of range
-            COUNTYEL = 0
-        if YELLOW_POS_X >= PLAYER_POSITION_X+15:
-            YELLOW_POS_X -= 5
-        if YELLOW_POS_X <= PLAYER_POSITION_X+15:
-            YELLOW_POS_X += 5
-        if YELLOW_POS_Y >= PLAYER_POSITION_Y+25:
-            YELLOW_POS_Y -= 5
-        if YELLOW_POS_Y <= PLAYER_POSITION_Y+50:
-            YELLOW_POS_Y += 5
-        win.blit(yellow[COUNTYEL], (YELLOW_POS_X, YELLOW_POS_Y))
-    elif yellowdead:
-        if COUNTYEL <= 8:
-            pygame.time.delay(10)
-            win.blit(deadyellow[COUNTYEL], (YELLOW_POS_X, YELLOW_POS_Y))
-        else:
-            YELLOW_POS_X, YELLOW_POS_Y = 242, 242
-    COUNTYEL += 1
+    def deadmai(self):
+        return self.dead
+
+    def birthmai(self):
+        return self.birth
+
+yellmon = monf(242, 242, yellow, deadyellow, 0)
+yellmon2 = monf(103, 298, yellow, deadyellow, 1)
+yellmon3 = monf(1018, 328, yellow, deadyellow, 2)
+yellmon4 = monf(583, 208, yellow, deadyellow, 3)
+yellmon5 = monf(583, 613, yellow, deadyellow, 4)
+
 #---------------------------------------------------------------------------
 def scrolling():
     """scrolling background"""
@@ -299,7 +348,7 @@ def secretfor(wall=[(0,0,0,0)]):
                 break
             else:
                 adam = vel
-        print(i,j,k,l)
+        # print(i,j,k,l)
         X -= adam
         RIGHT = False
         LEFT = True
@@ -313,7 +362,7 @@ def secretfor(wall=[(0,0,0,0)]):
                 break
             else:
                 adam = vel
-        print(i,j,k,l)
+        # print(i,j,k,l)
         X += adam
         RIGHT = True
         LEFT = False
@@ -327,7 +376,7 @@ def secretfor(wall=[(0,0,0,0)]):
                 break
             else:
                 adam = vel
-        print(i,j,k,l)
+        # print(i,j,k,l)
         Y += adam
         RIGHT = False
         LEFT = False
@@ -341,7 +390,7 @@ def secretfor(wall=[(0,0,0,0)]):
                 break
             else:
                 adam = vel
-        print(i,j,k,l)
+        # print(i,j,k,l)
         Y -= adam
         RIGHT = False
         LEFT = False
@@ -378,19 +427,37 @@ while run:
             win.blit(bg ,(-238, rel_y-bg_height))
 #---------------------------------------------------------------------------
 
-#     print(X, Y)
-#     print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
-#     print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
+    # print(X, Y)
+    # print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
+    # print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
 
     if fight and gameover == False:
         if CIRCLE:
-            redrawMagic(walls["secretfor"])
-        if YELLOW_POS_Y-PLAYER_POSITION_Y <= 30:
-            redrawMonster()
-            redrawGameWindow()
-        else:
-            redrawGameWindow()
-            redrawMonster()
+            redrawMagic(walls["wallmagic"])
+        # if YELLOW_POS_Y-PLAYER_POSITION_Y <= 30:
+        #     redrawMonster()
+        #     redrawGameWindow()
+        # else:
+        #     redrawGameWindow()
+        #     redrawMonster()
+        yellmon.spawn()
+        if yellmon.deadmai():
+            yellmon2.spawn()
+            yellmon3.spawn()
+            yellmon4.spawn()
+            yellmon5.spawn()
+        if yellmon.posyandplay() and yellmon.birthmai(): yellmon.redrawmonster()
+        if yellmon2.posyandplay() and yellmon2.birthmai(): yellmon2.redrawmonster()
+        if yellmon3.posyandplay() and yellmon3.birthmai(): yellmon3.redrawmonster()
+        if yellmon4.posyandplay() and yellmon4.birthmai(): yellmon4.redrawmonster()
+        if yellmon5.posyandplay() and yellmon5.birthmai(): yellmon5.redrawmonster()
+        redrawGameWindow()
+        if not yellmon.posyandplay() and yellmon.birthmai(): yellmon.redrawmonster()
+        if not yellmon2.posyandplay() and yellmon2.birthmai(): yellmon2.redrawmonster()
+        if not yellmon3.posyandplay() and yellmon3.birthmai(): yellmon3.redrawmonster()
+        if not yellmon4.posyandplay() and yellmon4.birthmai(): yellmon4.redrawmonster()
+        if not yellmon5.posyandplay() and yellmon5.birthmai(): yellmon5.redrawmonster()
+
         pygame.draw.rect(win, (250-(hp_player*5), hp_player*5, 0), [390, 40, hp_player*10, 15])
         
     elif gameover:
@@ -405,24 +472,6 @@ while run:
 
     if gosecretfor:
         win.blit(fog ,(-238, rel_y-bg_height))
-
-    if -15 <= YELLOW_POS_Y-PLAYER_POSITION_Y <= 60 and yellowdead == False and \
-       abs(YELLOW_POS_X-PLAYER_POSITION_X) <= 19 and fight == True: #ฝั่งลบ มอนสูงกว่าคน
-        if hp_player <= 0:
-            hp_player, WALKCOUNT = 50, 0
-            YELLOW_POS_X, YELLOW_POS_Y = 242, 242
-            fight = False
-            gameover = True
-            CIRCLE = False
-        else:
-            hp_player -= 0.5
-
-    if abs((MAGIC_POSITION_X+50)-YELLOW_POS_X) <= 50 and \
-       abs(MAGIC_POSITION_Y-YELLOW_POS_Y) <= 100 and yellowdead == False:
-        hp_yellow -= 2
-        if hp_yellow < 0:
-            COUNTYEL = 0
-            yellowdead = True
 
     pygame.display.update()
 

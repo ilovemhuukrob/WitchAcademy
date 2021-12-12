@@ -203,25 +203,25 @@ def redrawGameWindow():
             win.blit(avilia_walku[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
 #---------------------------------------------------------------------------
 scrollpaper = readvar('var.txt', 'scrollpaper')
-fontrule = pygame.font.Font('sprite/Tangerine-Bold.ttf', 72)
-fontpaper = pygame.font.Font('sprite/Tangerine-Bold.ttf', 48)
-ruleph = ['You have 60 seconds to find different items', 'and you can miss 3 time.']
-posx = 0
+ruleph = pygame.image.load('sprite/ruleph.png')
+
 def redrawrule(game):
     """ blit rule """
-    global ANIM, counttxt, countd, posx
+    global ANIM
     if ANIM+1 >= 15:
         ANIM = 14
     win.blit(scrollpaper[ANIM], (640-(scrollpaper[ANIM].get_rect().size[0]/2), 0))
-    message = fontrule.render('Rule', True, (0, 0, 0))
-    if game == 'Photohunt' and 'photohunt' not in inventory and ANIM == 14:
-        if counttxt <= 3:
-            txt = fontrule.render('Rule'[counttxt], True, (0, 0, 0))
-            posx += txt.get_rect().size[0]
-            scrollpaper[14].blit(txt, (posx, 150))
-            counttxt += 1
-    else:
-        posx = 640-(message.get_rect().size[0]/2)
+    if ANIM == 14:
+        fadein(ruleph, 0, 0)
+        win.blit(ruleph, (0, 0))
+#         message1 = fontrule.render('Rule', True, (0, 0, 0))
+#         win.blit(message1, (640-(message1.get_rect().size[0]/2), 170))
+#         if game == 'Photohunt':
+#             fadein(bg, 0, 0)
+#             message2 = fontpaper.render(ruleph[0], True, (0, 0, 0))
+#             win.blit(message2, (640-(message2.get_rect().size[0]/2), 300))
+#             message3 = fontpaper.render(ruleph[1], True, (0, 0, 0))
+#             win.blit(message3, (640-(message3.get_rect().size[0]/2), 350))
     ANIM += 1
 #---------------------------------------------------------------------------
 def fadeout():
@@ -248,7 +248,6 @@ def fadein(backg, posx, posy):
         pygame.display.update()
 #---------------------------------------------------------------------------
 dialogbox = readvar('var.txt', 'dialogbox')
-nabox = readvar('var.txt', 'nabox')
 lstdialog = readvar('dialog.txt', '')
 apple = pygame.image.load('sprite/apple.png')
 dia_she = pygame.image.load('sprite/sheree/sheree.png')
@@ -1556,10 +1555,6 @@ while run:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
                     RULE = True
-            if RULE:
-                redrawrule('Photohunt')
-#                     PLAY_PH1 = True
-#                     PLAY_MAIN = False
     #------------teacherroom-21-------------
         elif idmap == "21":
             wall(walls['teacherroom'])
@@ -1603,6 +1598,8 @@ while run:
                     PLAY_MAIN = False
         if not play_cutscene:
             redrawGameWindow()
+        if idmap == "20" and RULE:
+            redrawrule('Photohunt')
 #-----------------Photohunt--------------------
     elif PLAY_PH1:
         pygame.time.delay(30)

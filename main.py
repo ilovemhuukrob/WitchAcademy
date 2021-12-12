@@ -15,7 +15,7 @@ pygame.display.set_caption("W <it> CH AcademY")
 
 mapping = open("map.txt", "r").read()
 mapping = dict(json.loads(mapping))
-idmap = "00"
+idmap = "20"
 bg = pygame.image.load(mapping[idmap])
 bg2 = pygame.image.load(mapping[idmap])
 bgblood = pygame.image.load('sprite/forestblood.jpg')
@@ -37,7 +37,17 @@ start_scrolling_y = height/2
 stage_height = 720
 stage_position_y = 0
 
-X, Y, vel, WALK_AVI, CHECK = 508, 598, 15, 0, 'UP'
+X, Y, vel, WALK_AVI, CHECK = 508-70, 598-45-30, 15, 0, 'UP'
+
+inventory = []
+applescrap = pygame.image.load('sprite/map/applescrap.png')
+applescrap_s = pygame.image.load('sprite/map/applescrap_s.png')
+magicpowder = pygame.image.load('sprite/map/magicpowder.png')
+magicpowder_s = pygame.image.load('sprite/map/magicpowder_s.png')
+puzzlepaper = pygame.image.load('sprite/map/puzzlepaper.png')
+puzzlepaper_s = pygame.image.load('sprite/map/puzzlepaper_s.png')
+potion = pygame.image.load('sprite/map/potion.png')
+potion_s = pygame.image.load('sprite/map/potion_s.png')
 
 mainClock = pygame.time.Clock()
 
@@ -46,6 +56,7 @@ PLAY_FRONT, PLAY_MAIN, PLAY_PH1, PLAY_PH2, PLAY_PH3 = False, True, False, False,
 PLAY_BROOM = False
 LEFT, RIGHT = False, False
 DOWN, UP = False, False
+RULE = False
 
 #----------------Sound--------------------------------
 bg_hall = pygame.mixer.Sound("sound/178.mp3"); bg_hall.set_volume(0.0)
@@ -96,9 +107,9 @@ book_map = True
 book_inven = False
 book_menu = False
 
-POSX_AVI, POSY_AVI = 0, 0
-POSX_ESME, POSY_ESME = 0, 0
-POSX_SHE, POSY_SHE = 0, 0
+POSX_AVI, POSY_AVI = -300, 0
+POSX_ESME, POSY_ESME = -150, 0
+POSX_SHE, POSY_SHE = 300, 0
 POSX_VEN, POSY_VEN = 0, 0
 
 # #---------------------------------------------------------------------------
@@ -190,6 +201,28 @@ def redrawGameWindow():
             win.blit(avilia_walkd[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'UP':
             win.blit(avilia_walku[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+#---------------------------------------------------------------------------
+scrollpaper = readvar('var.txt', 'scrollpaper')
+fontrule = pygame.font.Font('sprite/Tangerine-Bold.ttf', 72)
+fontpaper = pygame.font.Font('sprite/Tangerine-Bold.ttf', 48)
+ruleph = ['You have 60 seconds to find different items', 'and you can miss 3 time.']
+posx = 0
+def redrawrule(game):
+    """ blit rule """
+    global ANIM, counttxt, countd, posx
+    if ANIM+1 >= 15:
+        ANIM = 14
+    win.blit(scrollpaper[ANIM], (640-(scrollpaper[ANIM].get_rect().size[0]/2), 0))
+    message = fontrule.render('Rule', True, (0, 0, 0))
+    if game == 'Photohunt' and 'photohunt' not in inventory and ANIM == 14:
+        if counttxt <= 3:
+            txt = fontrule.render('Rule'[counttxt], True, (0, 0, 0))
+            posx += txt.get_rect().size[0]
+            scrollpaper[14].blit(txt, (posx, 150))
+            counttxt += 1
+    else:
+        posx = 640-(message.get_rect().size[0]/2)
+    ANIM += 1
 #---------------------------------------------------------------------------
 def fadeout():
     """ fade out screen """
@@ -504,7 +537,7 @@ def cutscene():
             if countd >= 39: venwalk('right', 350)
     elif STORY3:
         if lstdialog[countd].split()[0] == 'End':
-            play_dialo, STORY3 = False, False
+            play_dialo, STORY3, countd = False, False, 0
         win.blit(esme_sleep, (106, 218))
         if countd >= 45 and POSX_AVI == 150 and POSY_AVI == 220:
             aviwalk('left', 150)
@@ -526,11 +559,13 @@ def cutscene():
             nextdia = True
         if countd in [7] and counttxt >= 50:
             nextdia = True
+        if countd in [11] and counttxt >= 25:
+            nextdia = True
         if countd in [16] and counttxt >= 105:
             nextdia = True
         if countd in [35] and counttxt >= 50:
             nextdia = True
-        elif countd not in [3, 7, 16, 35]:
+        elif countd not in [3, 7, 11, 16, 35]:
             nextdia = True
     elif nextdia:
         if not keys[pygame.K_SPACE]:
@@ -1520,12 +1555,14 @@ while run:
             if 328 <= X <= 448 and 493 <= Y <= 523:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
                 if keys[pygame.K_f]:
-                    PLAY_PH1 = True
-                    PLAY_MAIN = False
+                    RULE = True
+            if RULE:
+                redrawrule('Photohunt')
+#                     PLAY_PH1 = True
+#                     PLAY_MAIN = False
     #------------teacherroom-21-------------
         elif idmap == "21":
             wall(walls['teacherroom'])
-
             win.blit(bg ,(-238, -58))
             if 1168 <= X <= 1630 and 358 <= Y < 493:
                 win.fill((255,0,0), rect=[X+20,Y-50,50,50])
@@ -2218,7 +2255,7 @@ while run:
         if nextpage and book_menu:
             if book_anim != 29:book_anim += 1
             if book_anim == 29:nextpage = False
-            
+
         elif book_menu:
             if keys[pygame.K_a]:
                 backpage = True
@@ -2227,7 +2264,7 @@ while run:
                     book_anim -= 1
                 if book_anim == 19:
                     book_inven, book_menu, backpage = True, False, False
-                    
+
         if keys[pygame.K_e] and (book_anim == 9 or book_anim == 19 or book_anim == 29):
             backpage, book_map, book_inven, book_menu = True, False, False, False
             
@@ -2236,8 +2273,41 @@ while run:
             if book_anim == 0:
                 backpage, open_book, book_map = False, False, True
 
-        print(nextpage, book_anim)
         win.blit(book_img[book_anim], (0, 0))
+
+        if book_inven and book_anim == 19:
+            if 'potion' not in inventory:
+                win.blit(potion_s, (710, 212))
+            if 'potion' in inventory:
+                win.blit(potion, (710, 212))
+            if 'magicpowder' not in inventory:
+                win.blit(magicpowder_s, (800, 212))
+            if 'magicpowder' in inventory:
+                win.blit(magicpowder, (800, 212))
+            if 'applescrap' not in inventory:
+                win.blit(applescrap_s, (895, 205))
+            if 'applescrap' in inventory:
+                win.blit(applescrap, (895, 205))
+            if 'puzzlepaper1' not in inventory:
+                win.blit(puzzlepaper_s, (975, 215))
+            if 'puzzlepaper1' in inventory:
+                win.blit(puzzlepaper, (975, 215))
+            if 'puzzlepaper2' not in inventory:
+                win.blit(puzzlepaper_s, (690, 308))
+            if 'puzzlepaper2' in inventory:
+                win.blit(puzzlepaper, (690, 308))
+            if 'puzzlepaper3' not in inventory:
+                win.blit(puzzlepaper_s, (785, 308))
+            if 'puzzlepaper3' in inventory:
+                win.blit(puzzlepaper, (785, 308))
+            if 'puzzlepaper4' not in inventory:
+                win.blit(puzzlepaper_s, (880, 308))
+            if 'puzzlepaper4' in inventory:
+                win.blit(puzzlepaper, (880, 308))
+            if 'puzzlepaper5' not in inventory:
+                win.blit(puzzlepaper_s, (975, 308))
+            if 'puzzlepaper5' in inventory:
+                win.blit(puzzlepaper, (975, 308))
 
     if safe >= 1:
         if keys[pygame.K_f] and safe > 5:
@@ -2303,7 +2373,7 @@ while run:
         up_pz += 1
         down_pz += 1
         # print(row)
-        print("row1", row1, "row2", row2, "row3", row3, "row4", row4)
+        # print("row1", row1, "row2", row2, "row3", row3, "row4", row4)
 
     if PLAY_FRONT:
         frontgame()
@@ -2314,6 +2384,6 @@ while run:
 
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
         mx, my = pygame.mouse.get_pos()
-        print(mx, my)
+        # print(mx, my)
 
 pygame.quit()

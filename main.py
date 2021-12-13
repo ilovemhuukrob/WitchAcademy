@@ -247,7 +247,7 @@ posx_txt = 205
 posy_txt = 80
 counttxt = 0
 countd = 0
-checkpoint = 1
+checkpoint = 4
 
 play_cutscene = False
 STORY1, STORY2, STORY3 = True, False, False
@@ -965,7 +965,10 @@ foundph3_1 = foundph3_2 = foundph3_3 = foundph3_4 = foundph3_5 = foundph3_6 = 1
 sec = 62 # Timeset <<<<<<<<<<<
 WALKCOUNT = 0
 
+
 correctImg = readvar('photohunt.txt', 'circle')
+bucket = pygame.image.load('sprite/bucket.png')
+finish_ph1 = finish_ph2 = finish_ph3 = False
 
 def drawcorrect(posx, posy):
     global WALKCOUNT
@@ -2119,12 +2122,13 @@ while run:
                     idmap = "15"
                     CHECK = "RIGHT"
                     bg_hall.play(-1,fade_ms=5000)
-            win.fill((0,0,255), rect=[403,580,50,50])
-            if 328 <= X <= 448 and 493 <= Y <= 523:
-                redrawicon("hand", X+20, Y-50)
-                if keys[pygame.K_f]:
-                    PLAY_PH1 = True
-                    PLAY_MAIN = False
+            if not finish_ph1:
+                win.blit(bucket, (660, 450))
+                if 613 <= X <= 718 and 343 <= Y <= 523:
+                    redrawicon("hand", X+20, Y-50)
+                    if keys[pygame.K_f]:
+                        PLAY_PH1 = True
+                        PLAY_MAIN = False
     #------------teacherroom-21-------------
         elif idmap == "21":
             wall(walls['teacherroom'])
@@ -2141,12 +2145,14 @@ while run:
                     idmap = "15"
                     CHECK = "RIGHT"
                     bg_hall.play(-1,fade_ms=5000)
-            win.fill((0,0,255), rect=[800,433,50,50])
-            if 763 <= X <= 808 and 343 <= Y <= 418:
-                redrawicon("hand", X+20, Y-50)
-                if keys[pygame.K_f]:
-                    PLAY_PH3 = True
-                    PLAY_MAIN = False
+            # win.fill((0,0,255), rect=[800,433,50,50])
+            if not finish_ph3:
+                win.blit(bucket, (763, 388))
+                if 763 <= X <= 853 and 343 <= Y <= 418:
+                    redrawicon("hand", X+20, Y-50)
+                    if keys[pygame.K_f]:
+                        PLAY_PH3 = True
+                        PLAY_MAIN = False
     #------------researchroom-22------------
         elif idmap == "22":
             wall(walls['researchroom'])
@@ -2163,14 +2169,17 @@ while run:
                     idmap = "16"
                     CHECK = "RIGHT"
                     bg_hall.play(-1,fade_ms=5000)
-            win.fill((0,0,255), rect=[223,450,50,50])
-            if 118 <= X <= 283 and 373 <= Y <= 388:
-                redrawicon("hand", X+20, Y-50)
-                if keys[pygame.K_f]:
-                    PLAY_PH2 = True
-                    PLAY_MAIN = False
+            # win.fill((0,0,255), rect=[223,450,50,50])
+            if not finish_ph2:
+                win.blit(bucket, (448, 313))
+                if 403 <= X <= 493 and 313 <= Y <= 388:
+                    redrawicon("hand", X+20, Y-50)
+                    if keys[pygame.K_f]:
+                        PLAY_PH2 = True
+                        PLAY_MAIN = False
         if not play_cutscene:
             redrawGameWindow()
+
 #-----------------Photohunt--------------------
     elif PLAY_PH1:
         pygame.time.delay(30)
@@ -2306,13 +2315,16 @@ while run:
             win.blit(win_screen, (0,0))
             bg_sound_ph1.stop()
             PLAY_PH1 = False ;PLAY_MAIN = True
+            finish_ph1 = True
             score_value, sec, health_value, stage = 0, 62, 3, 0
         elif health_value == 0 or sec <= 0:
             lose_screen = pygame.image.load('sprite/photohunt/U lose.png')
             win.blit(lose_screen, (0,0))
             bg_sound_ph1.stop()
             PLAY_PH1 = False ;PLAY_MAIN = True
+            bg_ph_1 = pygame.image.load('sprite/photohunt/stage 1.png')
             score_value, sec, health_value, stage = 0, 62, 3, 0
+            foundph1_1 = foundph1_2 = foundph1_3 = foundph1_4 = foundph1_5 = foundph1_6 = foundph1_7 = 1
 
     elif PLAY_PH2:
         pygame.time.delay(30)
@@ -2462,13 +2474,17 @@ while run:
             win.blit(win_screen, (0,0))
             bg_sound_ph2.stop()
             PLAY_PH2 = False ;PLAY_MAIN = True
+            finish_ph2 = True
             score_value, sec, health_value, stage = 0, 62, 3, 0
         elif health_value <= 0 or sec <= 0:
             lose_screen = pygame.image.load('sprite/photohunt/U lose.png')
             win.blit(lose_screen, (0,0))
             bg_sound_ph2.stop()
             PLAY_PH2 = False ;PLAY_MAIN = True
+            bg_ph_2 = pygame.image.load('sprite/photohunt/stage 2.png')
             score_value, sec, health_value, stage = 0, 62, 3, 0
+            foundph2_1 = foundph2_2 = foundph2_3 = foundph2_4 = foundph2_5 = foundph2_6 = foundph2_7 = foundph2_8 = 1
+
 
     elif PLAY_PH3:
         pygame.time.delay(30)
@@ -2594,13 +2610,16 @@ while run:
             win.blit(win_screen, (0,0))
             bg_sound_ph3.stop()
             PLAY_PH3 = False ;PLAY_MAIN = True
+            finish_ph3 = True
             score_value, sec, health_value, stage = 0, 62, 3, 0
         elif health_value <= 0 or sec <= 0:
             lose_screen = pygame.image.load('sprite/photohunt/U lose.png')
             win.blit(lose_screen, (0,0))
             bg_sound_ph3.stop()
             PLAY_PH3 = False ;PLAY_MAIN = True
+            bg_ph_3 = pygame.image.load('sprite/photohunt/stage 3.png')
             score_value, sec, health_value, stage = 0, 62, 3, 0
+            foundph3_1 = foundph3_2 = foundph3_3 = foundph3_4 = foundph3_5 = foundph3_6 = 1
 
 #-----------------Broom game-----------------------
     if PLAY_BROOM:

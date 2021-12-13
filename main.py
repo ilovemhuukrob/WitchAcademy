@@ -112,6 +112,14 @@ POSX_ESME, POSY_ESME = -150, 0
 POSX_SHE, POSY_SHE = 300, 0
 POSX_VEN, POSY_VEN = 0, 0
 
+#-----------item---------------
+item = []
+applescrap = pygame.image.load('sprite/applescrap.png')
+potion = pygame.image.load('sprite/potion.png')
+magicpowder = pygame.image.load('sprite/magicpowder.png')
+
+
+
 # #---------------------------------------------------------------------------
 def fadescreen(): 
     fade = pygame.Surface((1280, 720))
@@ -247,7 +255,7 @@ posx_txt = 205
 posy_txt = 80
 counttxt = 0
 countd = 0
-checkpoint = 1
+checkpoint = 4
 
 play_cutscene = False
 STORY1, STORY2, STORY3 = True, False, False
@@ -995,9 +1003,11 @@ arrow_pos = {1:540 , 2:610, 3:677, 4:740}
 yrow = {1:410, 2:410, 3:410, 4:410}
 
 def col(row, xrow, yrow):
-    win.blit(col_down[row], (xrow, yrow))
+    if yrow >= 400:
+        win.blit(col_down[row], (xrow, yrow))
     win.blit(col_mid[row], (xrow, yrow+90))
-    win.blit(col_up[row], (xrow, yrow+180))
+    if yrow+180 <= 590:
+        win.blit(col_up[row], (xrow, yrow+180))
 
 #------------Broom Game-------------
 bg_b1 = pygame.image.load("sprite/racing/bg/mountain.png").convert()
@@ -1511,6 +1521,7 @@ class monf:
         abs(self.posx-PLAYER_POSITION_X) <= 19+5 and fight == True: #ฝั่งลบ มอนสูงกว่าคน
             damage = True
             if hp_player <= 0:
+                WALK_AVI = 0
                 # self.posx, self.posy = 242, 242
                 fight = False
                 gameover_sf = True
@@ -1586,6 +1597,7 @@ while run:
                     redrawicon("door", X+70, Y)
                     if keys[pygame.K_f]:
                         bg_opendoor.play(maxtime=1400)
+                        CHECK = "UP"
                         idmap, change = changemap(0, 1280, 0, 43, X, 583, idmap, "09", change)
 
             change = False
@@ -1633,7 +1645,7 @@ while run:
                 stage_height = 950
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
             bg.blit(bg2 ,(0, 0))
-            if 918 <= X <= 1098 and 88 <= Y <= 118:
+            if 918 <= X <= 1098 and 88 <= Y <= 118 and checkpoint >= 4:
                 redrawicon("hand", X+20, Y-50)
                 if keys[pygame.K_f]:
                     safe += 1
@@ -1685,6 +1697,7 @@ while run:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bg_opendoor.play(maxtime=1400)
+                        CHECK = "LEFT"
                         idmap, change = changemap(0,13,0,720,1123,343,idmap,"10", change)
             if 1138 <= X <= 1198 and 328 <= Y <= 373:
                 redrawicon("door", X+27, Y-50)
@@ -1793,11 +1806,13 @@ while run:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bg_opendoor.play(maxtime=1400)
+                        CHECK = "DOWN"
                         idmap,change = changemap(0,1280,598,1280,253,58,idmap,"01", change)
                 if 1183 <= X <= 1280:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bg_opendoor.play(maxtime=1400)
+                        CHECK = "RIGHT"
                         idmap,change = changemap(1183,1280,0,720,43,373,idmap,"10", change)
             change = False
             if not STORY3:
@@ -1835,11 +1850,13 @@ while run:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bg_opendoor.play(maxtime=1400)
+                        CHECK = "LEFT"
                         idmap, change = changemap(0,28,298,463,1168,493,idmap,"09", change)
                 if 1198 <= X <= 1280:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bg_opendoor.play(maxtime=1400)
+                        CHECK = "RIGHT"
                         idmap,change = changemap(1198,1280,0,720,28,373,idmap,"04", change)
             change = False
     #----------------path-11---------------
@@ -1990,6 +2007,7 @@ while run:
                         idmap = "21"
                         CHECK = "LEFT"
                 bg.blit(bg2 ,(0, 0))
+            
             change = False
     #--------------westcor2-16-------------
         elif idmap == "16":
@@ -2057,8 +2075,8 @@ while run:
                             X = 583
                             Y = 583
                             CHECK = "UP"
-                            bg = bg_sf
-                            bg2 = bg_sf
+                            bg = pygame.image.load("sprite/secretforest.jpg")
+                            bg2 = pygame.image.load("sprite/secretforest.jpg")
                             bg_garden.stop()
                             bgm_sf.play(-1)
 
@@ -2834,13 +2852,13 @@ while run:
         rel_y = -Y % bg_height
         cd_fs += 1
         damage = False
-        if Y <= 253 and not endevent_sf:
-            fight = True
         if Y >= 662:
             win.blit(bg ,(-238, -662))
         else:
             win.blit(bg ,(-238, rel_y-bg_height))
 
+        if "applescrap" not in item:
+            bg.blit(applescrap, (870, 500))
         # print(X, Y)
         # print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
         # print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
@@ -2885,9 +2903,9 @@ while run:
             if all([yellmon.deadmai(), yellmon2.deadmai(), yellmon3.deadmai(), yellmon4.deadmai(), yellmon5.deadmai(), not CIRCLE_SF]):
                 fight = False
                 endevent_sf = True
+                bg = pygame.image.load("sprite/secretforest.jpg")
             
         elif gameover_sf:
-            WALK_AVI = 0
             redrawDead()
             if WALK_AVI == 15:
                 fadescreen()
@@ -2907,8 +2925,15 @@ while run:
                 cd_fs4 = 0
                 cd_fs5 = 0
                 CHECK = "UP"
+                item.pop()
         else:
             redrawGameWindow_sefor()
+        if 538 <= X <= 658 and 208 <= Y <= 253 and not endevent_sf and not fight:
+            redrawicon("hand", X+20, Y-50)
+            if keys[pygame.K_f] and ("applescrap" not in item):
+                fight = True
+                item.append("applescrap")
+                bg = pygame.image.load("sprite/secretforest.jpg")
 
         if not fight:
             if 598 <= Y <= 613:
@@ -3049,6 +3074,7 @@ while run:
     pygame.display.update()
     
     print(X, Y)
+    print(item)
     # print(idmap)
 
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:

@@ -247,7 +247,7 @@ posx_txt = 205
 posy_txt = 80
 counttxt = 0
 countd = 0
-checkpoint = 4
+checkpoint = 1
 
 play_cutscene = False
 STORY1, STORY2, STORY3 = True, False, False
@@ -721,11 +721,17 @@ def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
 
         if checkpoint >= 4:
             if idmapnew == "00":
-                bg = pygame.image.load('sprite/entryhallnpc.jpg')
-                bg2 = pygame.image.load('sprite/entryhallnpc.jpg')
+                bg = pygame.image.load('sprite/entryhall.jpg')
+                bg2 = pygame.image.load('sprite/entryhall.jpg')
             if idmapnew == "11":
                 bg = pygame.image.load('sprite/Pathnpc.jpg')
                 bg2 = pygame.image.load('sprite/Pathnpc.jpg')
+            if idmapnew == "15":
+                bg = pygame.image.load('sprite/westcorridor_1.jpg')
+                bg2 = pygame.image.load('sprite/westcorridor_1.jpg')
+            if idmapnew == "16":
+                bg = pygame.image.load('sprite/westcorridor_2.jpg')
+                bg2 = pygame.image.load('sprite/westcorridor_2.jpg')
             if idmapnew == "18":
                 bg = bgblood
                 bg2 = bgblood
@@ -737,30 +743,6 @@ def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
         if idmapold == '01' and idmapnew == '02': # hall ==> canteen
             bg_hall.set_volume(0.4)
             bg_canteen.play(-1)
-        #========================canteen==============================
-        # elif idmapold == '02' and idmapnew == '01': # canteen ==> hall
-        #     bg_canteen.stop()
-        #     bg_hall.set_volume(1.0)
-        # elif idmapold == '02' and idmapnew == '03': # canteen ==> eastcorridor1
-        #     bg_canteen.stop()
-        #     bg_hall.set_volume(0.4)
-        #     bg_corridor.play(-1)
-        #     foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
-        # elif idmapold == '02' and idmapnew == '08': # canteen ==> eastgarden
-        #     bg_hall.stop()
-        #     bg_canteen.stop()
-        #     bg_garden.play(-1).set_volume(0.7)
-        #     foot = pygame.mixer.Sound("sound\steponconcrete.mp3"); foot.set_volume(1.0)
-        #========================eastgarden===========================
-        # elif idmapold == '08' and idmapnew == '02': # eastgarden ==> canteen
-        #     bg_garden.stop()
-        #     bg_hall.play(-1).set_volume(0.4)
-        #     bg_canteen.play(-1)
-        # elif idmapold == '08' and idmapnew == '03': # eastgarden ==> eastcorridor1
-        #     bg_garden.stop()
-        #     bg_hall.play(-1).set_volume(0.4)
-        #     bg_corridor.play(-1)
-        #     foot = pygame.mixer.Sound("sound\steponwood.mp3"); foot.set_volume(0.4)
         #========================eastcorridor1===========================
         elif idmapold == '03' and idmapnew == '08': # eastcorridor1 ==> eastgarden
             bg_corridor.stop()
@@ -1068,9 +1050,9 @@ class mon:
             wmon, hmon = self.monster[self.moncount].get_rect().size
             # print(wmon, hmon)
             if yb < self.posy < yb+hplay-80 and xb < self.posx < xb+wplay-80 and cooldownb > 2:
+                crash.play()
                 heartb -= 1
                 cooldownb = 0
-                crash.play()
             # if self.posy-180 < y < self.posy-10 and self.posx-100 < x < self.posx-50 and cooldown > 2:
             #     heart -= 1
             #     cooldown = 0
@@ -1232,6 +1214,8 @@ cd_fs4 = 0
 cd_fs5 = 0
 bgm_sf = pygame.mixer.Sound("sound/forest2.mp3"); bgm_sf.set_volume(1.0)
 roar = pygame.mixer.Sound("sound/roar.mp3"); roar.set_volume(1.0)
+damage = False
+endevent_sf = False
 
 rspell, lspell = readvar('var.txt', 'rspell'), readvar('var.txt', 'lspell')
 dspell, uspell = readvar('var.txt', 'dspell'), readvar('var.txt', 'uspell')
@@ -1315,6 +1299,7 @@ def redrawGameWindow_sefor():
     global WALK_AVI
     global PLAYER_POSITION_X
     global PLAYER_POSITION_Y
+    global damage
 
     if WALK_AVI + 1 >= 9 and gameover_sf != True and CIRCLE_SF != True: #กัน out of range
         WALK_AVI = 0
@@ -1357,6 +1342,15 @@ def redrawGameWindow_sefor():
             win.blit(avilia_walkd[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
         elif CHECK == 'UP':
             win.blit(avilia_walku[0], (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+    if damage and not CIRCLE_SF:
+        if CHECK == 'RIGHT':
+            win.blit(damagewalkr, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        elif CHECK == 'LEFT':
+            win.blit(damagewalkl, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        elif CHECK == 'DOWN':
+            win.blit(damagewalkd, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+        elif CHECK == 'UP':
+            win.blit(damagewalku, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
 
 def secretfor(wall=[(0,0,0,0)]):
     """secret forest map"""
@@ -1488,8 +1482,8 @@ class monf:
             if self.count <= 8:
                 pygame.time.delay(10)
                 win.blit(self.deadani[self.count], (self.posx, self.posy))
-            else:
-                self.posx, self.posy = 242, 242
+            # else:
+            #     self.posx, self.posy = 242, 242
         self.count += 1
 
     def spawn(self):
@@ -1502,6 +1496,7 @@ class monf:
         global gameover_sf
         global CIRCLE_SF
         global WALK_AVI
+        global damage
 
         self.birth = True
 
@@ -1510,10 +1505,10 @@ class monf:
             self.roar = False
 
         if -15 <= self.posy-PLAYER_POSITION_Y <= 60 and self.dead == False and \
-        abs(self.posx-PLAYER_POSITION_X) <= 19 and fight == True: #ฝั่งลบ มอนสูงกว่าคน
+        abs(self.posx-PLAYER_POSITION_X) <= 19+5 and fight == True: #ฝั่งลบ มอนสูงกว่าคน
+            damage = True
             if hp_player <= 0:
-                hp_player, WALK_AVI = 50, 0
-                self.posx, self.posy = 242, 242
+                # self.posx, self.posy = 242, 242
                 fight = False
                 gameover_sf = True
                 CIRCLE_SF = False
@@ -1527,16 +1522,16 @@ class monf:
                 self.count = 0
                 self.dead = True
 
-        if -15 <= self.posy-PLAYER_POSITION_Y <= 60 and self.dead == False and\
-       abs(self.posx-PLAYER_POSITION_X) <= 19 and fight == True and CIRCLE_SF == False:
-            if CHECK == 'RIGHT':
-                win.blit(damagewalkr, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-            elif CHECK == 'LEFT':
-                win.blit(damagewalkl, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-            elif CHECK == 'DOWN':
-                win.blit(damagewalkd, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
-            elif CHECK == 'UP':
-                win.blit(damagewalku, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+    #     if -15 <= self.posy-PLAYER_POSITION_Y <= 60 and self.dead == False and\
+    #    abs(self.posx-PLAYER_POSITION_X) <= 19 and fight == True and CIRCLE_SF == False:
+    #         if CHECK == 'RIGHT':
+    #             win.blit(damagewalkr, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+    #         elif CHECK == 'LEFT':
+    #             win.blit(damagewalkl, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+    #         elif CHECK == 'DOWN':
+    #             win.blit(damagewalkd, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
+    #         elif CHECK == 'UP':
+    #             win.blit(damagewalku, (PLAYER_POSITION_X, PLAYER_POSITION_Y))
 
     def posyandplay(self):
         return self.posy-PLAYER_POSITION_Y <= 30
@@ -1600,8 +1595,8 @@ while run:
                 X = 28
                 Y = 463
                 stage_height = 720
-                bg = pygame.image.load("sprite/eastcorridor_1npc.jpg")
-                bg2 = pygame.image.load("sprite/eastcorridor_1npc.jpg")
+                bg = pygame.image.load("sprite/eastcorridor_1.jpg")
+                bg2 = pygame.image.load("sprite/eastcorridor_1.jpg")
                 idmap = "03"
                 bg_canteen.stop()
                 bg_hall.set_volume(0.4)
@@ -1610,8 +1605,8 @@ while run:
                 X = 28
                 Y = 223
                 stage_height = 720
-                bg = pygame.image.load("sprite/eastgardennpc.jpg")
-                bg2 = pygame.image.load("sprite/eastgardennpc.jpg")
+                bg = pygame.image.load("sprite/eastgarden.jpg")
+                bg2 = pygame.image.load("sprite/eastgarden.jpg")
                 idmap = "08"
                 bg_hall.stop()
                 bg_canteen.stop()
@@ -1620,11 +1615,11 @@ while run:
                 X = 1168
                 Y = 238
                 stage_height = 720
-                bg = pygame.image.load("sprite/hallwaynpc.jpg")
-                bg2 = pygame.image.load("sprite/hallwaynpc.jpg")
+                bg = pygame.image.load("sprite/hallway.jpg")
+                bg2 = pygame.image.load("sprite/hallway.jpg")
                 idmap = "01"
                 bg_canteen.stop()
-                bg_hall.play(-1)
+                bg_hall.set_volume(1.0)
             elif X >= 798 and Y >= 283 and Y <= 598:
                 stage_height = 720
                 win.blit(bg ,(-453, -283))
@@ -1709,8 +1704,8 @@ while run:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
                     bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/eastcorridor_1npc.jpg")
-                    bg2 = pygame.image.load("sprite/eastcorridor_1npc.jpg")
+                    bg = pygame.image.load("sprite/eastcorridor_1.jpg")
+                    bg2 = pygame.image.load("sprite/eastcorridor_1.jpg")
                     X = 1093
                     Y = 493
                     idmap = "03"
@@ -1725,8 +1720,8 @@ while run:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
                     bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/eastcorridor_1npc.jpg")
-                    bg2 = pygame.image.load("sprite/eastcorridor_1npc.jpg")
+                    bg = pygame.image.load("sprite/eastcorridor_1.jpg")
+                    bg2 = pygame.image.load("sprite/eastcorridor_1.jpg")
                     X = 1093
                     Y = 133
                     idmap = "03"
@@ -1741,8 +1736,8 @@ while run:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
                     bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/eastcorridor_2npc.jpg")
-                    bg2 = pygame.image.load("sprite/eastcorridor_2npc.jpg")
+                    bg = pygame.image.load("sprite/eastcorridor_2.jpg")
+                    bg2 = pygame.image.load("sprite/eastcorridor_2.jpg")
                     X = 1093
                     Y = 358
                     idmap = "04"
@@ -1754,8 +1749,8 @@ while run:
             sub_eastgar_01.walkrl(-50, 2556)
             sub_eastgar_02.walkrl(-50, 2556)
             if X <= 13:
-                bg = pygame.image.load("sprite/canteennpc.jpg")
-                bg2 = pygame.image.load("sprite/canteennpc.jpg")
+                bg = pygame.image.load("sprite/canteen.jpg")
+                bg2 = pygame.image.load("sprite/canteen.jpg")
                 stage_height = 950
                 X = 813
                 Y = 823
@@ -1764,8 +1759,8 @@ while run:
                 bg_hall.play(-1).set_volume(0.4)
                 bg_canteen.play(-1)
             elif Y <= 13:
-                bg = pygame.image.load("sprite/eastcorridor_1npc.jpg")
-                bg2 = pygame.image.load("sprite/eastcorridor_1npc.jpg")
+                bg = pygame.image.load("sprite/eastcorridor_1.jpg")
+                bg2 = pygame.image.load("sprite/eastcorridor_1.jpg")
                 X = 433
                 Y = 613
                 idmap = "03"
@@ -2056,13 +2051,13 @@ while run:
                         if keys[pygame.K_f]:
                             PLAY_SEFOR = True
                             PLAY_MAIN = False
-                            X = 598
-                            Y = 613
+                            X = 583
+                            Y = 583
                             CHECK = "UP"
                             bg = bg_sf
                             bg2 = bg_sf
                             bg_garden.stop()
-                            bgm_sf.play()
+                            bgm_sf.play(-1)
 
             change = False
             if not STORY2:
@@ -2095,11 +2090,10 @@ while run:
                 bg2 = pygame.image.load("sprite/forest.jpg")
                 X = 1198
                 Y = 418
-                goeastfor = False
-                goforest = True
+                idmap = "18"
             elif Y >= 628:
-                bg = pygame.image.load("sprite/eastcorridor_2npc.jpg")
-                bg2 = pygame.image.load("sprite/eastcorridor_2npc.jpg")
+                bg = pygame.image.load("sprite/eastcorridor_2.jpg")
+                bg2 = pygame.image.load("sprite/eastcorridor_2.jpg")
                 X = 598
                 Y = 28
                 idmap = "04"
@@ -2118,8 +2112,8 @@ while run:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
                     bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/westcorridor_1npc.jpg")
-                    bg2 = pygame.image.load("sprite/westcorridor_1npc.jpg")
+                    bg = pygame.image.load("sprite/westcorridor_1.jpg")
+                    bg2 = pygame.image.load("sprite/westcorridor_1.jpg")
                     X = 58
                     Y = 343
                     idmap = "15"
@@ -2140,8 +2134,8 @@ while run:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
                     bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/westcorridor_1npc.jpg")
-                    bg2 = pygame.image.load("sprite/westcorridor_1npc.jpg")
+                    bg = pygame.image.load("sprite/westcorridor_1.jpg")
+                    bg2 = pygame.image.load("sprite/westcorridor_1.jpg")
                     X = 58
                     Y = 133
                     idmap = "15"
@@ -2162,8 +2156,8 @@ while run:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
                     bg_opendoor.play(maxtime=1400)
-                    bg = pygame.image.load("sprite/westcorridor_2npc.jpg")
-                    bg2 = pygame.image.load("sprite/westcorridor_2npc.jpg")
+                    bg = pygame.image.load("sprite/westcorridor_2.jpg")
+                    bg2 = pygame.image.load("sprite/westcorridor_2.jpg")
                     X = 58
                     Y = 298
                     idmap = "16"
@@ -2820,7 +2814,8 @@ while run:
         rel_x = -X % bg_width
         rel_y = -Y % bg_height
         cd_fs += 1
-        if Y <= 253:
+        damage = False
+        if Y <= 253 and not endevent_sf:
             fight = True
         if Y >= 662:
             win.blit(bg ,(-238, -662))
@@ -2830,8 +2825,6 @@ while run:
         # print(X, Y)
         # print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
         # print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
-        # if all([yellmon.deadmai(), yellmon2.deadmai(), yellmon3.deadmai(), yellmon4.deadmai(), yellmon5.deadmai()]):
-        #     fight = False
 
         if fight and gameover_sf == False:
             if CIRCLE_SF:
@@ -2869,14 +2862,21 @@ while run:
             if not yellmon5.posyandplay() and yellmon5.birthmai(): yellmon5.redrawmonster()
 
             pygame.draw.rect(win, (250-(hp_player*5), hp_player*5, 0), [390, 40, hp_player*10, 15])
+
+            if all([yellmon.deadmai(), yellmon2.deadmai(), yellmon3.deadmai(), yellmon4.deadmai(), yellmon5.deadmai(), not CIRCLE_SF]):
+                fight = False
+                endevent_sf = True
             
         elif gameover_sf:
+            WALK_AVI = 0
             redrawDead()
             if WALK_AVI == 15:
                 fadescreen()
-                X, Y = 598, 613
+                X, Y = 583, 583
+                hp_player = 50
                 gameover_sf = False
                 fight = False
+                damage = False
                 yellmon = monf(242, 242, yellow, deadyellow, 0)
                 yellmon2 = monf(103, 298, yellow, deadyellow, 1)
                 yellmon3 = monf(1018, 328, yellow, deadyellow, 2)
@@ -2890,6 +2890,21 @@ while run:
                 CHECK = "UP"
         else:
             redrawGameWindow_sefor()
+
+        if not fight:
+            if 598 <= Y <= 613:
+                redrawicon("door", X+27, Y-50)
+                if keys[pygame.K_f]:
+                    PLAY_SEFOR = False
+                    PLAY_MAIN = True
+                    X = 448
+                    Y = 358
+                    CHECK = "DOWN"
+                    bg = bgblood
+                    bg2 = bgblood
+                    bg_garden.play(-1)
+                    bgm_sf.stop()
+                    idmap = "18"
 
         win.blit(fog ,(-238, rel_y-bg_height))
 

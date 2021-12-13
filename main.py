@@ -247,7 +247,7 @@ posx_txt = 205
 posy_txt = 80
 counttxt = 0
 countd = 0
-checkpoint = 4
+checkpoint = 1
 
 play_cutscene = False
 STORY1, STORY2, STORY3 = True, False, False

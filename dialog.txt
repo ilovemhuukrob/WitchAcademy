@@ -60,3 +60,19 @@ Esme : The Last is apple carcass, It's in Secret forest. but...
 Avilia : Yeah, Everyone knows that forests are not normal.
 Esme : Please, Be careful I will never forget what you helped me.
 End : Story3
+Veneno : Headmaster
+Headmaster : yes?
+Veneno : I have something very precious to offer to you.
+Veneno : An apple that can restore the magic power that you ordered me to       research is successful.
+Headmaster : Great, thanks to this, I will be able to restore my lost magic power.
+Headmaster : If it really works I will support you and that student.
+Veneno : Thank you Headmaster, I hope it works
+End : Story4
+Esme : You're a liar! you said that apples were meant to save other lives!
+Esme : I'll tell people about what you do!
+Veneno : Don't do this Esme You are still useful to me.
+Esme : I'm sure Headmaster died because of that apple.
+Veneno : You make me no choices Esme
+Veneno : You made this a bad ending.
+Esme : W...What are you doing?
+End : Story5

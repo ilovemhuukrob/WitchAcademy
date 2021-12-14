@@ -2802,7 +2802,7 @@ while run:
     if PLAY_BROOM:
         pygame.time.delay(25)
         bg_scrolling_b -= 1
-        timeb = 180
+
         if timeb >= 180:
             # bgm_3.stop()
             bgm_b.stop()

@@ -1,5 +1,5 @@
 {
-    "00" : "sprite/entryhall.jpg",
+    "00" : "sprite/entryhall_close.jpg",
    "01" : "sprite/hallway.jpg",
    "02" : "sprite/canteen.jpg",
    "03" : "sprite/eastcorridor_1.jpg",
@@ -14,8 +14,8 @@
     "12" : "sprite/meetingroom.jpg",
     "13" : "sprite/halls.jpg",
     "14" : "sprite/westgarden.jpg",
-    "15" : "sprite/westcorridor_1.jpg",
-    "16" : "sprite/westcorridor_2.jpg",
+    "15" : "sprite/westcorridor_1_close.jpg",
+    "16" : "sprite/westcorridor_2_close.jpg",
     "17" : "sprite/westforest.jpg",
     "18" : "sprite/forest.jpg",
     "19" : "sprite/eastforest.jpg",

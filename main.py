@@ -1672,7 +1672,7 @@ yellmon4 = monf(583, 208, yellow, deadyellow, 3)
 yellmon5 = monf(583, 613, yellow, deadyellow, 4)
 #---------------------------------------------------------------------------
 """mainloop"""
-bgm_intro.play(-1, maxtime=79000)
+bgm_intro.play(-1)
 while run:
     # pygame.time.delay(30)
     keys = pygame.key.get_pressed()

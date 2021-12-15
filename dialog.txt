@@ -2,7 +2,7 @@ Sheree : Esme!
 Sheree : I told you. Don't mess with my professor!
 Esme : Wait, before you...
 Sheree : No matter what you say, I hate you at all!
-Sheree : This apple, you made it? I never thought you can make this apple look  beauty.
+Sheree : Hmm, you made this apple? I never thought you could make this apple  look beautiful.
 Esme : That's the thing I had to give to Prof.Veneno Bring it back!
 Sheree : Are you giving it to Prof.Veneno? How dare you!
 Avilia : That's enough!
@@ -23,8 +23,8 @@ Esme : that Apple is dangerous because it can lure monsters out.
 Esme : If a monster or someone accidentally eats it... It will explode itself.
 Avilia : W...Why did you bring such dangerous stuff to Academy?!
 Esme : I...I
-Avilia : No time to talk! Must hurry to stop before anything happens!
-Avilia : I'll follow Sheree, and you find the other way to stop her!
+Avilia : No time to talk! I must hurry to stop before anything happens!
+Avilia : I'll follow Sheree, and you need to find another way to stop her!
 End : Story1
 Esme : Sheree! Give me that apple! RIGHT NOW!
 Sheree : Look like this apple is very important to you.
@@ -38,16 +38,16 @@ Avilia : Esme! Are you alright? Can you walk?
 Esme : I'm fine... but my leg hurts
 Avilia : I'll cast a healing spell right now.
 Veneno : Students. What happened?
-Esme : Teacher, a...apple
+Esme : Professor, a...apple
 Veneno : I get it, later
 Veneno : Let me take Esme to first aid. Avila follows me.
 Avilia : Yes sir.
 End : Story2
 Avilia : Esme You feel better?
-Esme : Avilia, I have to hurry make another apple.
+Esme : Avilia, I have to make another apple as soon as possible.
 Avilia : What? No, You can't make another weird apple again.
 Esme : I can't stop. It's Very Important.
-Avilia : Is that Important than your life? Esme please stop hurting yourself.
+Avilia : Is that more important than your life? Esme, please stop hurting          yourself.
 Esme : Avilia, please, It can save other life from becoming victims of Monster.Me and Prof.Veneno worked together to research it.
 Avilia : I know, it's important for you but you have to rest.
 Esme : Avilia help me please. I lost an apple Prof.Veneno must have been very disappointed.
@@ -55,7 +55,7 @@ Avilia : *Sigh* but I'm not sure that will be successful.
 Esme : You have to bring the ingredients to me. after that, I can do it myself.
 Avilia : what ingredients?
 Esme : The First is potion, You can go and ask for it from Prof.Stella She is    always in the west hallway.
-Esme : The Second is magic powder, You can get it as a reward from the eventat the canteen by the puzzle club.
+Esme : The Second is magic powder, You can get it as a reward from the eventat the canteen by the mystery club.
 Esme : The Last is apple carcass, It's in Secret forest. but...
 Avilia : Yeah, Everyone knows that forests are not normal.
 Esme : Please, Be careful I will never forget what you helped me.
@@ -63,7 +63,7 @@ End : Story3
 Veneno : Headmaster
 Headmaster : yes?
 Veneno : I have something very precious to offer to you.
-Veneno : An apple that can restore the magic power that you ordered me to       research is successful.
+Veneno : An apple that can restore the magic power that you ordered me to       make is successful.
 Headmaster : Great, thanks to this, I will be able to restore my lost magic power.
 Headmaster : If it really works I will support you and that student.
 Veneno : Thank you Headmaster, I hope it works

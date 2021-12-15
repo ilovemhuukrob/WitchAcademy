@@ -504,15 +504,6 @@ sprite/mean/m2_b17.png
 sprite/mean/m2_b17.png
 sprite/mean/m2_b17.png
 sprite/mean/m2_b17.png
-sprite/headmaster/walkl1.png
-sprite/headmaster/walkl2.png
-sprite/headmaster/walkl3.png
-sprite/headmaster/walkl4.png
-sprite/headmaster/walkl5.png
-sprite/headmaster/walkl6.png
-sprite/headmaster/walkl7.png
-sprite/headmaster/walkl8.png
-sprite/headmaster/walkl9.png
 sprite/headmaster/walkd1.png
 sprite/headmaster/walkd2.png
 sprite/headmaster/walkd3.png

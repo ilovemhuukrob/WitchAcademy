@@ -527,7 +527,12 @@ def redrawpaper(paper):
     if ANIM_PAPER+1 > 14:ANIM_PAPER = 14
     win.blit(paper[ANIM_PAPER], (0, 0))
 
-    if ANIM_PAPER == 14:
+    if ANIM_PAPER == 14 and (PLAY_PH1 or PLAY_PH2 or PLAY_PH3):
+        if keys[pygame.K_SPACE]:
+            closepaper = True
+            paper.reverse()
+            ANIM_PAPER = 0
+    elif ANIM_PAPER == 14:
         cd_paper += 1
         if cd_paper >= 30 and not book_inven:
             closepaper = True
@@ -1080,7 +1085,7 @@ health_value = 3
 foundph1_1 = foundph1_2 = foundph1_3 = foundph1_4 = foundph1_5 = foundph1_6 = foundph1_7 = 1
 foundph2_1 = foundph2_2 = foundph2_3 = foundph2_4 = foundph2_5 = foundph2_6 = foundph2_7 = foundph2_8 = 1
 foundph3_1 = foundph3_2 = foundph3_3 = foundph3_4 = foundph3_5 = foundph3_6 = 1
-sec = 65 # Timeset <<<<<<<<<<<
+sec = 61 # Timeset <<<<<<<<<<<
 WALKCOUNT = 0
 
 
@@ -1679,8 +1684,13 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if keys[pygame.K_e] and (PLAY_MAIN or PLAY_SEFOR) and not play_pz and checkpoint >= 4:
+        if keys[pygame.K_e] and (PLAY_MAIN or (PLAY_SEFOR and not fight)) and not play_pz and checkpoint >= 4:
             openbook = True
+        elif keys[pygame.K_ESCAPE] and PLAY_MAIN:
+            openbook = True
+            book_map = False
+            book_menu = True
+            nextpage = True
 
     if PLAY_MAIN:
         pygame.time.delay(45)
@@ -2430,7 +2440,7 @@ while run:
 #-----------------Photohunt--------------------
     elif PLAY_PH1:
         pygame.time.delay(30)
-        sec -= 0.05
+        if not what_paper: sec -= 0.05
         if stage == 0:
             bgm_ph1.play(-1)
             stage = 1
@@ -2483,7 +2493,7 @@ while run:
                         not((125 < mx < 173 and 492 < my < 527) or (700 < mx < 760 and 492 < my < 527)) and \
                         not((350 < mx < 425 and 470 < my < 528) or (942 < mx < 1022 and 470 < my < 528)) and \
                         not((60 < mx < 134 and 650 < my < 703) or (649 < mx < 727 and 671 < my < 703)):
-                        if health_value > 0:
+                        if health_value >= 0:
                             w_sound.play()
                             health_value -= 1
         if foundph1_1 == 2: # เทียน
@@ -2560,18 +2570,18 @@ while run:
             bgm_ph1.stop()
             PLAY_PH1 = False ;PLAY_MAIN = True
             finish_ph1 = True
-            score_value, sec, health_value, stage = 0, 65, 3, 0
-        elif health_value == 0 or sec <= 0:
+            score_value, sec, health_value, stage = 0, 61, 3, 0
+        elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph1.stop()
             PLAY_PH1 = False ;PLAY_MAIN = True
             bg_ph_1 = pygame.image.load('sprite/photohunt/stage 1.png')
-            score_value, sec, health_value, stage = 0, 65, 3, 0
+            score_value, sec, health_value, stage = 0, 61, 3, 0
             foundph1_1 = foundph1_2 = foundph1_3 = foundph1_4 = foundph1_5 = foundph1_6 = foundph1_7 = 1
 
     elif PLAY_PH2:
         pygame.time.delay(30)
-        sec -= 0.05
+        if not what_paper: sec -= 0.05
         if stage == 0:
             bgm_ph2.play(-1)
             stage = 1
@@ -2630,7 +2640,7 @@ while run:
                                             not((231 < mx < 277 and 221 < my < 256) or (853 < mx < 911 and 223 < my < 259)) and\
                                                 not((355 < mx < 395 and 440 < my < 510) or (970 < mx < 1010 and 440 < my < 510)):
                     # else:
-                        if health_value > 0:
+                        if health_value >= 0:
                             w_sound.play()
                             health_value -= 1
         if foundph2_1 == 2: # แก้ววายด้านขวา
@@ -2716,17 +2726,17 @@ while run:
             PLAY_PH2 = False ;PLAY_MAIN = True
             finish_ph2 = True
             score_value, sec, health_value, stage = 0, 65, 3, 0
-        elif health_value <= 0 or sec <= 0:
+        elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph2.stop()
             PLAY_PH2 = False ;PLAY_MAIN = True
             bg_ph_2 = pygame.image.load('sprite/photohunt/stage 2.png')
-            score_value, sec, health_value, stage = 0, 65, 3, 0
+            score_value, sec, health_value, stage = 0, 61, 3, 0
             foundph2_1 = foundph2_2 = foundph2_3 = foundph2_4 = foundph2_5 = foundph2_6 = foundph2_7 = foundph2_8 = 1
 
     elif PLAY_PH3:
         pygame.time.delay(30)
-        sec -= 0.05
+        if not what_paper: sec -= 0.05
         if stage == 0:
             bgm_ph3.play(-1)
             stage = 1
@@ -2776,7 +2786,7 @@ while run:
                                     not((259 < mx < 289 and 394 < my < 434) or (849 < mx < 892 and 394 < my < 434)) and\
                                         not((111 < mx < 142 and 185 < my < 229) or (700 < mx < 736 and 185 < my < 229)):
                     # else:
-                        if health_value > 0:
+                        if health_value >= 0:
                             w_sound.play()
                             health_value -= 1
 
@@ -2846,13 +2856,13 @@ while run:
             bgm_ph3.stop()
             PLAY_PH3 = False ;PLAY_MAIN = True
             finish_ph3 = True
-            score_value, sec, health_value, stage = 0, 65, 3, 0
-        elif health_value <= 0 or sec <= 0:
+            score_value, sec, health_value, stage = 0, 61, 3, 0
+        elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph3.stop()
             PLAY_PH3 = False ;PLAY_MAIN = True
             bg_ph_3 = pygame.image.load('sprite/photohunt/stage 3.png')
-            score_value, sec, health_value, stage = 0, 65, 3, 0
+            score_value, sec, health_value, stage = 0, 61, 3, 0
             foundph3_1 = foundph3_2 = foundph3_3 = foundph3_4 = foundph3_5 = foundph3_6 = 1
 
 #-----------------Broom game-----------------------
@@ -3211,7 +3221,7 @@ while run:
         if nextpage and book_menu:
             if book_anim != 29:book_anim += 1
             if book_anim == 29:nextpage = False
-            
+
         elif book_menu:
             if keys[pygame.K_a]:
                 backpage = True
@@ -3220,8 +3230,10 @@ while run:
                     book_anim -= 1
                 if book_anim == 19:
                     book_inven, book_menu, backpage = True, False, False
+            if book_anim == 29 and 830 <= mx <= 930 and 320 <= my <= 350:
+                run = False
 
-        if (keys[pygame.K_e] or keys[pygame.K_ESCAPE]) and (book_anim == 9 or book_anim == 19 or book_anim == 29):
+        if (keys[pygame.K_e] or keys[pygame.K_ESCAPE]) and not what_paper and (book_anim == 9 or book_anim == 19 or book_anim == 29):
             backpage, book_map, book_inven, book_menu = True, False, False, False
 
         if backpage and not book_map and not book_inven and not book_menu:
@@ -3284,9 +3296,14 @@ while run:
                     what_paper = paper_bnwbklu.copy()
                     mx, my = -1, -1
                     seepaper = True
-            if 0 <= mx <= 1280 and 0 <= my <= 720 and seepaper and ANIM_PAPER == 14:
-                seepaper = False
-                mx, my = -1, -1
+
+            if seepaper:
+                if keys[pygame.K_ESCAPE]:
+                    mx, my = -1, -1
+                    seepaper = False
+                elif 0 <= mx <= 1280 and 0 <= my <= 720:
+                    mx, my = -1, -1
+                    seepaper = False
 
     if safe >= 1 and ("puzzlepaper1" not in item):
         item.append("puzzlepaper1")
@@ -3400,5 +3417,6 @@ while run:
         mouseon = 0
     if mouseon == 1:
         mx, my = pygame.mouse.get_pos()
+        print('mouseeeeeeeeeeeeeeeeeee', mx, my)
 
 pygame.quit()

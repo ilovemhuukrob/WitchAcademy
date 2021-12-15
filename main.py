@@ -20,7 +20,7 @@ bg = pygame.image.load(mapping[idmap])
 bg2 = pygame.image.load(mapping[idmap])
 bgblood = pygame.image.load('sprite/map/forestblood.jpg')
 bgfirstaid = pygame.image.load('sprite/map/firstaidroom.jpg')
-bgfront = pygame.image.load("sprite/front.jpg").convert()
+bgfront = pygame.image.load("sprite/front.jpg")
 BG_SCROLLING, ANIM = 0, 0
 bg_width, bg_height = bg.get_rect().size
 icon = pygame.image.load("sprite/minilogo.png")
@@ -45,19 +45,23 @@ PLAY_FRONT, PLAY_MAIN, PLAY_PH1, PLAY_PH2, PLAY_PH3 = True, False, False, False,
 PLAY_BROOM, PLAY_SEFOR = False, False
 LEFT, RIGHT = False, False
 DOWN, UP = False, False
+mouseon = 0
 #----------------------------------Sound-----------------------------------
 music = True
 cd_foot = 5
-s_volum = 1.0
-bgm_intro = pygame.mixer.Sound("sound/intro.mp3"); bgm_intro.set_volume(1.0)
-bgm_hall = pygame.mixer.Sound("sound/schooltheme.mp3"); bgm_hall.set_volume(1.0)
-bgm_opendoor = pygame.mixer.Sound("sound/Wood Door - Open_Close.mp3"); bgm_opendoor.set_volume(1.0)
-bgm_canteen = pygame.mixer.Sound("sound/canteen.mp3"); bgm_canteen.set_volume(1.0)
-bgm_corridor = pygame.mixer.Sound("sound/class.mp3"); bgm_corridor.set_volume(1.0)
-bgm_garden = pygame.mixer.Sound("sound/garden.mp3"); bgm_garden.set_volume(1.0)
-boom_sound = pygame.mixer.Sound("sound/explode.mp3"); boom_sound.set_volume(1.0)
-bgm_dark = pygame.mixer.Sound("sound/dark song.mp3"); boom_sound.set_volume(1.0)
-foot = pygame.mixer.Sound("sound/wood.mp3"); foot.set_volume(0.4)
+bgm_volume = 1.0
+effects_volume = 1.0
+bgm_intro = pygame.mixer.Sound("sound/intro.mp3"); bgm_intro.set_volume(bgm_volume)
+bgm_hall = pygame.mixer.Sound("sound/schooltheme.mp3"); bgm_hall.set_volume(bgm_volume)
+bgm_opendoor = pygame.mixer.Sound("sound/Wood Door - Open_Close.mp3"); bgm_opendoor.set_volume(bgm_volume)
+bgm_canteen = pygame.mixer.Sound("sound/canteen.mp3"); bgm_canteen.set_volume(bgm_volume)
+bgm_corridor = pygame.mixer.Sound("sound/class.mp3"); bgm_corridor.set_volume(bgm_volume)
+bgm_garden = pygame.mixer.Sound("sound/garden.mp3"); bgm_garden.set_volume(bgm_volume)
+bgm_dark = pygame.mixer.Sound("sound/dark song.mp3"); bgm_dark.set_volume(bgm_volume)
+collect_item = pygame.mixer.Sound("sound/collectitem.mp3"); bgm_dark.set_volume(bgm_volume)
+boom_sound = pygame.mixer.Sound("sound/explode.mp3"); boom_sound.set_volume(effects_volume)
+gane_over_sound = pygame.mixer.Sound("sound/gameover.mp3"); boom_sound.set_volume(effects_volume)
+foot = pygame.mixer.Sound("sound/wood.mp3"); foot.set_volume(effects_volume)
 #---------------------------------------------------------------------------
 def readvar(file, string):
     """readline variable"""
@@ -83,11 +87,11 @@ STORY1, STORY2, STORY3, STORY4, STORY5 = True, False, False, False, False
 BLACK, alpha = 0, 255
 posx_txt, posy_txt = 205, 80
 counttxt, countd = 0, 0
-checkpoint = 1
-
+checkpoint = 4 #<----------------- checkpoint is here! ---------------------
 logo = pygame.image.load('sprite/logo.png')
 press = pygame.image.load('sprite/press.png')
 font = pygame.font.Font('sprite/alagard.ttf', 21)
+fontmenu = pygame.font.Font('sprite/ELEGANT TYPEWRITER Bold.ttf', 32)
 avilia_walkr, avilia_walkl = readvar('var.txt', 'avilia/walkr'), readvar('var.txt', 'avilia/walkl')
 avilia_walkd, avilia_walku = readvar('var.txt', 'avilia/walkd'), readvar('var.txt', 'avilia/walku')
 esme_walkr = readvar('var.txt', 'esme/walkr')
@@ -97,15 +101,13 @@ ven_walku = readvar('var.txt', 'veneno/walku')
 ven_walkd = readvar('var.txt', 'veneno/walkd')
 m1_walkl, m2_walkl = readvar('var.txt', 'm1_walkl'), readvar('var.txt', 'm2_walkl')
 m1_b, m2_b = readvar('var.txt', 'm1_b'), readvar('var.txt', 'm2_b')
-head_walkl = readvar('var.txt', 'headmaster/walkl')
 head_walku = readvar('var.txt', 'headmaster/walku')
 head_walkd = readvar('var.txt', 'headmaster/walkd')
 she_push = readvar('var.txt', 'sheree/push')
 esme_fail = readvar('var.txt', 'esme/fail')
-sheree_b = readvar('front.txt', 'sheree')
-esme_b = readvar('front.txt', 'esme/broom')
-avilia_b = readvar('front.txt', 'avilia/broom')
-bubble = readvar('var.txt', 'bubble/')
+sheree_b = readvar('var.txt', 'sheree/broom')
+esme_b = readvar('var.txt', 'esme/broom')
+avilia_b = readvar('var.txt', 'avilia/broom')
 explosion = readvar('var.txt', 'explosion')
 dialogbox = readvar('var.txt', 'dialogbox')
 lstdialog = readvar('dialog.txt', '')
@@ -117,6 +119,7 @@ dia_stella = pygame.image.load('sprite/stella/dia_stella.png')
 dia_head = pygame.image.load('sprite/headmaster/headmaster.png')
 esme_sleep = pygame.image.load('sprite/esme/sleep.png')
 apple = pygame.image.load('sprite/item/apple.png')
+bubble = readvar('var.txt', 'bubble/bubble')
 sad, upset, shock = readvar('var.txt', 'sad'), readvar('var.txt', 'upset'), readvar('var.txt', 'shock')
 sad, upset, shock = bubble+sad+sad, bubble+upset+upset, bubble+shock+shock
 POSX_AVI, POSY_AVI = -300, 0
@@ -127,7 +130,7 @@ POSX_M1, POSY_M1 = 100, 363
 POSX_M2, POSY_M2 = 100, 323
 ANIMB, WALK_ESME, WALK_SHE, WALK_VEN, WALK_M1, WALK_M2, WALK_H = 0, 0, 0, 0, 0, 0, 0
 #------------------------------Book Scroll paper----------------------------
-book_img = readvar('front.txt', 'book')
+book_img = readvar('var.txt', 'book')
 paper_b1 = readvar('var.txt', 'B1')
 paper_901502 = readvar('var.txt', '901502')
 paper_blackcathate = readvar('var.txt', 'blackcathate')
@@ -142,6 +145,8 @@ nextpage, backpage = False, False
 book_map, book_inven, book_menu = True, False, False
 cd_paper, what_paper, closepaper = 0, [], False
 seepaper = False
+howtobook = pygame.image.load('sprite/howtobook.png')
+howtopz = pygame.image.load('sprite/howtopuzzle.png')
 applescrap_b = pygame.image.load('sprite/book/applescrap.png')
 applescrap_s = pygame.image.load('sprite/book/applescrap_s.png')
 magicpowder_b = pygame.image.load('sprite/book/magicpowder.png')
@@ -405,12 +410,7 @@ def venwalk(way, stop):
 #---------------------------------------------------------------------------
 def headwalk(way, stop):
     global WALK_H, POSX_H, POSY_H
-    if WALK_H+1 > len(head_walkl)-1:WALK_H = 0
-    if way == 'right':
-        if POSX_H != stop:
-            POSX_H += 5
-            WALK_H += 1
-        win.blit(head_walkl[WALK_H], (POSX_H, POSY_H))
+    if WALK_H+1 > len(head_walku)-1:WALK_H = 0
     if way == 'up':
         if POSY_H != stop:
             POSY_H -= 5
@@ -532,7 +532,12 @@ def redrawpaper(paper):
     if ANIM_PAPER+1 > 14:ANIM_PAPER = 14
     win.blit(paper[ANIM_PAPER], (0, 0))
 
-    if ANIM_PAPER == 14:
+    if ANIM_PAPER == 14 and (PLAY_PH1 or PLAY_PH2 or PLAY_PH3):
+        if keys[pygame.K_SPACE]:
+            closepaper = True
+            paper.reverse()
+            ANIM_PAPER = 0
+    elif ANIM_PAPER == 14:
         cd_paper += 1
         if cd_paper >= 30 and not book_inven:
             closepaper = True
@@ -565,7 +570,7 @@ def cutscene():
         if lstdialog[countd].split()[0] == 'End':
             play_dialog, STORY1 = False, False
         if countd < 16: meanwalk(2, 'right', 550)
-        if countd in [0, 1, 2, 3, 4, 5, 6]: aviwalk('left', 1090)
+        if countd in range(0, 7): aviwalk('left', 1065)
         if countd in [0, 1]:
             esmewalk('right', 750)
             shewalk('right', 600)
@@ -645,12 +650,12 @@ def cutscene():
                 esmewalk('right', 500)
                 win.blit(apple, (POSX_SHE-25+(counttxt), POSY_SHE+30))
             if counttxt in range(20, 47):
-                boom_sound.play()
-                bgm_garden.stop()
-                #เสียงระเบิดใส่ตรงนี้มั้งนะ (*｀◇´*)/
+                if counttxt == 20:
+                    boom_sound.play()
+                    bgm_garden.stop()
+                    bgm_dark.play()
                 win.blit(explosion[counttxt-20], (POSX_SHE-180, POSY_SHE-150))
             if counttxt >= 20:
-                bgm_dark.play()
                 esmefail('down')
             avibroom('right', 200)
         if countd in range(36, 45):
@@ -663,6 +668,7 @@ def cutscene():
     elif STORY3:
         if lstdialog[countd].split()[0] == 'End':
             play_dialog, STORY3, countd = False, False, 0
+        bgm_dark.stop()
         win.blit(esme_sleep, (106, 218))
         if countd >= 45 and POSX_AVI == 150 and POSY_AVI == 220:
             aviwalk('left', 150)
@@ -730,15 +736,17 @@ def cutscene():
             esmewalk('right', 320)
             venwalk('left', 480)
     if play_dialog:redrawdialog(countd)
-    if keys[pygame.K_SPACE] and play_dialog and counttxt >= len(lstdialog[countd].split(':')[1])-1:
-        if countd in [0] and counttxt >= 10:nextdia = True
-        if countd in [3] and counttxt >= 90:nextdia = True
-        if countd in [7] and counttxt >= 50:nextdia = True
-        if countd in [11] and counttxt >= 25:nextdia = True
-        if countd in [16] and counttxt >= 50:nextdia = True
-        if countd in [32] and counttxt >= 70:nextdia = True
-        if countd in [35] and counttxt >= 50:nextdia = True
-        elif countd not in [0, 3, 7, 11, 16, 32, 35]:nextdia = True
+    if keys[pygame.K_SPACE] and play_dialog:
+        nextdia = True
+#     if keys[pygame.K_SPACE] and play_dialog and counttxt >= len(lstdialog[countd].split(':')[1])-1:
+#         if countd in [0] and counttxt >= 10:nextdia = True
+#         if countd in [3] and counttxt >= 90:nextdia = True
+#         if countd in [7] and counttxt >= 50:nextdia = True
+#         if countd in [11] and counttxt >= 25:nextdia = True
+#         if countd in [16] and counttxt >= 50:nextdia = True
+#         if countd in [32] and counttxt >= 70:nextdia = True
+#         if countd in [35] and counttxt >= 50:nextdia = True
+#         elif countd not in [0, 3, 7, 11, 16, 32, 35]:nextdia = True
     elif nextdia:
         if not keys[pygame.K_SPACE]:
             countd += 1
@@ -981,9 +989,9 @@ def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
         
 
 class sup:
-    def __init__(self, name, posx, posy):
+    def __init__(self, name, posx, posy, count):
         self.name = readvar('support.txt', name)
-        self.count = 0
+        self.count = count
         self.sub_l = True
         self.sub_r = False
         self.sub_u = True
@@ -991,17 +999,11 @@ class sup:
         self.posx = posx
         self.posy = posy
 
-    def standr(self):
-        bg.blit(self.name[0], (self.posx, self.posy))
-
-    def standl(self):
-        bg.blit(self.name[1], (self.posx, self.posy))
-    
-    def standu(self):
-        bg.blit(self.name[2], (self.posx, self.posy))
-    
-    def standd(self):
-        bg.blit(self.name[3], (self.posx, self.posy))
+    def fight(self):
+        if self.count+1 > len(self.name):
+            self.count = 0
+        bg.blit(self.name[self.count], (self.posx, self.posy))
+        self.count += 1
 
     def walkrl(self, turnl, turnr):
         if self.sub_l:
@@ -1044,25 +1046,28 @@ class sup:
         self.count += 1
 #------------------------------------Sup------------------------------------
 #-----------Entryhalls
-sub_entryhalls_01 = sup("g5_", 906, 200)
+sub_entryhalls_01 = sup("g5_", 906, 200, 0)
 # ----------Hallways
-sub_hallways_01 = sup("sup01_", 1141, 407)
+sub_hallways_01 = sup("sup01_", 1141, 407, 0)
 #-----------Canteen
-sub_canteen_01 = sup("g12_", 1197, 578)
+sub_canteen_01 = sup("g12_", 1197, 578, 0)
 #-----------Hall
-sub_halls_01 = sup("g4_", 641,232)
+sub_halls_01 = sup("g4_", 641,232, 0)
 #-----------Path
-sub_path_01 = sup("g5_", 888, 598)
+sub_path_01 = sup("g5_", 888, 598, 0)
 #-----------Westgarden
-sub_wastgar_01 = sup("g4_",893,350)
+sub_wastgar_01 = sup("g4_",893,350, 0)
 #-----------Eastgarden
-sub_eastgar_01 = sup("g8_", 813, 368)
+sub_eastgar_01 = sup("g8_", 813, 368, 0)
 #-----------Eastforest
-sub_eastforest_01 = sup("g7_", 1435, 409)
+sub_eastforest_01 = sup("g7_", 1435, 409, 0)
 #-----------Westforest
-sub_wastforest_01 = sup("g12_", 697,400)
+sub_wastforest_01 = sup("g12_", 697,400, 0)
 #-----------Westcorridor1
-sub_wastcor1_01 = sup("g8_", 797, 225)
+sub_wastcor1_01 = sup("g8_", 797, 225, 0)
+#----------battle----------------------
+sub_battle1 = sup("g14", 523, 452, 8)
+sub_battle2 = sup("g13", 1114, 452, 0)
 #---------------------------------Photohunt---------------------------------
 font_ph = pygame.font.Font('sprite/photohunt/2005_iannnnnAMD.ttf', 72)
 HeartImg = pygame.image.load('sprite/photohunt/heart.png')
@@ -1082,7 +1087,7 @@ health_value = 3
 foundph1_1 = foundph1_2 = foundph1_3 = foundph1_4 = foundph1_5 = foundph1_6 = foundph1_7 = 1
 foundph2_1 = foundph2_2 = foundph2_3 = foundph2_4 = foundph2_5 = foundph2_6 = foundph2_7 = foundph2_8 = 1
 foundph3_1 = foundph3_2 = foundph3_3 = foundph3_4 = foundph3_5 = foundph3_6 = 1
-sec = 65 # Timeset <<<<<<<<<<<
+sec = 61 # Timeset <<<<<<<<<<<
 WALKCOUNT = 0
 
 
@@ -1130,9 +1135,9 @@ bg_b3 = pygame.image.load("sprite/racing/bg/library.jpg").convert()
 bg_b4 = pygame.image.load("sprite/racing/bg/forest1.jpg").convert()
 
 #------------Sound---------------
-bgm_1 = pygame.mixer.Sound("sound/forest.mp3"); bgm_1.set_volume(1.0)
-bgm_2 = pygame.mixer.Sound("sound/clocktower2.mp3"); bgm_2.set_volume(1.0)
-bgm_3 = pygame.mixer.Sound("sound/library.mp3"); bgm_3.set_volume(1.0)
+bgm_b1 = pygame.mixer.Sound("sound/forest.mp3"); bgm_b1.set_volume(1.0)
+bgm_b2 = pygame.mixer.Sound("sound/clocktower2.mp3"); bgm_b2.set_volume(1.0)
+bgm_b3 = pygame.mixer.Sound("sound/library.mp3"); bgm_b3.set_volume(1.0)
 crash = pygame.mixer.Sound("sound/crash.mp3"); crash.set_volume(1.0)
 
 bg_scrolling_b = 0
@@ -1143,15 +1148,12 @@ def redrawbroomGameWindow():
     
     if broomcount + 1 >= 44: #กัน out of range
         broomcount = 0
-
     if rightb:
         win.blit(broomright[broomcount], (xb, yb))
         broomcount += 1
-
     else:
         win.blit(nobroom[broomcount], (xb, yb))
         broomcount += 1
-    pygame.display.update()
 
 class mon:
     def __init__(self, posx, posy, monster):
@@ -1210,7 +1212,7 @@ broomright, nobroom = avilia_b.copy(), avilia_b.copy()
 
 heartimg = pygame.image.load('sprite/racing/heart.png')
 
-clock = readvar('broomgame.txt', 'clocktower/clock')
+clock = readvar('broomgame.txt', 'clock/clock')
 bird = readvar('broomgame.txt', 'bird')
 bluebook, purbook, redbook = readvar('broomgame.txt', 'bluebook'), readvar('broomgame.txt', 'purbook'), readvar('broomgame.txt', 'redbook')
 
@@ -1323,7 +1325,7 @@ leftb = False
 rightb = False
 broomcount = 0
 check = ''
-timeb = 0
+timeb = 0 
 heartb = 5
 cooldownb = 0
 
@@ -1677,17 +1679,20 @@ yellmon4 = monf(583, 208, yellow, deadyellow, 3)
 yellmon5 = monf(583, 613, yellow, deadyellow, 4)
 #---------------------------------------------------------------------------
 """mainloop"""
-bgm_intro.play(-1, maxtime=79000)
+bgm_intro.play(-1)
 while run:
     # pygame.time.delay(30)
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if keys[pygame.K_ESCAPE]:
-            run = False
-        if keys[pygame.K_e] and (PLAY_MAIN or PLAY_SEFOR) and not play_pz:
+        if keys[pygame.K_e] and (PLAY_MAIN or (PLAY_SEFOR and not fight)) and not play_pz and checkpoint >= 4 and not what_paper:
             openbook = True
+        elif keys[pygame.K_ESCAPE] and PLAY_MAIN and not openbook:
+            openbook = True
+            book_map = False
+            book_menu = True
+            nextpage = True
 
     if PLAY_MAIN:
         pygame.time.delay(45)
@@ -1759,7 +1764,7 @@ while run:
                 stage_height = 950
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
             bg.blit(bg2 ,(0, 0))
-            if 918 <= X <= 1098 and 88 <= Y <= 118 and checkpoint >= 4:
+            if 918 <= X <= 1098 and 88 <= Y <= 118 and checkpoint >= 4 and not prize_pz:
                 redrawicon("hand", X+20, Y-50)
                 if keys[pygame.K_f]:
                     safe += 1
@@ -1903,6 +1908,7 @@ while run:
                     if 808 <= X <= 838 and 118 <= Y <= 163:
                         redrawicon("hand", X+20, Y-50)
                         if keys[pygame.K_f] and ("puzzlepaper5" not in item):
+                            alpha = 255
                             item.append("puzzlepaper5")
                             what_paper = paper_bnwbklu.copy()
     #--------------firstaid-09-------------
@@ -1944,10 +1950,10 @@ while run:
                     POSX_VEN, POSY_VEN = 1300, 325
                     POSX_H, POSY_H = 435, 255
                     fadein(bg, -238, -118)
-            if (X == 28 and Y <= 253) or (73 <= X <= 88 and Y <= 253) and checkpoint == 4:
-                if not play_dialog:
+            if (X == 28 and Y <= 253) or (73 <= X <= 88 and Y <= 253):
+                if not play_dialog and checkpoint >= 4:
                     redrawicon("chat", X+20, Y-50)
-                    if keys[pygame.K_f]:
+                    if keys[pygame.K_f] and checkpoint >= 4:
                         if 'potion' not in item or 'magicpowder' not in item or 'applescrap' not in item:
                             lstdialog = ['Esme : If you forget the details of the ingredients, You can press E to see it']
                         if 'potion' in item and 'magicpowder' in item and 'applescrap' in item:
@@ -1965,7 +1971,7 @@ while run:
                         if not keys[pygame.K_SPACE] and play_dialog:countdnpc += 1
                         if lstdialog[countdnpc-1].split()[0] != lstdialog[countdnpc].split()[0] and play_dialog:ANIM = 0
                         counttxt, posx_txt, posy_txt = 0, 205, 80
-                        dialogbox[9] = pygame.image.load('sprite/dialogbox10.png')
+                        dialogbox[9] = pygame.image.load('sprite/dialog/dialogbox10.png')
                         nextdia = False
             if not STORY3:
                 if BLACK > 0:
@@ -1989,6 +1995,8 @@ while run:
             wall(walls["battle"])
             # idmap, change = changemap(0,13,0,720,1168,493,idmap,"09", change)
             # idmap, change = changemap(1222,1280,0,720,28,373,idmap,"04", change)
+            sub_battle1.fight()
+            sub_battle2.fight()
             if not change:
                 if X >= 523 and Y >= 103:
                     win.blit(bg ,(-523, -103))
@@ -1998,6 +2006,7 @@ while run:
                     win.blit(bg ,(-523, -103))
                 else:
                     win.blit(bg ,(rel_x-bg_width, -103))
+                bg.blit(bg2 ,(0, 0))
                 if 0 <= X <= 28 and 298 <= Y <= 463:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
@@ -2007,7 +2016,7 @@ while run:
                 if 1198 <= X <= 1280:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
-                        bg_opendoor.play(maxtime=1400)
+                        bgm_opendoor.play(maxtime=1400)
                         CHECK = "RIGHT"
                         idmap,change = changemap(1198,1280,0,720,28,373,idmap,"04", change)
             change = False
@@ -2031,11 +2040,10 @@ while run:
                     fadein(bg_b1, 0, 0)
                 redrawblack()
             if STORY1:
-
                 if not play_cutscene:
                     POSX_ESME, POSY_ESME = 300, 343
                     POSX_SHE, POSY_SHE = 150, 343
-                    POSX_AVI, POSY_AVI = 1280, 343
+                    POSX_AVI, POSY_AVI, WALK_AVI = 1280, 343, 0
                     play_cutscene = True
                     fadeout()
                     fadein(bg, -1108, -313)
@@ -2073,6 +2081,7 @@ while run:
                     if 388 <= X <= 463 and 0 <= Y <= 103:
                         redrawicon("hand", X+20, Y-50)
                         if keys[pygame.K_f] and ("puzzlepaper4" not in item):
+                            alpha = 255
                             item.append("puzzlepaper4")
                             what_paper = paper_901502.copy()
                     
@@ -2104,6 +2113,7 @@ while run:
                     if 418 <= X <= 448 and 418 <= Y <= 508:
                         redrawicon("hand", X+20, Y-50)
                         if keys[pygame.K_f] and ("puzzlepaper3" not in item):
+                            alpha = 255
                             item.append("puzzlepaper3")
                             what_paper = paper_b1.copy()
             change = False
@@ -2138,6 +2148,7 @@ while run:
                     if 352 <= X <= 412 and 118 <= Y <= 163:
                         redrawicon("hand", X+20, Y-50)
                         if keys[pygame.K_f] and ("puzzlepaper2" not in item):
+                            alpha = 255
                             item.append("puzzlepaper2")
                             what_paper = paper_blackcathate.copy()
             change = False
@@ -2160,7 +2171,7 @@ while run:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bgm_hall.stop()
-                        bg_opendoor.play(maxtime=1400)
+                        bgm_opendoor.play(maxtime=1400)
                         bg = pygame.image.load("sprite/map/apothecaryroom.jpg")
                         bg2 = pygame.image.load("sprite/map/apothecaryroom.jpg")
                         X = 973
@@ -2171,7 +2182,7 @@ while run:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bgm_hall.stop()
-                        bg_opendoor.play(maxtime=1400)
+                        bgm_opendoor.play(maxtime=1400)
                         bg = pygame.image.load("sprite/map/teacherroom.jpg")
                         bg2 = pygame.image.load("sprite/map/teacherroom.jpg")
                         X = 958
@@ -2202,7 +2213,7 @@ while run:
                             if not keys[pygame.K_SPACE] and play_dialog:countdnpc += 1
                             if lstdialog[countdnpc-1].split()[0] != lstdialog[countdnpc].split()[0] and play_dialog:ANIM = 0
                             counttxt, posx_txt, posy_txt = 0, 205, 80
-                            dialogbox[9] = pygame.image.load('sprite/dialogbox10.png')
+                            dialogbox[9] = pygame.image.load('sprite/dialog/dialogbox10.png')
                             nextdia = False
                 bg.blit(bg2 ,(0, 0))
             change = False
@@ -2224,7 +2235,7 @@ while run:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bgm_hall.stop()
-                        bg_opendoor.play(maxtime=1400)
+                        bgm_opendoor.play(maxtime=1400)
                         bg = pygame.image.load("sprite/map/researchroom.jpg")
                         bg2 = pygame.image.load("sprite/map/researchroom.jpg")
                         X = 973
@@ -2294,6 +2305,7 @@ while run:
                     STORY3, checkpoint = True, 3
                     idmap, countd, POSX_AVI, POSY_AVI = "09", 45, 530, 620
                     fadein(bg, -13, -13)
+                    bgm_hall.play(-1)
                 redrawblack()
             if STORY2:
                 if BLACK < 100:
@@ -2337,7 +2349,7 @@ while run:
             if 1168 <= X <= 1280 and 298 <= Y < 433:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
-                    bg_opendoor.play(maxtime=1400)
+                    bgm_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/map/westcorridor_1.jpg")
                     bg2 = pygame.image.load("sprite/map/westcorridor_1.jpg")
                     X = 58
@@ -2371,7 +2383,7 @@ while run:
             if 1168 <= X <= 1630 and 298 <= Y < 433:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
-                    bg_opendoor.play(maxtime=1400)
+                    bgm_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/map/westcorridor_1.jpg")
                     bg2 = pygame.image.load("sprite/map/westcorridor_1.jpg")
                     X = 58
@@ -2408,7 +2420,7 @@ while run:
             if 1168 <= X <= 1630 and 358 <= Y < 433:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
-                    bg_opendoor.play(maxtime=1400)
+                    bgm_opendoor.play(maxtime=1400)
                     bg = pygame.image.load("sprite/map/westcorridor_2.jpg")
                     bg2 = pygame.image.load("sprite/map/westcorridor_2.jpg")
                     X = 58
@@ -2419,15 +2431,17 @@ while run:
             # win.fill((0,0,255), rect=[223,450,50,50])
             if not finish_ph2:
                 win.blit(bucket, (448, 493))
-                if 403 <= X <= 493 and 313 <= Y <= 388:
+                if 373 <= X <= 493 and 403 <= Y <= 463:
                     redrawicon("hand", X+20, Y-50)
                     if keys[pygame.K_f]:
                         PLAY_PH2 = True
                         PLAY_MAIN = False
         if not play_cutscene:
             redrawGameWindow()
-        if item == [] and checkpoint == 4 and not play_cutscene:
+        if item == [] and checkpoint >= 4 and not play_cutscene:
             redrawobtain('press E to open your book', 'or press F to interact')
+        if 'puzzlepaper1' in item or 'puzzlepaper2' in item or 'puzzlepaper3' in item or 'puzzlepaper4' in item or 'puzzlepaper5' in item:
+            redrawobtain('you obtain', 'a puzzle paper')
         if 'magicpowder' in item and idmap != "15" and idmap != "20" and idmap != "21" and idmap != "22" and not play_cutscene:
             redrawobtain('you obtain', 'a magic powder')
         if 'potion' in item and idmap != "02" and not play_cutscene:
@@ -2436,7 +2450,7 @@ while run:
 #-----------------Photohunt--------------------
     elif PLAY_PH1:
         pygame.time.delay(30)
-        sec -= 0.05
+        if not what_paper: sec -= 0.05
         if stage == 0:
             bgm_ph1.play(-1)
             stage = 1
@@ -2489,7 +2503,7 @@ while run:
                         not((125 < mx < 173 and 492 < my < 527) or (700 < mx < 760 and 492 < my < 527)) and \
                         not((350 < mx < 425 and 470 < my < 528) or (942 < mx < 1022 and 470 < my < 528)) and \
                         not((60 < mx < 134 and 650 < my < 703) or (649 < mx < 727 and 671 < my < 703)):
-                        if health_value > 0:
+                        if health_value >= 0:
                             w_sound.play()
                             health_value -= 1
         if foundph1_1 == 2: # เทียน
@@ -2566,18 +2580,18 @@ while run:
             bgm_ph1.stop()
             PLAY_PH1 = False ;PLAY_MAIN = True
             finish_ph1 = True
-            score_value, sec, health_value, stage = 0, 65, 3, 0
-        elif health_value == 0 or sec <= 0:
+            score_value, sec, health_value, stage = 0, 61, 3, 0
+        elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph1.stop()
             PLAY_PH1 = False ;PLAY_MAIN = True
             bg_ph_1 = pygame.image.load('sprite/photohunt/stage 1.png')
-            score_value, sec, health_value, stage = 0, 65, 3, 0
+            score_value, sec, health_value, stage = 0, 61, 3, 0
             foundph1_1 = foundph1_2 = foundph1_3 = foundph1_4 = foundph1_5 = foundph1_6 = foundph1_7 = 1
 
     elif PLAY_PH2:
         pygame.time.delay(30)
-        sec -= 0.05
+        if not what_paper: sec -= 0.05
         if stage == 0:
             bgm_ph2.play(-1)
             stage = 1
@@ -2636,7 +2650,7 @@ while run:
                                             not((231 < mx < 277 and 221 < my < 256) or (853 < mx < 911 and 223 < my < 259)) and\
                                                 not((355 < mx < 395 and 440 < my < 510) or (970 < mx < 1010 and 440 < my < 510)):
                     # else:
-                        if health_value > 0:
+                        if health_value >= 0:
                             w_sound.play()
                             health_value -= 1
         if foundph2_1 == 2: # แก้ววายด้านขวา
@@ -2722,17 +2736,17 @@ while run:
             PLAY_PH2 = False ;PLAY_MAIN = True
             finish_ph2 = True
             score_value, sec, health_value, stage = 0, 65, 3, 0
-        elif health_value <= 0 or sec <= 0:
+        elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph2.stop()
             PLAY_PH2 = False ;PLAY_MAIN = True
             bg_ph_2 = pygame.image.load('sprite/photohunt/stage 2.png')
-            score_value, sec, health_value, stage = 0, 65, 3, 0
+            score_value, sec, health_value, stage = 0, 61, 3, 0
             foundph2_1 = foundph2_2 = foundph2_3 = foundph2_4 = foundph2_5 = foundph2_6 = foundph2_7 = foundph2_8 = 1
 
     elif PLAY_PH3:
         pygame.time.delay(30)
-        sec -= 0.05
+        if not what_paper: sec -= 0.05
         if stage == 0:
             bgm_ph3.play(-1)
             stage = 1
@@ -2782,7 +2796,7 @@ while run:
                                     not((259 < mx < 289 and 394 < my < 434) or (849 < mx < 892 and 394 < my < 434)) and\
                                         not((111 < mx < 142 and 185 < my < 229) or (700 < mx < 736 and 185 < my < 229)):
                     # else:
-                        if health_value > 0:
+                        if health_value >= 0:
                             w_sound.play()
                             health_value -= 1
 
@@ -2852,13 +2866,13 @@ while run:
             bgm_ph3.stop()
             PLAY_PH3 = False ;PLAY_MAIN = True
             finish_ph3 = True
-            score_value, sec, health_value, stage = 0, 65, 3, 0
-        elif health_value <= 0 or sec <= 0:
+            score_value, sec, health_value, stage = 0, 61, 3, 0
+        elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph3.stop()
             PLAY_PH3 = False ;PLAY_MAIN = True
             bg_ph_3 = pygame.image.load('sprite/photohunt/stage 3.png')
-            score_value, sec, health_value, stage = 0, 65, 3, 0
+            score_value, sec, health_value, stage = 0, 61, 3, 0
             foundph3_1 = foundph3_2 = foundph3_3 = foundph3_4 = foundph3_5 = foundph3_6 = 1
 
 #-----------------Broom game-----------------------
@@ -2867,7 +2881,7 @@ while run:
         bg_scrolling_b -= 1
 
         if timeb >= 180:
-            bgm_3.stop()
+            bgm_b3.stop()
             bgm_garden.play()
             PLAY_BROOM, idmap, countd = False, "18", 28
             bg = pygame.image.load(mapping[idmap])
@@ -2889,8 +2903,8 @@ while run:
             win.blit(bg_b3, (bg_scrolling_b+1280, 0))
             if stage_b == 2:
                 stage_b = 3
-                bgm_3.play(-1)
-                bgm_2.stop()
+                bgm_b3.play(-1)
+                bgm_b2.stop()
 
         elif timeb >= 60:
             if fadebg2 == False:
@@ -2900,8 +2914,8 @@ while run:
             win.blit(bg_b2, (bg_scrolling_b+1280, 0))
             if stage_b == 1:
                 stage_b = 2
-                bgm_2.play(-1)
-                bgm_1.stop()
+                bgm_b2.play(-1)
+                bgm_b1.stop()
             
         elif timeb >= 0:
             win.blit(bg_b1, (bg_scrolling_b, 0))
@@ -2909,7 +2923,7 @@ while run:
             if stage_b == 0:
                 stage_b = 1
                 bgm_hall.stop()
-                bgm_1.play(-1)
+                bgm_b1.play(-1)
                 what_paper = paper_rulerc.copy()
 
             
@@ -2933,6 +2947,8 @@ while run:
         else:
             rightb = False
     #----------------------------------------------------------- stage 1 ----------------------------------------------------------------
+    if PLAY_BROOM:
+
         bird2.spawn(9,7,0); bird9.spawn(22,7,0); bird16.spawn(33,20,0)
         bird3.spawn(10,7,0); bird10.spawn(25,7,0); bird17.spawn(47,15,0)
         bird4.spawn(14,7,0); bird11.spawn(27,7,0)
@@ -3066,13 +3082,23 @@ while run:
         if heartb == 1:
             win.blit(heartimg, (1180, 25)) 
         if heartb == 0:
+            bgm_b1.stop()
+            bgm_b2.stop()
+            bgm_b3.stop()
+            gane_over_sound.play()
             for _ in range(1000):
                 yb -= 15
             fadeout()
+            fadebg3 = False
+            fadebg2 = False
+            fadebg1 = False
+            stage_b = 0
             timeb = 0
             heartb = 5
             xb = 50
             yb = 355
+            bgm_b1.play(-1)
+
         redrawbroomGameWindow()
 
 #-----------------Secret forest-------------------
@@ -3096,7 +3122,7 @@ while run:
         # print('PLAYER', PLAYER_POSITION_X, PLAYER_POSITION_Y)
         # print('MONSTER', YELLOW_POS_X, YELLOW_POS_Y)
 
-        if fight and gameover_sf == False:
+        if fight and not gameover_sf and not what_paper:
             if CIRCLE_SF:
                 redrawMagic(walls["wallmagic"])
             # if YELLOW_POS_Y-PLAYER_POSITION_Y <= 30:
@@ -3190,111 +3216,12 @@ while run:
 
 #-----------------MAIN GAME-----------------------------------------------
 
-    if openbook and (PLAY_MAIN or (PLAY_SEFOR and not fight)) and not play_cutscene:
+    if safe >= 1 and ("puzzlepaper1" not in item):
+        item.append("puzzlepaper1")
+        alpha = 255
+        what_paper = paper_rulepz.copy()
 
-        if book_map:
-            book_anim += 1
-            if book_anim+1 >= 9:
-                book_anim = 9
-            if keys[pygame.K_d]:
-                nextpage, book_inven, book_map = True, True, False
-
-        if nextpage and book_inven:
-            if book_anim != 19:
-                book_anim += 1
-            if book_anim == 19:
-                nextpage = False
-
-        elif book_inven:
-            if keys[pygame.K_d]:
-                nextpage, book_menu, book_inven = True, True, False
-            if keys[pygame.K_a]:
-                backpage = True
-            if backpage:
-                if book_anim != 9:book_anim -= 1
-                if book_anim == 9:book_map, book_inven, backpage = True, False, False
-
-        if nextpage and book_menu:
-            if book_anim != 29:book_anim += 1
-            if book_anim == 29:nextpage = False
-            
-        elif book_menu:
-            if keys[pygame.K_a]:
-                backpage = True
-            if backpage:
-                if book_anim != 19:
-                    book_anim -= 1
-                if book_anim == 19:
-                    book_inven, book_menu, backpage = True, False, False
-
-        if keys[pygame.K_e] and (book_anim == 9 or book_anim == 19 or book_anim == 29):
-            backpage, book_map, book_inven, book_menu = True, False, False, False
-
-        if backpage and not book_map and not book_inven and not book_menu:
-            book_anim -= 1
-            if book_anim == 0:
-                backpage, openbook, book_map = False, False, True
-
-        win.blit(book_img[book_anim], (0, 0))
-
-        if book_inven and book_anim == 19:
-            if 'potion' not in item:
-                win.blit(potion_s, (710, 212))
-            if 'potion' in item:
-                win.blit(potion_b, (710, 212))
-            if 'magicpowder' not in item:
-                win.blit(magicpowder_s, (800, 212))
-            if 'magicpowder' in item:
-                win.blit(magicpowder_b, (800, 212))
-            if 'applescrap' not in item:
-                win.blit(applescrap_s, (895, 205))
-            if 'applescrap' in item:
-                win.blit(applescrap_b, (895, 205))
-            if 'puzzlepaper1' not in item:
-                win.blit(puzzlepaper_s, (975, 215))
-            if 'puzzlepaper1' in item:
-                win.blit(puzzlepaper_b, (975, 215))
-                if 978 <= mx <= 1048 and 224 <= my <= 290 and not seepaper:
-                    what_paper = paper_rulepz.copy()
-                    mx, my = -1, -1
-                    seepaper = True
-            if 'puzzlepaper2' not in item:
-                win.blit(puzzlepaper_s, (690, 308))
-            if 'puzzlepaper2' in item:
-                win.blit(puzzlepaper_b, (690, 308))
-                if 695 <= mx <= 763 and 307 <= my <= 394 and not seepaper:
-                    what_paper = paper_blackcathate.copy()
-                    mx, my = -1, -1
-                    seepaper = True
-            if 'puzzlepaper3' not in item:
-                win.blit(puzzlepaper_s, (785, 308))
-            if 'puzzlepaper3' in item:
-                win.blit(puzzlepaper_b, (785, 308))
-                if 790 <= mx <= 859 and 307 <= my <= 394 and not seepaper:
-                    what_paper = paper_b1.copy()
-                    mx, my = -1, -1
-                    seepaper = True
-            if 'puzzlepaper4' not in item:
-                win.blit(puzzlepaper_s, (880, 308))
-            if 'puzzlepaper4' in item:
-                win.blit(puzzlepaper_b, (880, 308))
-                if 884 <= mx <= 952 and 307 <= my <= 394 and not seepaper:
-                    what_paper = paper_901502.copy()
-                    mx, my = -1, -1
-                    seepaper = True
-            if 'puzzlepaper5' not in item:
-                win.blit(puzzlepaper_s, (975, 308))
-            if 'puzzlepaper5' in item:
-                win.blit(puzzlepaper_b, (975, 308))
-                if 979 <= mx <= 1045 and 307 <= my <= 394 and not seepaper:
-                    what_paper = paper_bnwbklu.copy()
-                    mx, my = -1, -1
-                    seepaper = True
-            if 0 <= mx <= 1280 and 0 <= my <= 720 and seepaper:
-                seepaper = False
-                mx, my = -1, -1
-
-    if safe >= 1 and not prize_pz and 'magicpowder' not in item:
+    if safe >= 1 and not prize_pz and 'magicpowder' not in item and not what_paper:
         play_pz = True
         if keys[pygame.K_f] and safe > 15:
             safe = -5
@@ -3363,10 +3290,9 @@ while run:
         print("row1", row1, "row2", row2, "row3", row3, "row4", row4)
 
         if keys[pygame.K_SPACE] and cd_pz > 10:
-            if (row1 == 1 or row1 == 9 or row1 == 4 or row1 == 7) and \
-                (row2 == 9 or row2 == 1 or row2 == 4 or row2 == 7) and \
-                (row3 == 4 or row3 == 9 or row3 == 1 or row3 == 7) and \
-                (row4 == 7 or row4 == 4 or row4 == 9 or row4 == 1) and not prize_pz:
+            answer = {row1, row2, row3, row4}
+            answertrue = {1, 9, 4, 7}
+            if (answer == answertrue) and not prize_pz:
                 prize_pz = True
                 item.append("magicpowder")
                 alpha = 255
@@ -3381,9 +3307,161 @@ while run:
                 row[2] = 0
                 row[3] = 0
                 row[4] = 0
-        if ("puzzlepaper1" not in item):
-            item.append("puzzlepaper1")
-            what_paper = paper_rulepz.copy()
+
+    if play_pz: win.blit(howtopz, (0, 0))
+
+    # if what_paper:
+    #     redrawpaper(what_paper)
+
+    if openbook and (PLAY_MAIN or (PLAY_SEFOR and not fight)) and not play_cutscene:
+
+        if book_map:
+            book_anim += 1
+            if book_anim+1 >= 9:
+                book_anim = 9
+            if keys[pygame.K_d]:
+                nextpage, book_inven, book_map = True, True, False
+
+        if nextpage and book_inven:
+            if book_anim != 19:
+                book_anim += 1
+            if book_anim == 19:
+                nextpage = False
+
+        elif book_inven:
+            if keys[pygame.K_d]:
+                nextpage, book_menu, book_inven = True, True, False
+            if keys[pygame.K_a]:
+                backpage = True
+            if backpage:
+                if book_anim != 9:book_anim -= 1
+                if book_anim == 9:book_map, book_inven, backpage = True, False, False
+
+        win.blit(book_img[book_anim], (0, 0))
+        win.blit(howtobook, (0, 0))
+
+        if nextpage and book_menu:
+            if book_anim != 29:book_anim += 1
+            if book_anim == 29:nextpage = False
+
+        elif book_menu:
+            if keys[pygame.K_a]:
+                backpage = True
+            if backpage:
+                if book_anim != 19:
+                    book_anim -= 1
+                if book_anim == 19:
+                    book_inven, book_menu, backpage = True, False, False
+            if book_anim == 29 and 326 <= mx <= 365 and 318 <= my <= 352 and effects_volume-0.01 >= 0:
+                effects_volume -= 0.01
+                boom_sound.set_volume(effects_volume)
+                boom_sound.set_volume(effects_volume)
+                foot.set_volume(effects_volume)
+                mx, my = -1, -1
+            if book_anim == 29 and 365 <= mx <= 407 and 238 <= my <= 352 and effects_volume+0.01 <= 1:
+                effects_volume += 0.01
+                boom_sound.set_volume(effects_volume)
+                boom_sound.set_volume(effects_volume)
+                foot.set_volume(effects_volume)
+                mx, my = -1, -1
+            if book_anim == 29 and 326 <= mx <= 365 and 414 <= my <= 453 and bgm_volume-0.01 >= 0:
+                bgm_volume -= 0.01
+                bgm_intro.set_volume(bgm_volume)
+                bgm_hall.set_volume(bgm_volume)
+                bgm_opendoor.set_volume(bgm_volume)
+                bgm_canteen.set_volume(bgm_volume)
+                bgm_corridor.set_volume(bgm_volume)
+                bgm_garden.set_volume(bgm_volume)
+                bgm_dark.set_volume(bgm_volume)
+                bgm_dark.set_volume(bgm_volume)
+                mx, my = -1, -1
+            if book_anim == 29 and 365 <= mx <= 407 and 414 <= my <= 453 and bgm_volume+0.01 <= 1:
+                bgm_volume += 0.01
+                bgm_intro.set_volume(bgm_volume)
+                bgm_hall.set_volume(bgm_volume)
+                bgm_opendoor.set_volume(bgm_volume)
+                bgm_canteen.set_volume(bgm_volume)
+                bgm_corridor.set_volume(bgm_volume)
+                bgm_garden.set_volume(bgm_volume)
+                bgm_dark.set_volume(bgm_volume)
+                bgm_dark.set_volume(bgm_volume)
+                mx, my = -1, -1
+            if book_anim == 29 and 830 <= mx <= 930 and 320 <= my <= 350:
+                run = False
+
+            volume_show = fontmenu.render(str(int(effects_volume*100))+"%", True, (0, 0, 0))
+            volume_show2 = fontmenu.render(str(int(bgm_volume*100))+"%", True, (0, 0, 0))
+            win.blit(volume_show, (428, 320))
+            win.blit(volume_show2, (428, 420))
+
+        if (keys[pygame.K_e] or keys[pygame.K_ESCAPE]) and not what_paper and (book_anim == 9 or book_anim == 19 or book_anim == 29):
+            backpage, book_map, book_inven, book_menu = True, False, False, False
+
+        if backpage and not book_map and not book_inven and not book_menu:
+            book_anim -= 1
+            if book_anim == 0:
+                backpage, openbook, book_map = False, False, True
+
+        # win.blit(book_img[book_anim], (0, 0))
+
+        if book_inven and book_anim == 19:
+            if 'potion' not in item:
+                win.blit(potion_s, (710, 212))
+            if 'potion' in item:
+                win.blit(potion_b, (710, 212))
+            if 'magicpowder' not in item:
+                win.blit(magicpowder_s, (800, 212))
+            if 'magicpowder' in item:
+                win.blit(magicpowder_b, (800, 212))
+            if 'applescrap' not in item:
+                win.blit(applescrap_s, (895, 205))
+            if 'applescrap' in item:
+                win.blit(applescrap_b, (895, 205))
+            if 'puzzlepaper1' not in item:
+                win.blit(puzzlepaper_s, (975, 215))
+            if 'puzzlepaper1' in item:
+                win.blit(puzzlepaper_b, (975, 215))
+                if 978 <= mx <= 1048 and 224 <= my <= 290 and not seepaper:
+                    what_paper = paper_rulepz.copy()
+                    mx, my = -1, -1
+                    seepaper = True
+            if 'puzzlepaper2' not in item:
+                win.blit(puzzlepaper_s, (690, 308))
+            if 'puzzlepaper2' in item:
+                win.blit(puzzlepaper_b, (690, 308))
+                if 695 <= mx <= 763 and 307 <= my <= 394 and not seepaper:
+                    what_paper = paper_blackcathate.copy()
+                    mx, my = -1, -1
+                    seepaper = True
+            if 'puzzlepaper3' not in item:
+                win.blit(puzzlepaper_s, (785, 308))
+            if 'puzzlepaper3' in item:
+                win.blit(puzzlepaper_b, (785, 308))
+                if 790 <= mx <= 859 and 307 <= my <= 394 and not seepaper:
+                    what_paper = paper_b1.copy()
+                    mx, my = -1, -1
+                    seepaper = True
+            if 'puzzlepaper4' not in item:
+                win.blit(puzzlepaper_s, (880, 308))
+            if 'puzzlepaper4' in item:
+                win.blit(puzzlepaper_b, (880, 308))
+                if 884 <= mx <= 952 and 307 <= my <= 394 and not seepaper:
+                    what_paper = paper_901502.copy()
+                    mx, my = -1, -1
+                    seepaper = True
+            if 'puzzlepaper5' not in item:
+                win.blit(puzzlepaper_s, (975, 308))
+            if 'puzzlepaper5' in item:
+                win.blit(puzzlepaper_b, (975, 308))
+                if 979 <= mx <= 1045 and 307 <= my <= 394 and not seepaper:
+                    what_paper = paper_bnwbklu.copy()
+                    mx, my = -1, -1
+                    seepaper = True
+
+            if seepaper:
+                if (keys[pygame.K_ESCAPE]) or (0 <= mx <= 1280 and 0 <= my <= 720):
+                    mx, my = -1, -1
+                    seepaper = False
 
     if what_paper:
         redrawpaper(what_paper)
@@ -3399,7 +3477,11 @@ while run:
     # print(idmap)
 
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        mouseon += 1
+    else:
+        mouseon = 0
+    if mouseon == 1:
         mx, my = pygame.mouse.get_pos()
-        print(mx, my)
+        print('mouseeeeeeeeeeeeeeeeeee', mx, my)
 
 pygame.quit()

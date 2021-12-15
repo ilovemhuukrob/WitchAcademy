@@ -84,11 +84,11 @@ chat_icon = readvar('var.txt', 'chat')
 #-----------------------------Front and Cutscene----------------------------
 FRONTANIM = False
 play_dialog, play_cutscene, nextdia = False, False, False
-STORY1, STORY2, STORY3, STORY4, STORY5 = False, False, False, False, False
+STORY1, STORY2, STORY3, STORY4, STORY5 = True, False, False, False, False
 BLACK, alpha = 0, 255
 posx_txt, posy_txt = 205, 80
 counttxt, countd = 0, 0
-checkpoint = 4 #<----------------- checkpoint is here! ---------------------
+checkpoint = 1 #<----------------- checkpoint is here! ---------------------
 logo = pygame.image.load('sprite/logo.png')
 press = pygame.image.load('sprite/press.png')
 font = pygame.font.Font('sprite/alagard.ttf', 21)
@@ -157,7 +157,7 @@ puzzlepaper_s = pygame.image.load('sprite/book/puzzlepaper_s.png')
 potion_b = pygame.image.load('sprite/book/potion.png')
 potion_s = pygame.image.load('sprite/book/potion_s.png')
 #-----------------------------------Item------------------------------------
-item = ["applescrap", "magicpowder", "potion"]
+item = []
 applescrap = pygame.image.load('sprite/item/applescrap.png')
 potion = pygame.image.load('sprite/item/potion.png')
 magicpowder = pygame.image.load('sprite/item/magicpowder.png')

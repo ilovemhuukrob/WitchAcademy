@@ -3298,10 +3298,7 @@ while run:
                     seepaper = True
 
             if seepaper:
-                if keys[pygame.K_ESCAPE]:
-                    mx, my = -1, -1
-                    seepaper = False
-                elif 0 <= mx <= 1280 and 0 <= my <= 720:
+                if (keys[pygame.K_ESCAPE]) or (0 <= mx <= 1280 and 0 <= my <= 720):
                     mx, my = -1, -1
                     seepaper = False
 

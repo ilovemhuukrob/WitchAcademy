@@ -58,9 +58,10 @@ bgm_canteen = pygame.mixer.Sound("sound/canteen.mp3"); bgm_canteen.set_volume(bg
 bgm_corridor = pygame.mixer.Sound("sound/class.mp3"); bgm_corridor.set_volume(bgm_volume)
 bgm_garden = pygame.mixer.Sound("sound/garden.mp3"); bgm_garden.set_volume(bgm_volume)
 bgm_dark = pygame.mixer.Sound("sound/dark song.mp3"); bgm_dark.set_volume(bgm_volume)
-collect_item = pygame.mixer.Sound("sound/collectitem.mp3"); bgm_dark.set_volume(bgm_volume)
+bgm_potionroom = pygame.mixer.Sound("sound/potionroom.mp3"); bgm_potionroom.set_volume(bgm_volume)
+collect_item = pygame.mixer.Sound("sound/collectitem.mp3"); collect_item.set_volume(bgm_volume)
 boom_sound = pygame.mixer.Sound("sound/explode.mp3"); boom_sound.set_volume(effects_volume)
-gane_over_sound = pygame.mixer.Sound("sound/gameover.mp3"); boom_sound.set_volume(effects_volume)
+game_over_sound = pygame.mixer.Sound("sound/gameover.mp3"); game_over_sound.set_volume(effects_volume)
 foot = pygame.mixer.Sound("sound/wood.mp3"); foot.set_volume(effects_volume)
 #---------------------------------------------------------------------------
 def readvar(file, string):
@@ -83,7 +84,7 @@ chat_icon = readvar('var.txt', 'chat')
 #-----------------------------Front and Cutscene----------------------------
 FRONTANIM = False
 play_dialog, play_cutscene, nextdia = False, False, False
-STORY1, STORY2, STORY3, STORY4, STORY5 = True, False, False, False, False
+STORY1, STORY2, STORY3, STORY4, STORY5 = False, False, False, False, False
 BLACK, alpha = 0, 255
 posx_txt, posy_txt = 205, 80
 counttxt, countd = 0, 0
@@ -156,7 +157,7 @@ puzzlepaper_s = pygame.image.load('sprite/book/puzzlepaper_s.png')
 potion_b = pygame.image.load('sprite/book/potion.png')
 potion_s = pygame.image.load('sprite/book/potion_s.png')
 #-----------------------------------Item------------------------------------
-item = []
+item = ["applescrap", "magicpowder", "potion"]
 applescrap = pygame.image.load('sprite/item/applescrap.png')
 potion = pygame.image.load('sprite/item/potion.png')
 magicpowder = pygame.image.load('sprite/item/magicpowder.png')
@@ -696,6 +697,8 @@ def cutscene():
             if countd == 69 and 950 > POSX_VEN > 900:
                 win.blit(apple, ((POSX_H+35)-((POSX_VEN-900)/5)*2, POSY_H+25))
             if countd == 69 and 1100 > POSX_VEN > 975:
+                if POSX_VEN == 980:boom_sound.play()
+                bgm_hall.stop()
                 win.blit(explosion[int((POSX_VEN-980)/5)], (POSX_H-150, POSY_H-150))
         if countd == 69 and POSY_VEN == 325 and POSX_VEN >= 800:
             venwalk('right', 1300)
@@ -727,6 +730,7 @@ def cutscene():
     elif STORY5:
         if lstdialog[countd].split()[0] == 'End':
             play_dialog, countd = False, 77
+            bgm_dark.play()
         if countd == 77:
             esmewalk('right', 320)
             venwalk('left', 320)
@@ -736,17 +740,15 @@ def cutscene():
             esmewalk('right', 320)
             venwalk('left', 480)
     if play_dialog:redrawdialog(countd)
-    if keys[pygame.K_SPACE] and play_dialog:
-        nextdia = True
-#     if keys[pygame.K_SPACE] and play_dialog and counttxt >= len(lstdialog[countd].split(':')[1])-1:
-#         if countd in [0] and counttxt >= 10:nextdia = True
-#         if countd in [3] and counttxt >= 90:nextdia = True
-#         if countd in [7] and counttxt >= 50:nextdia = True
-#         if countd in [11] and counttxt >= 25:nextdia = True
-#         if countd in [16] and counttxt >= 50:nextdia = True
-#         if countd in [32] and counttxt >= 70:nextdia = True
-#         if countd in [35] and counttxt >= 50:nextdia = True
-#         elif countd not in [0, 3, 7, 11, 16, 32, 35]:nextdia = True
+    if keys[pygame.K_SPACE] and play_dialog and counttxt >= len(lstdialog[countd].split(':')[1])-1:
+        if countd in [0] and counttxt >= 10:nextdia = True
+        if countd in [3] and counttxt >= 90:nextdia = True
+        if countd in [7] and counttxt >= 50:nextdia = True
+        if countd in [11] and counttxt >= 25:nextdia = True
+        if countd in [16] and counttxt >= 50:nextdia = True
+        if countd in [32] and counttxt >= 70:nextdia = True
+        if countd in [35] and counttxt >= 50:nextdia = True
+        elif countd not in [0, 3, 7, 11, 16, 32, 35]:nextdia = True
     elif nextdia:
         if not keys[pygame.K_SPACE]:
             countd += 1
@@ -916,73 +918,82 @@ def changemap(l, r, u, d, nx, ny, idmapold, idmapnew, change):
             if idmapnew == "18":
                 bg = bgblood
                 bg2 = bgblood
+
+        # if checkpoint >= 7:
+        #     if idmapnew == "21":
+        #         bg = pygame.image.load('sprite/map/teacherroomblood.jpg')
+        #         bg2 = pygame.image.load('sprite/map/teacherroomblood.jpg')
+        #     if idmapnew == "20":
+        #         bg = pygame.image.load('sprite/map/apothecaryroomcutscene2.jpg')
+        #         bg2 = pygame.image.load('sprite/map/apothecaryroomcutscene2.jpg')
+
         X = nx
         Y = ny
         change = True
         # music = True
         #=========================hall================================
         if idmapold == '01' and idmapnew == '02': # hall ==> canteen
-            bgm_hall.set_volume(0.4)
+            bgm_hall.set_volume(bgm_volume)
             bgm_canteen.play(-1)
         #========================eastcorridor1===========================
         elif idmapold == '03' and idmapnew == '08': # eastcorridor1 ==> eastgarden
             bgm_corridor.stop()
             bgm_hall.stop()
-            bgm_garden.play(-1).set_volume(0.7)
+            bgm_garden.play(-1).set_volume(bgm_volume)
         elif idmapold == '03' and idmapnew == '02': # eastcorridor1 ==> canteen
             bgm_corridor.stop()
-            bgm_hall.play(-1).set_volume(0.4)
+            bgm_hall.play(-1).set_volume(bgm_volume)
             bgm_canteen.play(-1)
         #========================eastcorridor2===========================
         elif idmapold == '04' and idmapnew == '19': # eastcorridor2 ==> eastforest
             bgm_corridor.stop()
             bgm_hall.stop()
-            bgm_garden.play(-1).set_volume(0.7)
+            bgm_garden.play(-1).set_volume(bgm_volume)
         elif idmapold == '04' and idmapnew == '10': # eastcorridor2 ==> battleroom
             bgm_corridor.stop()
-            bgm_hall.play(-1).set_volume(1.0)
+            bgm_hall.play(-1).set_volume(bgm_volume)
         #========================battleroom===========================
         elif idmapold == '10' and idmapnew == '04': # battleroom ==> eastcorridor2
-            bgm_hall.set_volume(0.4)
+            bgm_hall.set_volume(bgm_volume)
             bgm_corridor.play(-1)
         #========================eastforest===========================
         elif idmapold == '19' and idmapnew == '04': # eastforest ==> eastcorridor2
             bgm_garden.stop()
-            bgm_hall.play(-1).set_volume(0.4)
+            bgm_hall.play(-1).set_volume(bgm_volume)
             bgm_corridor.play(-1)
         #========================westgargen===========================
         elif idmapold == '14' and idmapnew == '13': # westgarden ==> sechall
             bgm_garden.stop()
-            bgm_hall.play(-1).set_volume(1.0)
+            bgm_hall.play(-1).set_volume(bgm_volume)
         elif idmapold == '14' and idmapnew == '15': # westgarden ==> westcorridor1
             bgm_garden.stop()
-            bgm_hall.play(-1).set_volume(0.4)
+            bgm_hall.play(-1).set_volume(bgm_volume)
             bgm_corridor.play(-1)
         #========================sechall===========================
         elif idmapold == '13' and idmapnew == '14': # westgarden ==> sechall
             bgm_hall.stop()
-            bgm_garden.play(-1).set_volume(0.7)
+            bgm_garden.play(-1).set_volume(bgm_volume)
         #========================path==============================
         elif idmapold == '11' and idmapnew == '15': # path ==> westcorridor1
-            bgm_hall.set_volume(0.4)
+            bgm_hall.set_volume(bgm_volume)
             bgm_corridor.play(-1)
         #========================westcorridor1===========================
         elif idmapold == '15' and idmapnew == '14': # westcorridor1 ==> westgarden
             bgm_corridor.stop()
             bgm_hall.stop()
-            bgm_garden.play(-1).set_volume(0.7)
+            bgm_garden.play(-1).set_volume(bgm_volume)
         elif idmapold == '15' and idmapnew == '11': # westcorridor1 ==> path
             bgm_corridor.stop()
-            bgm_hall.play(-1).set_volume(1.0)
+            bgm_hall.play(-1).set_volume(bgm_volume)
         #========================westcorridor2===========================
         elif idmapold == '16' and idmapnew == '17': # westcorridor2 ==> westforest
             bgm_corridor.stop()
             bgm_hall.stop()
-            bgm_garden.play(-1); bgm_garden.set_volume(0.7)
+            bgm_garden.play(-1); bgm_garden.set_volume(bgm_volume)
         #========================westforest===========================
         elif idmapold == '17' and idmapnew == '16': # westforest ==> westcorridor2
             bgm_garden.stop()
-            bgm_hall.play(-1).set_volume(0.4)
+            bgm_hall.play(-1).set_volume(bgm_volume)
             bgm_corridor.play(-1)
         return idmapnew, change
     return idmapold, change
@@ -1072,14 +1083,15 @@ sub_battle2 = sup("g13", 1114, 452, 0)
 font_ph = pygame.font.Font('sprite/photohunt/2005_iannnnnAMD.ttf', 72)
 HeartImg = pygame.image.load('sprite/photohunt/heart.png')
 bg_ph_1 = pygame.image.load('sprite/photohunt/stage 1.png')
-bgm_ph1 = pygame.mixer.Sound('sound/bgm_ph1.mp3'); bgm_ph1.set_volume(0.3)
+bgm_ph1 = pygame.mixer.Sound('sound/bgm_ph1.mp3'); bgm_ph1.set_volume(bgm_volume)
 bg_ph_2 = pygame.image.load('sprite/photohunt/stage 2.png')
-bgm_ph2 = pygame.mixer.Sound('sound/tech_rom.mp3'); bgm_ph2.set_volume(0.3)
+bgm_ph2 = pygame.mixer.Sound('sound/tech_rom.mp3'); bgm_ph2.set_volume(bgm_volume)
 bg_ph_3 = pygame.image.load('sprite/photohunt/stage 3.png')
-bgm_ph3 = pygame.mixer.Sound('sound/research_roon.mp3'); bgm_ph3.set_volume(0.3)
-c_sound = pygame.mixer.Sound("sound/magicsound.mp3"); c_sound.set_volume(0.5)
-w_sound = pygame.mixer.Sound("sound/Swoosh.mp3"); w_sound.set_volume(0.5)
+bgm_ph3 = pygame.mixer.Sound('sound/research_roon.mp3'); bgm_ph3.set_volume(bgm_volume)
+c_sound = pygame.mixer.Sound("sound/magicsound.mp3"); c_sound.set_volume(effects_volume)
+w_sound = pygame.mixer.Sound("sound/Swoosh.mp3"); w_sound.set_volume(effects_volume)
 win_screen = pygame.image.load('sprite/photohunt/bg_end_ph.jpg')
+
 
 stage = 0
 score_value = 0
@@ -1135,10 +1147,10 @@ bg_b3 = pygame.image.load("sprite/racing/bg/library.jpg").convert()
 bg_b4 = pygame.image.load("sprite/racing/bg/forest1.jpg").convert()
 
 #------------Sound---------------
-bgm_b1 = pygame.mixer.Sound("sound/forest.mp3"); bgm_b1.set_volume(1.0)
-bgm_b2 = pygame.mixer.Sound("sound/clocktower2.mp3"); bgm_b2.set_volume(1.0)
-bgm_b3 = pygame.mixer.Sound("sound/library.mp3"); bgm_b3.set_volume(1.0)
-crash = pygame.mixer.Sound("sound/crash.mp3"); crash.set_volume(1.0)
+bgm_b1 = pygame.mixer.Sound("sound/forest.mp3"); bgm_b1.set_volume(bgm_volume)
+bgm_b2 = pygame.mixer.Sound("sound/clocktower2.mp3"); bgm_b2.set_volume(bgm_volume)
+bgm_b3 = pygame.mixer.Sound("sound/library.mp3"); bgm_b3.set_volume(bgm_volume)
+crash = pygame.mixer.Sound("sound/crash.mp3"); crash.set_volume(effects_volume)
 
 bg_scrolling_b = 0
 stage_b = 0
@@ -1346,12 +1358,11 @@ cd_fs2 = 0
 cd_fs3 = 0
 cd_fs4 = 0
 cd_fs5 = 0
-bgm_sf = pygame.mixer.Sound("sound/secret forest.mp3"); bgm_sf.set_volume(1.0)
-roar = pygame.mixer.Sound("sound/roar.mp3"); roar.set_volume(1.0)
-bgm_sf2 = pygame.mixer.Sound("sound/secret forest song.mp3"); bgm_sf2.set_volume(1.0)
+bgm_sf = pygame.mixer.Sound("sound/secret forest.mp3"); bgm_sf.set_volume(bgm_volume)
+roar = pygame.mixer.Sound("sound/roar.mp3"); roar.set_volume(effects_volume)
+bgm_sf2 = pygame.mixer.Sound("sound/secret forest song.mp3"); bgm_sf2.set_volume(bgm_volume)
 damage = False
 endevent_sf = False
-
 rspell, lspell = readvar('var.txt', 'rspell'), readvar('var.txt', 'lspell')
 dspell, uspell = readvar('var.txt', 'dspell'), readvar('var.txt', 'uspell')
 magic, deadplayer = readvar('var.txt', 'circle'), readvar('var.txt', 'dead/')
@@ -1733,7 +1744,7 @@ while run:
                 bg2 = pygame.image.load("sprite/map/eastcorridor_1.jpg")
                 idmap = "03"
                 bgm_canteen.stop()
-                bgm_hall.set_volume(0.4)
+                bgm_hall.set_volume(bgm_volume)
                 bgm_corridor.play(-1)
             elif Y >= 778 and Y <= 838 and X >= 828:
                 X = 28
@@ -1744,7 +1755,7 @@ while run:
                 idmap = "08"
                 bgm_hall.stop()
                 bgm_canteen.stop()
-                bgm_garden.play(-1).set_volume(0.7)
+                bgm_garden.play(-1).set_volume(bgm_volume)
             elif X <= 13 and Y >= 148 and Y <= 163:
                 X = 1168
                 Y = 238
@@ -1753,7 +1764,7 @@ while run:
                 bg2 = pygame.image.load("sprite/map/hallway.jpg")
                 idmap = "01"
                 bgm_canteen.stop()
-                bgm_hall.set_volume(1.0)
+                bgm_hall.set_volume(bgm_volume)
             elif X >= 798 and Y >= 283 and Y <= 598:
                 stage_height = 720
                 win.blit(bg ,(-453, -283))
@@ -1889,7 +1900,7 @@ while run:
                 Y = 823
                 idmap = "02"
                 bgm_garden.stop()
-                bgm_hall.play(-1).set_volume(0.4)
+                bgm_hall.play(-1).set_volume(bgm_volume)
                 bgm_canteen.play(-1)
             elif Y <= 13:
                 bg = pygame.image.load("sprite/map/eastcorridor_1.jpg")
@@ -1898,7 +1909,7 @@ while run:
                 Y = 613
                 idmap = "03"
                 bgm_garden.stop()
-                bgm_hall.play(-1).set_volume(0.4)
+                bgm_hall.play(-1).set_volume(bgm_volume)
                 bgm_corridor.play(-1)
             else:
                 win.blit(bg ,(rel_x-bg_width, rel_y-bg_height))
@@ -1910,6 +1921,7 @@ while run:
                         if keys[pygame.K_f] and ("puzzlepaper5" not in item):
                             alpha = 255
                             item.append("puzzlepaper5")
+                            collect_item.play()
                             what_paper = paper_bnwbklu.copy()
     #--------------firstaid-09-------------
         elif idmap == "09": #FIRSTAID ROOM
@@ -2083,6 +2095,7 @@ while run:
                         if keys[pygame.K_f] and ("puzzlepaper4" not in item):
                             alpha = 255
                             item.append("puzzlepaper4")
+                            collect_item.play()
                             what_paper = paper_901502.copy()
                     
             change = False
@@ -2115,6 +2128,7 @@ while run:
                         if keys[pygame.K_f] and ("puzzlepaper3" not in item):
                             alpha = 255
                             item.append("puzzlepaper3")
+                            collect_item.play()
                             what_paper = paper_b1.copy()
             change = False
     #----------------hall-13---------------
@@ -2150,6 +2164,7 @@ while run:
                         if keys[pygame.K_f] and ("puzzlepaper2" not in item):
                             alpha = 255
                             item.append("puzzlepaper2")
+                            collect_item.play()
                             what_paper = paper_blackcathate.copy()
             change = False
     #--------------westcor1-15-------------
@@ -2171,7 +2186,12 @@ while run:
                     redrawicon("door", X+27, Y-50)
                     if keys[pygame.K_f]:
                         bgm_hall.stop()
+                        bgm_corridor.stop()
                         bgm_opendoor.play(maxtime=1400)
+                        bgm_potionroom.play(-1)
+                        if checkpoint >= 7:
+                            bg = pygame.image.load("sprite/map/apothecaryroomcutscene2.jpg")
+                            bg2 = pygame.image.load("sprite/map/apothecaryroomcutscene2.jpg")
                         bg = pygame.image.load("sprite/map/apothecaryroom.jpg")
                         bg2 = pygame.image.load("sprite/map/apothecaryroom.jpg")
                         X = 973
@@ -2183,6 +2203,9 @@ while run:
                     if keys[pygame.K_f]:
                         bgm_hall.stop()
                         bgm_opendoor.play(maxtime=1400)
+                        if checkpoint >= 7:
+                            bg = pygame.image.load("sprite/map/teacherroomblood.jpg")
+                            bg2 = pygame.image.load("sprite/map/teacherroomblood.jpg")
                         bg = pygame.image.load("sprite/map/teacherroom.jpg")
                         bg2 = pygame.image.load("sprite/map/teacherroom.jpg")
                         X = 958
@@ -2203,6 +2226,7 @@ while run:
                                 lstdialog = ["Stella : You did great, Now it's yours"]
                                 if 'potion' not in item:
                                     item.append('potion')
+                                    collect_item.play()
                                     alpha = 255
                             play_dialog, ANIM, countdnpc = True, 0, 0
                     if play_dialog:
@@ -2357,6 +2381,7 @@ while run:
                     idmap = "15"
                     CHECK = "RIGHT"
                     bgm_hall.play(-1,fade_ms=5000)
+                    bgm_potionroom.stop()
             if not finish_ph1:
                 win.blit(bucket, (673, 403))
                 if 613 <= X <= 718 and 283 <= Y <= 463:
@@ -2364,6 +2389,7 @@ while run:
                     if keys[pygame.K_f]:
                         PLAY_PH1 = True
                         PLAY_MAIN = False
+                        bgm_potionroom.stop()
             if not STORY5 and checkpoint == 6:
                 fadeout()
                 X, Y = 1153, 373
@@ -2397,9 +2423,12 @@ while run:
                 if 763 <= X <= 853 and 283 <= Y <= 358:
                     redrawicon("hand", X+20, Y-50)
                     if keys[pygame.K_f]:
+                        bgm_corridor.stop()
                         PLAY_PH3 = True
                         PLAY_MAIN = False
             if STORY4:
+                if countd == 69 and 1100 > POSX_VEN > 975:
+                    bg = pygame.image.load('sprite/map/teacherroomblood.jpg')
                 cutscene()
             if not STORY4 and checkpoint == 5:
                 fadeout()
@@ -2434,17 +2463,18 @@ while run:
                 if 373 <= X <= 493 and 403 <= Y <= 463:
                     redrawicon("hand", X+20, Y-50)
                     if keys[pygame.K_f]:
+                        bgm_corridor.stop()
                         PLAY_PH2 = True
                         PLAY_MAIN = False
         if not play_cutscene:
             redrawGameWindow()
         if item == [] and checkpoint >= 4 and not play_cutscene:
             redrawobtain('press E to open your book', 'or press F to interact')
-        if 'puzzlepaper1' in item or 'puzzlepaper2' in item or 'puzzlepaper3' in item or 'puzzlepaper4' in item or 'puzzlepaper5' in item:
+        if ('puzzlepaper1' in item or 'puzzlepaper2' in item or 'puzzlepaper3' in item or 'puzzlepaper4' in item or 'puzzlepaper5' in item) and idmap != "15" and idmap != "16" and idmap != "02":
             redrawobtain('you obtain', 'a puzzle paper')
-        if 'magicpowder' in item and idmap != "15" and idmap != "20" and idmap != "21" and idmap != "22" and not play_cutscene:
+        if ('magicpowder' in item and idmap != "15" and idmap != "20" and idmap != "21" and idmap != "22") and not play_cutscene:
             redrawobtain('you obtain', 'a magic powder')
-        if 'potion' in item and idmap != "02" and not play_cutscene:
+        if ('potion' in item and idmap != "02") and not play_cutscene:
             redrawobtain('you obtain', 'a potion')
 
 #-----------------Photohunt--------------------
@@ -2578,12 +2608,14 @@ while run:
         if score_value == 7:
             fadeout(200)
             bgm_ph1.stop()
+            bgm_potionroom.play(-1)
             PLAY_PH1 = False ;PLAY_MAIN = True
             finish_ph1 = True
             score_value, sec, health_value, stage = 0, 61, 3, 0
         elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph1.stop()
+            game_over_sound.play()
             PLAY_PH1 = False ;PLAY_MAIN = True
             bg_ph_1 = pygame.image.load('sprite/photohunt/stage 1.png')
             score_value, sec, health_value, stage = 0, 61, 3, 0
@@ -2739,6 +2771,7 @@ while run:
         elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph2.stop()
+            game_over_sound.play()
             PLAY_PH2 = False ;PLAY_MAIN = True
             bg_ph_2 = pygame.image.load('sprite/photohunt/stage 2.png')
             score_value, sec, health_value, stage = 0, 61, 3, 0
@@ -2870,6 +2903,7 @@ while run:
         elif health_value < 0 or sec <= 0:
             fadeout(200)
             bgm_ph3.stop()
+            game_over_sound.play()
             PLAY_PH3 = False ;PLAY_MAIN = True
             bg_ph_3 = pygame.image.load('sprite/photohunt/stage 3.png')
             score_value, sec, health_value, stage = 0, 61, 3, 0
@@ -3085,7 +3119,7 @@ while run:
             bgm_b1.stop()
             bgm_b2.stop()
             bgm_b3.stop()
-            gane_over_sound.play()
+            game_over_sound.play()
             for _ in range(1000):
                 yb -= 15
             fadeout()
@@ -3167,6 +3201,7 @@ while run:
         elif gameover_sf:
             redrawDead()
             if WALK_AVI == 15:
+                game_over_sound.play()
                 fadeout()
                 X, Y = 583, 583
                 hp_player = 50
@@ -3194,6 +3229,8 @@ while run:
                 fight = True
                 alpha = 255
                 item.append("applescrap")
+                collect_item.play()
+                bgm_sf2.play(-1)
                 bg = pygame.image.load("sprite/map/secretforest.jpg")
 
         if not fight:
@@ -3209,6 +3246,7 @@ while run:
                     bg2 = bgblood
                     bgm_garden.play(-1)
                     bgm_sf.stop()
+                    bgm_sf2.stop()
                     idmap = "18"
 
         win.blit(fog ,(-238, rel_y-bg_height))
@@ -3218,6 +3256,7 @@ while run:
 
     if safe >= 1 and ("puzzlepaper1" not in item):
         item.append("puzzlepaper1")
+        collect_item.play()
         alpha = 255
         what_paper = paper_rulepz.copy()
 
@@ -3295,6 +3334,8 @@ while run:
             if (answer == answertrue) and not prize_pz:
                 prize_pz = True
                 item.append("magicpowder")
+                play_pz = False
+                collect_item.play()
                 alpha = 255
                 safe = 0
             else:
@@ -3308,7 +3349,7 @@ while run:
                 row[3] = 0
                 row[4] = 0
 
-    if play_pz: win.blit(howtopz, (0, 0))
+    if play_pz: win.blit(howtopz, (928, 613))
 
     # if what_paper:
     #     redrawpaper(what_paper)
@@ -3338,7 +3379,7 @@ while run:
                 if book_anim == 9:book_map, book_inven, backpage = True, False, False
 
         win.blit(book_img[book_anim], (0, 0))
-        win.blit(howtobook, (0, 0))
+        win.blit(howtobook, (335, 635))
 
         if nextpage and book_menu:
             if book_anim != 29:book_anim += 1
@@ -3355,44 +3396,69 @@ while run:
             if book_anim == 29 and 326 <= mx <= 365 and 318 <= my <= 352 and effects_volume-0.01 >= 0:
                 effects_volume -= 0.01
                 boom_sound.set_volume(effects_volume)
-                boom_sound.set_volume(effects_volume)
+                game_over_sound.set_volume(effects_volume)
                 foot.set_volume(effects_volume)
+                c_sound.set_volume(effects_volume)
+                w_sound.set_volume(effects_volume)
+                crash.set_volume(effects_volume)
+                roar.set_volume(effects_volume)
                 mx, my = -1, -1
             if book_anim == 29 and 365 <= mx <= 407 and 238 <= my <= 352 and effects_volume+0.01 <= 1:
                 effects_volume += 0.01
                 boom_sound.set_volume(effects_volume)
-                boom_sound.set_volume(effects_volume)
+                game_over_sound.set_volume(effects_volume)
                 foot.set_volume(effects_volume)
+                c_sound.set_volume(effects_volume)
+                w_sound.set_volume(effects_volume)
+                crash.set_volume(effects_volume)
+                roar.set_volume(effects_volume)
                 mx, my = -1, -1
             if book_anim == 29 and 326 <= mx <= 365 and 414 <= my <= 453 and bgm_volume-0.01 >= 0:
                 bgm_volume -= 0.01
                 bgm_intro.set_volume(bgm_volume)
                 bgm_hall.set_volume(bgm_volume)
-                bgm_opendoor.set_volume(bgm_volume)
                 bgm_canteen.set_volume(bgm_volume)
                 bgm_corridor.set_volume(bgm_volume)
                 bgm_garden.set_volume(bgm_volume)
                 bgm_dark.set_volume(bgm_volume)
-                bgm_dark.set_volume(bgm_volume)
+                bgm_potionroom.set_volume(bgm_volume)
+                collect_item.set_volume(bgm_volume)
+                bgm_ph1.set_volume(bgm_volume)
+                bgm_ph2.set_volume(bgm_volume)
+                bgm_ph3.set_volume(bgm_volume)
+                bgm_sf.set_volume(bgm_volume)
+                bgm_sf2.set_volume(bgm_volume)
+                bgm_b1.set_volume(bgm_volume)
+                bgm_b2.set_volume(bgm_volume)
+                bgm_b3.set_volume(bgm_volume)
                 mx, my = -1, -1
             if book_anim == 29 and 365 <= mx <= 407 and 414 <= my <= 453 and bgm_volume+0.01 <= 1:
                 bgm_volume += 0.01
                 bgm_intro.set_volume(bgm_volume)
                 bgm_hall.set_volume(bgm_volume)
-                bgm_opendoor.set_volume(bgm_volume)
                 bgm_canteen.set_volume(bgm_volume)
                 bgm_corridor.set_volume(bgm_volume)
                 bgm_garden.set_volume(bgm_volume)
                 bgm_dark.set_volume(bgm_volume)
-                bgm_dark.set_volume(bgm_volume)
+                bgm_potionroom.set_volume(bgm_volume)
+                collect_item.set_volume(bgm_volume)
+                bgm_ph1.set_volume(bgm_volume)
+                bgm_ph2.set_volume(bgm_volume)
+                bgm_ph3.set_volume(bgm_volume)
+                bgm_sf.set_volume(bgm_volume)
+                bgm_sf2.set_volume(bgm_volume)
+                bgm_b1.set_volume(bgm_volume)
+                bgm_b2.set_volume(bgm_volume)
+                bgm_b3.set_volume(bgm_volume)
                 mx, my = -1, -1
             if book_anim == 29 and 830 <= mx <= 930 and 320 <= my <= 350:
                 run = False
 
             volume_show = fontmenu.render(str(int(effects_volume*100))+"%", True, (0, 0, 0))
             volume_show2 = fontmenu.render(str(int(bgm_volume*100))+"%", True, (0, 0, 0))
-            win.blit(volume_show, (428, 320))
-            win.blit(volume_show2, (428, 420))
+            if book_anim == 29:
+                win.blit(volume_show, (428, 320))
+                win.blit(volume_show2, (428, 420))
 
         if (keys[pygame.K_e] or keys[pygame.K_ESCAPE]) and not what_paper and (book_anim == 9 or book_anim == 19 or book_anim == 29):
             backpage, book_map, book_inven, book_menu = True, False, False, False
@@ -3401,8 +3467,6 @@ while run:
             book_anim -= 1
             if book_anim == 0:
                 backpage, openbook, book_map = False, False, True
-
-        # win.blit(book_img[book_anim], (0, 0))
 
         if book_inven and book_anim == 19:
             if 'potion' not in item:
@@ -3469,12 +3533,6 @@ while run:
     if PLAY_FRONT:
         frontgame()
     pygame.display.update()
-    
-    print(X, Y)
-    # print(item)
-    # print(ANIM_PAPER)
-    # print(seepaper)
-    # print(idmap)
 
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
         mouseon += 1
@@ -3482,6 +3540,6 @@ while run:
         mouseon = 0
     if mouseon == 1:
         mx, my = pygame.mouse.get_pos()
-        print('mouseeeeeeeeeeeeeeeeeee', mx, my)
+        print(mx, my)
 
 pygame.quit()

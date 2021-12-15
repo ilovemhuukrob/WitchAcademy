@@ -80,11 +80,11 @@ chat_icon = readvar('var.txt', 'chat')
 #-----------------------------Front and Cutscene----------------------------
 FRONTANIM = False
 play_dialog, play_cutscene, nextdia = False, False, False
-STORY1, STORY2, STORY3, STORY4, STORY5 = False, False, False, False, False
+STORY1, STORY2, STORY3, STORY4, STORY5 = True, False, False, False, False
 BLACK, alpha = 0, 255
 posx_txt, posy_txt = 205, 80
 counttxt, countd = 0, 0
-checkpoint = 4
+checkpoint = 1 #<----------------- checkpoint is here! ---------------------
 
 logo = pygame.image.load('sprite/logo.png')
 press = pygame.image.load('sprite/press.png')
@@ -1906,6 +1906,7 @@ while run:
                     if 808 <= X <= 838 and 118 <= Y <= 163:
                         redrawicon("hand", X+20, Y-50)
                         if keys[pygame.K_f] and ("puzzlepaper5" not in item):
+                            alpha = 255
                             item.append("puzzlepaper5")
                             what_paper = paper_bnwbklu.copy()
     #--------------firstaid-09-------------
@@ -2075,6 +2076,7 @@ while run:
                     if 388 <= X <= 463 and 0 <= Y <= 103:
                         redrawicon("hand", X+20, Y-50)
                         if keys[pygame.K_f] and ("puzzlepaper4" not in item):
+                            alpha = 255
                             item.append("puzzlepaper4")
                             what_paper = paper_901502.copy()
                     
@@ -2106,6 +2108,7 @@ while run:
                     if 418 <= X <= 448 and 418 <= Y <= 508:
                         redrawicon("hand", X+20, Y-50)
                         if keys[pygame.K_f] and ("puzzlepaper3" not in item):
+                            alpha = 255
                             item.append("puzzlepaper3")
                             what_paper = paper_b1.copy()
             change = False
@@ -2140,6 +2143,7 @@ while run:
                     if 352 <= X <= 412 and 118 <= Y <= 163:
                         redrawicon("hand", X+20, Y-50)
                         if keys[pygame.K_f] and ("puzzlepaper2" not in item):
+                            alpha = 255
                             item.append("puzzlepaper2")
                             what_paper = paper_blackcathate.copy()
             change = False
@@ -2869,7 +2873,7 @@ while run:
     if PLAY_BROOM:
         pygame.time.delay(25)
         bg_scrolling_b -= 1
-        timeb = 180
+
         if timeb >= 180:
             bgm_3.stop()
             bgm_garden.play()
@@ -2937,6 +2941,8 @@ while run:
         else:
             rightb = False
     #----------------------------------------------------------- stage 1 ----------------------------------------------------------------
+    if PLAY_BROOM:
+
         bird2.spawn(9,7,0); bird9.spawn(22,7,0); bird16.spawn(33,20,0)
         bird3.spawn(10,7,0); bird10.spawn(25,7,0); bird17.spawn(47,15,0)
         bird4.spawn(14,7,0); bird11.spawn(27,7,0)
@@ -3077,6 +3083,7 @@ while run:
             heartb = 5
             xb = 50
             yb = 355
+
         redrawbroomGameWindow()
 
 #-----------------Secret forest-------------------

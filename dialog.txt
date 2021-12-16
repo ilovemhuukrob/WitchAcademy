@@ -56,7 +56,7 @@ Esme : You have to bring the ingredients to me. after that, I can do it myself.
 Avilia : what ingredients?
 Esme : The First is potion, You can go and ask for it from Prof.Stella She is    always in the west hallway.
 Esme : The Second is magic powder, You can get it as a reward from the eventat the canteen by the mystery club.
-Esme : The Last is apple carcass, It's in Secret forest. but...
+Esme : The Last is apple scrap, It's in Secret forest. but...
 Avilia : Yeah, Everyone knows that forests are not normal.
 Esme : Please, Be careful I will never forget what you helped me.
 End : Story3

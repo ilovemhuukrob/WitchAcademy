@@ -185,7 +185,7 @@ def credit():
     special1 = font_credit3.render("Sanderfrenken", True, (255, 255, 255))
     special2 = font_credit3.render("RPG Maker MV", True, (255, 255, 255))
     special3 = font_credit3.render("Tul Suwannarat", True, (255, 255, 255))
-    special6 = font_credit3.render("Oat Chayanont", True, (255, 255, 255))
+    special6 = font_credit3.render("Chayanont Supakit", True, (255, 255, 255))
     special4 = font_credit3.render("Chotipat Pornavalai", True, (255, 255, 255))
     special5 = font_credit1.render("Thankyou  for  playing", True, (255, 255, 255))
     win.blit(crispycat, ((1280/2)-(crispycat.get_size()[0]/2), 750-credit_y))
@@ -200,7 +200,7 @@ def credit():
     win.blit(special6, ((1280/2)-(special6.get_size()[0]/2), 1800-credit_y))
     win.blit(special4, ((1280/2)-(special4.get_size()[0]/2), 1900-credit_y))
     win.blit(special5, ((1280/2)-(special5.get_size()[0]/2), 2300-credit_y))
-    if credit_y <= 1900:
+    if credit_y <= 2000:
         credit_y += 0.1
 #---------------------------------------------------------------------------
 def frontgame():

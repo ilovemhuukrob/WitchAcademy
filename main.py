@@ -1083,7 +1083,7 @@ sub_wastgar_01 = sup("g4_",893,350, 0)
 #-----------Eastgarden
 sub_eastgar_01 = sup("g8_", 700,341, 0)
 #-----------Eastforest
-sub_eastforest_01 = sup("g7_", 1266, 393, 0)
+# sub_eastforest_01 = sup("g7_", 1266, 393, 0)
 #-----------Westforest
 sub_wastforest_01 = sup("g12_", 697,400, 0)
 #-----------Westcorridor1
@@ -1195,8 +1195,17 @@ class mon:
         global cooldownb
         global hplay
         global wplay
+        global rehartb
+        global stage_b
 
-        if timeb >= sec:
+        if sec <= 60:
+            stage_check = 1
+        elif sec <= 120:
+            stage_check = 2
+        elif sec <= 180:
+            stage_check = 3
+
+        if timeb >= sec and stage_check == stage_b:
 
             if self.moncount + 1 >= len(self.monster):
                 self.moncount = 0
@@ -1223,7 +1232,7 @@ class mon:
             else:
                 self.posx -= speedx
                 self.posy += speedy
-        if heartb <= 0 or timeb <= 2:
+        if rehartb:
             self.posx = self.posx_rs
             self.posy = self.posy_rs
 
@@ -1338,6 +1347,7 @@ yb = 355
 velb = 30
 leftb = False
 rightb = False
+rehartb = False
 broomcount = 0
 check = ''
 timeb = 0 
@@ -1687,6 +1697,7 @@ while run:
             book_map = False
             book_menu = True
             nextpage = True
+            mx, my = -1, -1
 
     if PLAY_MAIN:
         pygame.time.delay(45)
@@ -2331,7 +2342,7 @@ while run:
     #-------------eastforest-19-------------
         elif idmap == "19":
             wall(walls["eastfor"])
-            sub_eastforest_01.walkrl(1266, 388)
+            # sub_eastforest_01.walkrl(1266, 388)
             idmap ,change = changemap(0,13,0,720,1198,418,idmap,"18", change)
             idmap,change = changemap(0,1280,628,720,598,28,idmap,"04", change)
 
@@ -2498,7 +2509,7 @@ while run:
                 quit()
             if stage == 1:
                 # screen.blit(background, (0, 0))
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not what_paper:
                     mx, my = pygame.mouse.get_pos()
                     if ((153 < mx < 195 and 150 < my < 239) or (740 < mx < 780 and 150 < my < 239)) and foundph1_1 == 1:  # เทียน
                         c_sound.play()
@@ -2641,7 +2652,7 @@ while run:
                 quit()
             if stage == 1:
                 # screen.blit(background, (0, 0))
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not what_paper:
                     mx, my = pygame.mouse.get_pos()
                     if ((545 < mx < 610 and 459 < my < 489) or (1162 < mx < 1225 and 454 < my < 492)) and foundph2_1 == 1: # แก้ววายด้านขวา
                         c_sound.play()
@@ -2797,7 +2808,7 @@ while run:
                 quit()
             if stage == 1:
                 # win.blit(bg_ph_3, (0, 0))
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not what_paper:
                     mx, my = pygame.mouse.get_pos()
                     if ((578 < mx < 617 and 242 < my < 282) or (1182 < mx < 1217 and 242 < my < 282)) and foundph3_1 == 1: # หมีบน
                         c_sound.play()
@@ -2933,6 +2944,7 @@ while run:
             fadeout()
             PLAY_MAIN, STORY2 = True, True
             fadein(bg, -283, -358)
+            continue
 
         elif timeb >= 120:
             if fadebg3 == False:
@@ -2986,7 +2998,6 @@ while run:
         else:
             rightb = False
     #----------------------------------------------------------- stage 1 ----------------------------------------------------------------
-    if PLAY_BROOM:
 
         bird2.spawn(9,7,0); bird9.spawn(22,7,0); bird16.spawn(33,20,0)
         bird3.spawn(10,7,0); bird10.spawn(25,7,0); bird17.spawn(47,15,0)
@@ -3099,7 +3110,9 @@ while run:
         bluebook04.spawn(140,20,0)
     #-------------------------------------------------------------------------------------------------------------------------------
         cooldownb += 0.05
-
+        if rehartb:
+            rehartb = False
+            heartb = 5
         if heartb == 5:
             win.blit(heartimg, (920, 25))
             win.blit(heartimg, (985, 25))
@@ -3128,15 +3141,23 @@ while run:
             for _ in range(1000):
                 yb -= 15
             fadeout()
-            fadebg3 = False
-            fadebg2 = False
-            fadebg1 = False
-            stage_b = 0
-            timeb = 0
-            heartb = 5
+            # fadebg3 = False
+            # fadebg2 = False
+            # fadebg1 = False
+            rehartb = True
+            if timeb >= 120:
+                timeb = 120
+                stage_b = 2
+            elif timeb >= 60:
+                timeb = 60
+                stage_b = 1
+            elif timeb >= 0:
+                stage_b = 0
+                timeb = 0
+
             xb = 50
             yb = 355
-            bgm_b1.play(-1)
+            # bgm_b1.play(-1)
 
         redrawbroomGameWindow()
 
@@ -3230,6 +3251,7 @@ while run:
                 bg = pygame.image.load("sprite/map/secretforest.jpg")
 
         if not fight:
+            bgm_sf2.stop()
             if 598 <= Y <= 613:
                 redrawicon("door", X+27, Y-50)
                 if keys[pygame.K_f]:
@@ -3355,6 +3377,7 @@ while run:
                 book_anim = 9
             if keys[pygame.K_d]:
                 nextpage, book_inven, book_map = True, True, False
+                mx, my = -1, -1
 
         if nextpage and book_inven:
             if book_anim != 19:
@@ -3365,6 +3388,7 @@ while run:
         elif book_inven:
             if keys[pygame.K_d]:
                 nextpage, book_menu, book_inven = True, True, False
+                mx, my = -1, -1
             if keys[pygame.K_a]:
                 backpage = True
             if backpage:
